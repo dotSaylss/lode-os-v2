@@ -5,6 +5,7 @@ from pathlib import Path
 # working regardless of the process's current working directory.
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 _DEFAULT_DB = _PROJECT_ROOT / "data" / "mock_mogul_db.json"
+_PROVIDERS_DB = _PROJECT_ROOT / "data" / "mock_providers_db.json"
 
 
 def get_artist_data() -> str:
@@ -20,3 +21,22 @@ def get_artist_data() -> str:
     if _DEFAULT_DB.exists():
         return _DEFAULT_DB.read_text()
     return "{}"
+
+
+def get_providers() -> str:
+    """Read the vetted service-provider marketplace and return it as JSON.
+
+    This is the MatchmakerAgent's grounding source (Custom RAG): the full list
+    of ~20 vetted providers across mixing, mastering, cover art, vocal
+    production, sync licensing, music video, promotion, and session musicians.
+    Each provider includes category, specialty, genres, rating, reviews,
+    turnaround, rate, location, and bio. The agent MUST ground every
+    recommendation in this data and only ever name providers that appear here.
+
+    Returns:
+        A JSON string of {"providers": [...]}, or '{"providers": []}' if the
+        marketplace database is unavailable.
+    """
+    if _PROVIDERS_DB.exists():
+        return _PROVIDERS_DB.read_text()
+    return '{"providers": []}'
