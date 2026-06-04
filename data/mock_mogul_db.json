@@ -1,0 +1,29 @@
+{
+  "artist_profile": {
+    "id": "june_freedom_001",
+    "name": "June Freedom",
+    "ytd_earnings": 125000.50
+  },
+  "connected_sources": [
+    {
+      "name": "DistroKid",
+      "status": "connected"
+    },
+    {
+      "name": "Spotify",
+      "status": "connected"
+    },
+    {
+      "name": "ASCAP",
+      "status": "connected"
+    },
+    {
+      "name": "SoundExchange",
+      "status": "connected"
+    }
+  ],
+  "neighboring_rights": {
+    "registered": false,
+    "estimated_missing": 2400.00
+  }
+}

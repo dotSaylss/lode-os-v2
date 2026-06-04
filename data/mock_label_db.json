@@ -1,0 +1,1975 @@
+{
+  "label_profile": {
+    "id": "mogul_label_001",
+    "name": "Lode Records",
+    "total_artists": 50
+  },
+  "artists": [
+    {
+      "id": "artist_001",
+      "name": "Reese Khalil",
+      "ytd_earnings": 14802.93,
+      "connected_sources": [
+        {
+          "name": "BMI",
+          "status": "connected"
+        },
+        {
+          "name": "Songtrust",
+          "status": "connected"
+        },
+        {
+          "name": "ASCAP",
+          "status": "connected"
+        },
+        {
+          "name": "TuneCore",
+          "status": "connected"
+        },
+        {
+          "name": "DistroKid",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "sync_unmatched",
+          "label": "Unmatched Sync Placements",
+          "organization": "YouTube Content ID",
+          "registered": false,
+          "estimated_missing": 4286.34
+        },
+        {
+          "type": "pro_blackbox",
+          "label": "PRO Black-Box Royalties",
+          "organization": "ASCAP/BMI",
+          "registered": false,
+          "estimated_missing": 2111.83
+        }
+      ],
+      "total_uncollected": 6398.17,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_002",
+      "name": "Malik Ray",
+      "ytd_earnings": 15217.78,
+      "connected_sources": [
+        {
+          "name": "YouTube Content ID",
+          "status": "connected"
+        },
+        {
+          "name": "CD Baby",
+          "status": "connected"
+        },
+        {
+          "name": "BMI",
+          "status": "connected"
+        },
+        {
+          "name": "Apple Music",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 10460.91
+        },
+        {
+          "type": "unclaimed_mechanicals",
+          "label": "Unclaimed Mechanical Royalties",
+          "organization": "MLC",
+          "registered": false,
+          "estimated_missing": 7024.23
+        }
+      ],
+      "total_uncollected": 17485.14,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_003",
+      "name": "Nadia Sharma",
+      "ytd_earnings": 268361.96,
+      "connected_sources": [
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "Songtrust",
+          "status": "connected"
+        },
+        {
+          "name": "CD Baby",
+          "status": "connected"
+        },
+        {
+          "name": "DistroKid",
+          "status": "connected"
+        },
+        {
+          "name": "ASCAP",
+          "status": "connected"
+        }
+      ],
+      "gaps": [],
+      "total_uncollected": 0,
+      "status": "all_clear"
+    },
+    {
+      "id": "artist_004",
+      "name": "Ravi Khalil",
+      "ytd_earnings": 272687.49,
+      "connected_sources": [
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "YouTube Content ID",
+          "status": "connected"
+        },
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "CD Baby",
+          "status": "connected"
+        },
+        {
+          "name": "TuneCore",
+          "status": "connected"
+        },
+        {
+          "name": "Apple Music",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "sync_unmatched",
+          "label": "Unmatched Sync Placements",
+          "organization": "YouTube Content ID",
+          "registered": false,
+          "estimated_missing": 1291.22
+        }
+      ],
+      "total_uncollected": 1291.22,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_005",
+      "name": "Saoirse Said",
+      "ytd_earnings": 275980.25,
+      "connected_sources": [
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "CD Baby",
+          "status": "connected"
+        },
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "BMI",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "pro_blackbox",
+          "label": "PRO Black-Box Royalties",
+          "organization": "ASCAP/BMI",
+          "registered": false,
+          "estimated_missing": 2401.87
+        }
+      ],
+      "total_uncollected": 2401.87,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_006",
+      "name": "Lila Cruz",
+      "ytd_earnings": 173683.63,
+      "connected_sources": [
+        {
+          "name": "YouTube Content ID",
+          "status": "connected"
+        },
+        {
+          "name": "BMI",
+          "status": "connected"
+        },
+        {
+          "name": "ASCAP",
+          "status": "connected"
+        },
+        {
+          "name": "Songtrust",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 12387.9
+        }
+      ],
+      "total_uncollected": 12387.9,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_007",
+      "name": "Saoirse Mensah",
+      "ytd_earnings": 70301.08,
+      "connected_sources": [
+        {
+          "name": "TuneCore",
+          "status": "connected"
+        },
+        {
+          "name": "CD Baby",
+          "status": "connected"
+        },
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 11570.56
+        },
+        {
+          "type": "pro_blackbox",
+          "label": "PRO Black-Box Royalties",
+          "organization": "ASCAP/BMI",
+          "registered": false,
+          "estimated_missing": 3795.39
+        }
+      ],
+      "total_uncollected": 15365.95,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_008",
+      "name": "Zara Lake",
+      "ytd_earnings": 46861.07,
+      "connected_sources": [
+        {
+          "name": "BMI",
+          "status": "connected"
+        },
+        {
+          "name": "YouTube Content ID",
+          "status": "connected"
+        },
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "TuneCore",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 11406.7
+        },
+        {
+          "type": "sync_unmatched",
+          "label": "Unmatched Sync Placements",
+          "organization": "YouTube Content ID",
+          "registered": false,
+          "estimated_missing": 9179.07
+        }
+      ],
+      "total_uncollected": 20585.77,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_009",
+      "name": "Diego Mensah",
+      "ytd_earnings": 242219.99,
+      "connected_sources": [
+        {
+          "name": "ASCAP",
+          "status": "connected"
+        },
+        {
+          "name": "CD Baby",
+          "status": "connected"
+        },
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "BMI",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 12458.5
+        }
+      ],
+      "total_uncollected": 12458.5,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_010",
+      "name": "June Khalil",
+      "ytd_earnings": 193425.22,
+      "connected_sources": [
+        {
+          "name": "TuneCore",
+          "status": "connected"
+        },
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "BMI",
+          "status": "connected"
+        },
+        {
+          "name": "YouTube Content ID",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 12005.83
+        },
+        {
+          "type": "sync_unmatched",
+          "label": "Unmatched Sync Placements",
+          "organization": "YouTube Content ID",
+          "registered": false,
+          "estimated_missing": 4954.98
+        },
+        {
+          "type": "pro_blackbox",
+          "label": "PRO Black-Box Royalties",
+          "organization": "ASCAP/BMI",
+          "registered": false,
+          "estimated_missing": 6275.77
+        }
+      ],
+      "total_uncollected": 23236.58,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_011",
+      "name": "Reese Reyes",
+      "ytd_earnings": 236934.06,
+      "connected_sources": [
+        {
+          "name": "ASCAP",
+          "status": "connected"
+        },
+        {
+          "name": "TuneCore",
+          "status": "connected"
+        },
+        {
+          "name": "Songtrust",
+          "status": "connected"
+        },
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        }
+      ],
+      "gaps": [],
+      "total_uncollected": 0,
+      "status": "all_clear"
+    },
+    {
+      "id": "artist_012",
+      "name": "Sienna Vega",
+      "ytd_earnings": 38428.02,
+      "connected_sources": [
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "BMI",
+          "status": "connected"
+        },
+        {
+          "name": "DistroKid",
+          "status": "connected"
+        },
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "Songtrust",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "unclaimed_mechanicals",
+          "label": "Unclaimed Mechanical Royalties",
+          "organization": "MLC",
+          "registered": false,
+          "estimated_missing": 4593.53
+        },
+        {
+          "type": "sync_unmatched",
+          "label": "Unmatched Sync Placements",
+          "organization": "YouTube Content ID",
+          "registered": false,
+          "estimated_missing": 7165.12
+        }
+      ],
+      "total_uncollected": 11758.65,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_013",
+      "name": "Theo Webb",
+      "ytd_earnings": 265542.84,
+      "connected_sources": [
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "YouTube Content ID",
+          "status": "connected"
+        },
+        {
+          "name": "CD Baby",
+          "status": "connected"
+        },
+        {
+          "name": "Spotify",
+          "status": "connected"
+        }
+      ],
+      "gaps": [],
+      "total_uncollected": 0,
+      "status": "all_clear"
+    },
+    {
+      "id": "artist_014",
+      "name": "Tariq Ali",
+      "ytd_earnings": 127163.22,
+      "connected_sources": [
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "BMI",
+          "status": "connected"
+        },
+        {
+          "name": "YouTube Content ID",
+          "status": "connected"
+        },
+        {
+          "name": "DistroKid",
+          "status": "connected"
+        },
+        {
+          "name": "ASCAP",
+          "status": "connected"
+        },
+        {
+          "name": "CD Baby",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 4262.23
+        },
+        {
+          "type": "unclaimed_mechanicals",
+          "label": "Unclaimed Mechanical Royalties",
+          "organization": "MLC",
+          "registered": false,
+          "estimated_missing": 1439.55
+        },
+        {
+          "type": "pro_blackbox",
+          "label": "PRO Black-Box Royalties",
+          "organization": "ASCAP/BMI",
+          "registered": false,
+          "estimated_missing": 6232.52
+        }
+      ],
+      "total_uncollected": 11934.3,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_015",
+      "name": "Indira Cruz",
+      "ytd_earnings": 147850.46,
+      "connected_sources": [
+        {
+          "name": "Apple Music",
+          "status": "connected"
+        },
+        {
+          "name": "BMI",
+          "status": "connected"
+        },
+        {
+          "name": "ASCAP",
+          "status": "connected"
+        },
+        {
+          "name": "TuneCore",
+          "status": "connected"
+        },
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 4400.07
+        },
+        {
+          "type": "pro_blackbox",
+          "label": "PRO Black-Box Royalties",
+          "organization": "ASCAP/BMI",
+          "registered": false,
+          "estimated_missing": 4753.9
+        }
+      ],
+      "total_uncollected": 9153.97,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_016",
+      "name": "Silas Marino",
+      "ytd_earnings": 119819.82,
+      "connected_sources": [
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "DistroKid",
+          "status": "connected"
+        },
+        {
+          "name": "CD Baby",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "sync_unmatched",
+          "label": "Unmatched Sync Placements",
+          "organization": "YouTube Content ID",
+          "registered": false,
+          "estimated_missing": 2328.52
+        }
+      ],
+      "total_uncollected": 2328.52,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_017",
+      "name": "Theo Marino",
+      "ytd_earnings": 57908.75,
+      "connected_sources": [
+        {
+          "name": "BMI",
+          "status": "connected"
+        },
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "Apple Music",
+          "status": "connected"
+        },
+        {
+          "name": "CD Baby",
+          "status": "connected"
+        },
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "DistroKid",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 12492.32
+        }
+      ],
+      "total_uncollected": 12492.32,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_018",
+      "name": "Mira Hart",
+      "ytd_earnings": 118544.62,
+      "connected_sources": [
+        {
+          "name": "BMI",
+          "status": "connected"
+        },
+        {
+          "name": "CD Baby",
+          "status": "connected"
+        },
+        {
+          "name": "DistroKid",
+          "status": "connected"
+        },
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "Songtrust",
+          "status": "connected"
+        },
+        {
+          "name": "Apple Music",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "unclaimed_mechanicals",
+          "label": "Unclaimed Mechanical Royalties",
+          "organization": "MLC",
+          "registered": false,
+          "estimated_missing": 6858.94
+        }
+      ],
+      "total_uncollected": 6858.94,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_019",
+      "name": "Felix Brooks",
+      "ytd_earnings": 188029.0,
+      "connected_sources": [
+        {
+          "name": "ASCAP",
+          "status": "connected"
+        },
+        {
+          "name": "BMI",
+          "status": "connected"
+        },
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "DistroKid",
+          "status": "connected"
+        },
+        {
+          "name": "Apple Music",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "unclaimed_mechanicals",
+          "label": "Unclaimed Mechanical Royalties",
+          "organization": "MLC",
+          "registered": false,
+          "estimated_missing": 3283.4
+        },
+        {
+          "type": "sync_unmatched",
+          "label": "Unmatched Sync Placements",
+          "organization": "YouTube Content ID",
+          "registered": false,
+          "estimated_missing": 4752.7
+        }
+      ],
+      "total_uncollected": 8036.1,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_020",
+      "name": "Esme Hart",
+      "ytd_earnings": 23471.25,
+      "connected_sources": [
+        {
+          "name": "ASCAP",
+          "status": "connected"
+        },
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "YouTube Content ID",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "unclaimed_mechanicals",
+          "label": "Unclaimed Mechanical Royalties",
+          "organization": "MLC",
+          "registered": false,
+          "estimated_missing": 1811.14
+        }
+      ],
+      "total_uncollected": 1811.14,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_021",
+      "name": "Bodhi Stone",
+      "ytd_earnings": 176471.77,
+      "connected_sources": [
+        {
+          "name": "Songtrust",
+          "status": "connected"
+        },
+        {
+          "name": "YouTube Content ID",
+          "status": "connected"
+        },
+        {
+          "name": "TuneCore",
+          "status": "connected"
+        },
+        {
+          "name": "ASCAP",
+          "status": "connected"
+        },
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "CD Baby",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 6034.91
+        }
+      ],
+      "total_uncollected": 6034.91,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_022",
+      "name": "Mateo Cruz",
+      "ytd_earnings": 10533.8,
+      "connected_sources": [
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "YouTube Content ID",
+          "status": "connected"
+        },
+        {
+          "name": "BMI",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 3217.29
+        },
+        {
+          "type": "unclaimed_mechanicals",
+          "label": "Unclaimed Mechanical Royalties",
+          "organization": "MLC",
+          "registered": false,
+          "estimated_missing": 1422.81
+        },
+        {
+          "type": "sync_unmatched",
+          "label": "Unmatched Sync Placements",
+          "organization": "YouTube Content ID",
+          "registered": false,
+          "estimated_missing": 3122.39
+        }
+      ],
+      "total_uncollected": 7762.49,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_023",
+      "name": "Ravi Reyes",
+      "ytd_earnings": 174376.35,
+      "connected_sources": [
+        {
+          "name": "YouTube Content ID",
+          "status": "connected"
+        },
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "Spotify",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "unclaimed_mechanicals",
+          "label": "Unclaimed Mechanical Royalties",
+          "organization": "MLC",
+          "registered": false,
+          "estimated_missing": 1777.26
+        },
+        {
+          "type": "sync_unmatched",
+          "label": "Unmatched Sync Placements",
+          "organization": "YouTube Content ID",
+          "registered": false,
+          "estimated_missing": 5402.4
+        }
+      ],
+      "total_uncollected": 7179.66,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_024",
+      "name": "Bodhi Sharma",
+      "ytd_earnings": 203190.51,
+      "connected_sources": [
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "YouTube Content ID",
+          "status": "connected"
+        },
+        {
+          "name": "Apple Music",
+          "status": "connected"
+        },
+        {
+          "name": "ASCAP",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "sync_unmatched",
+          "label": "Unmatched Sync Placements",
+          "organization": "YouTube Content ID",
+          "registered": false,
+          "estimated_missing": 4300.39
+        }
+      ],
+      "total_uncollected": 4300.39,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_025",
+      "name": "June Patel",
+      "ytd_earnings": 217744.43,
+      "connected_sources": [
+        {
+          "name": "ASCAP",
+          "status": "connected"
+        },
+        {
+          "name": "Apple Music",
+          "status": "connected"
+        },
+        {
+          "name": "CD Baby",
+          "status": "connected"
+        },
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "DistroKid",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 11912.05
+        },
+        {
+          "type": "sync_unmatched",
+          "label": "Unmatched Sync Placements",
+          "organization": "YouTube Content ID",
+          "registered": false,
+          "estimated_missing": 1006.24
+        }
+      ],
+      "total_uncollected": 12918.29,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_026",
+      "name": "Talia Bloom",
+      "ytd_earnings": 124901.99,
+      "connected_sources": [
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "TuneCore",
+          "status": "connected"
+        },
+        {
+          "name": "DistroKid",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "unclaimed_mechanicals",
+          "label": "Unclaimed Mechanical Royalties",
+          "organization": "MLC",
+          "registered": false,
+          "estimated_missing": 2796.43
+        },
+        {
+          "type": "sync_unmatched",
+          "label": "Unmatched Sync Placements",
+          "organization": "YouTube Content ID",
+          "registered": false,
+          "estimated_missing": 7330.99
+        }
+      ],
+      "total_uncollected": 10127.42,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_027",
+      "name": "Wren Soto",
+      "ytd_earnings": 211857.91,
+      "connected_sources": [
+        {
+          "name": "ASCAP",
+          "status": "connected"
+        },
+        {
+          "name": "Songtrust",
+          "status": "connected"
+        },
+        {
+          "name": "CD Baby",
+          "status": "connected"
+        },
+        {
+          "name": "DistroKid",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 11692.01
+        }
+      ],
+      "total_uncollected": 11692.01,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_028",
+      "name": "Ondine Frost",
+      "ytd_earnings": 80571.15,
+      "connected_sources": [
+        {
+          "name": "CD Baby",
+          "status": "connected"
+        },
+        {
+          "name": "DistroKid",
+          "status": "connected"
+        },
+        {
+          "name": "Apple Music",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 10537.48
+        }
+      ],
+      "total_uncollected": 10537.48,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_029",
+      "name": "Otis Lane",
+      "ytd_earnings": 14436.73,
+      "connected_sources": [
+        {
+          "name": "CD Baby",
+          "status": "connected"
+        },
+        {
+          "name": "TuneCore",
+          "status": "connected"
+        },
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "Songtrust",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 10074.6
+        },
+        {
+          "type": "unclaimed_mechanicals",
+          "label": "Unclaimed Mechanical Royalties",
+          "organization": "MLC",
+          "registered": false,
+          "estimated_missing": 4771.48
+        }
+      ],
+      "total_uncollected": 14846.08,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_030",
+      "name": "Indira Vega",
+      "ytd_earnings": 39372.96,
+      "connected_sources": [
+        {
+          "name": "ASCAP",
+          "status": "connected"
+        },
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "DistroKid",
+          "status": "connected"
+        },
+        {
+          "name": "Apple Music",
+          "status": "connected"
+        },
+        {
+          "name": "YouTube Content ID",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 9595.43
+        },
+        {
+          "type": "unclaimed_mechanicals",
+          "label": "Unclaimed Mechanical Royalties",
+          "organization": "MLC",
+          "registered": false,
+          "estimated_missing": 5507.19
+        }
+      ],
+      "total_uncollected": 15102.62,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_031",
+      "name": "Cyrus Santos",
+      "ytd_earnings": 77284.52,
+      "connected_sources": [
+        {
+          "name": "DistroKid",
+          "status": "connected"
+        },
+        {
+          "name": "YouTube Content ID",
+          "status": "connected"
+        },
+        {
+          "name": "BMI",
+          "status": "connected"
+        },
+        {
+          "name": "ASCAP",
+          "status": "connected"
+        },
+        {
+          "name": "Apple Music",
+          "status": "connected"
+        },
+        {
+          "name": "Songtrust",
+          "status": "connected"
+        }
+      ],
+      "gaps": [],
+      "total_uncollected": 0,
+      "status": "all_clear"
+    },
+    {
+      "id": "artist_032",
+      "name": "Soraya Reyes",
+      "ytd_earnings": 145937.32,
+      "connected_sources": [
+        {
+          "name": "TuneCore",
+          "status": "connected"
+        },
+        {
+          "name": "CD Baby",
+          "status": "connected"
+        },
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "Apple Music",
+          "status": "connected"
+        },
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "Songtrust",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 11861.89
+        }
+      ],
+      "total_uncollected": 11861.89,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_033",
+      "name": "Camila Hassan",
+      "ytd_earnings": 157038.92,
+      "connected_sources": [
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "Songtrust",
+          "status": "connected"
+        },
+        {
+          "name": "BMI",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 8005.84
+        }
+      ],
+      "total_uncollected": 8005.84,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_034",
+      "name": "Priya Diallo",
+      "ytd_earnings": 136706.64,
+      "connected_sources": [
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "TuneCore",
+          "status": "connected"
+        },
+        {
+          "name": "DistroKid",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "pro_blackbox",
+          "label": "PRO Black-Box Royalties",
+          "organization": "ASCAP/BMI",
+          "registered": false,
+          "estimated_missing": 1994.78
+        }
+      ],
+      "total_uncollected": 1994.78,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_035",
+      "name": "Marcus Stone",
+      "ytd_earnings": 74597.17,
+      "connected_sources": [
+        {
+          "name": "Songtrust",
+          "status": "connected"
+        },
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "Apple Music",
+          "status": "connected"
+        },
+        {
+          "name": "BMI",
+          "status": "connected"
+        },
+        {
+          "name": "TuneCore",
+          "status": "connected"
+        },
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 9250.99
+        },
+        {
+          "type": "sync_unmatched",
+          "label": "Unmatched Sync Placements",
+          "organization": "YouTube Content ID",
+          "registered": false,
+          "estimated_missing": 6276.49
+        },
+        {
+          "type": "pro_blackbox",
+          "label": "PRO Black-Box Royalties",
+          "organization": "ASCAP/BMI",
+          "registered": false,
+          "estimated_missing": 5305.79
+        }
+      ],
+      "total_uncollected": 20833.27,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_036",
+      "name": "Saoirse Tanaka",
+      "ytd_earnings": 219730.35,
+      "connected_sources": [
+        {
+          "name": "ASCAP",
+          "status": "connected"
+        },
+        {
+          "name": "YouTube Content ID",
+          "status": "connected"
+        },
+        {
+          "name": "Apple Music",
+          "status": "connected"
+        },
+        {
+          "name": "DistroKid",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 11616.93
+        },
+        {
+          "type": "unclaimed_mechanicals",
+          "label": "Unclaimed Mechanical Royalties",
+          "organization": "MLC",
+          "registered": false,
+          "estimated_missing": 1913.38
+        }
+      ],
+      "total_uncollected": 13530.31,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_037",
+      "name": "Talia Ray",
+      "ytd_earnings": 94305.04,
+      "connected_sources": [
+        {
+          "name": "Songtrust",
+          "status": "connected"
+        },
+        {
+          "name": "YouTube Content ID",
+          "status": "connected"
+        },
+        {
+          "name": "CD Baby",
+          "status": "connected"
+        },
+        {
+          "name": "Apple Music",
+          "status": "connected"
+        },
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "BMI",
+          "status": "connected"
+        }
+      ],
+      "gaps": [],
+      "total_uncollected": 0,
+      "status": "all_clear"
+    },
+    {
+      "id": "artist_038",
+      "name": "Mira Quinn",
+      "ytd_earnings": 216301.32,
+      "connected_sources": [
+        {
+          "name": "BMI",
+          "status": "connected"
+        },
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "Apple Music",
+          "status": "connected"
+        },
+        {
+          "name": "DistroKid",
+          "status": "connected"
+        },
+        {
+          "name": "TuneCore",
+          "status": "connected"
+        },
+        {
+          "name": "ASCAP",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 5393.57
+        },
+        {
+          "type": "sync_unmatched",
+          "label": "Unmatched Sync Placements",
+          "organization": "YouTube Content ID",
+          "registered": false,
+          "estimated_missing": 1982.06
+        }
+      ],
+      "total_uncollected": 7375.63,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_039",
+      "name": "Lena Day",
+      "ytd_earnings": 118867.03,
+      "connected_sources": [
+        {
+          "name": "CD Baby",
+          "status": "connected"
+        },
+        {
+          "name": "DistroKid",
+          "status": "connected"
+        },
+        {
+          "name": "BMI",
+          "status": "connected"
+        },
+        {
+          "name": "Songtrust",
+          "status": "connected"
+        },
+        {
+          "name": "Apple Music",
+          "status": "connected"
+        },
+        {
+          "name": "TuneCore",
+          "status": "connected"
+        }
+      ],
+      "gaps": [],
+      "total_uncollected": 0,
+      "status": "all_clear"
+    },
+    {
+      "id": "artist_040",
+      "name": "Mateo Park",
+      "ytd_earnings": 111463.64,
+      "connected_sources": [
+        {
+          "name": "TuneCore",
+          "status": "connected"
+        },
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "CD Baby",
+          "status": "connected"
+        }
+      ],
+      "gaps": [],
+      "total_uncollected": 0,
+      "status": "all_clear"
+    },
+    {
+      "id": "artist_041",
+      "name": "Ravi Ray",
+      "ytd_earnings": 252204.69,
+      "connected_sources": [
+        {
+          "name": "BMI",
+          "status": "connected"
+        },
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "CD Baby",
+          "status": "connected"
+        },
+        {
+          "name": "Songtrust",
+          "status": "connected"
+        },
+        {
+          "name": "DistroKid",
+          "status": "connected"
+        },
+        {
+          "name": "Apple Music",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 9066.82
+        },
+        {
+          "type": "sync_unmatched",
+          "label": "Unmatched Sync Placements",
+          "organization": "YouTube Content ID",
+          "registered": false,
+          "estimated_missing": 4672.82
+        },
+        {
+          "type": "pro_blackbox",
+          "label": "PRO Black-Box Royalties",
+          "organization": "ASCAP/BMI",
+          "registered": false,
+          "estimated_missing": 4533.54
+        }
+      ],
+      "total_uncollected": 18273.18,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_042",
+      "name": "Marcus Hassan",
+      "ytd_earnings": 168994.83,
+      "connected_sources": [
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "CD Baby",
+          "status": "connected"
+        },
+        {
+          "name": "ASCAP",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "unclaimed_mechanicals",
+          "label": "Unclaimed Mechanical Royalties",
+          "organization": "MLC",
+          "registered": false,
+          "estimated_missing": 2877.19
+        }
+      ],
+      "total_uncollected": 2877.19,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_043",
+      "name": "Indira Cole",
+      "ytd_earnings": 83685.8,
+      "connected_sources": [
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "Apple Music",
+          "status": "connected"
+        },
+        {
+          "name": "DistroKid",
+          "status": "connected"
+        },
+        {
+          "name": "TuneCore",
+          "status": "connected"
+        },
+        {
+          "name": "Songtrust",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 11985.54
+        },
+        {
+          "type": "unclaimed_mechanicals",
+          "label": "Unclaimed Mechanical Royalties",
+          "organization": "MLC",
+          "registered": false,
+          "estimated_missing": 1421.5
+        },
+        {
+          "type": "pro_blackbox",
+          "label": "PRO Black-Box Royalties",
+          "organization": "ASCAP/BMI",
+          "registered": false,
+          "estimated_missing": 986.18
+        }
+      ],
+      "total_uncollected": 14393.22,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_044",
+      "name": "Mira Santos",
+      "ytd_earnings": 236270.25,
+      "connected_sources": [
+        {
+          "name": "BMI",
+          "status": "connected"
+        },
+        {
+          "name": "ASCAP",
+          "status": "connected"
+        },
+        {
+          "name": "Apple Music",
+          "status": "connected"
+        },
+        {
+          "name": "TuneCore",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 11941.0
+        },
+        {
+          "type": "sync_unmatched",
+          "label": "Unmatched Sync Placements",
+          "organization": "YouTube Content ID",
+          "registered": false,
+          "estimated_missing": 3835.61
+        }
+      ],
+      "total_uncollected": 15776.61,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_045",
+      "name": "Ondine Khalil",
+      "ytd_earnings": 219559.39,
+      "connected_sources": [
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "DistroKid",
+          "status": "connected"
+        },
+        {
+          "name": "ASCAP",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 11515.88
+        },
+        {
+          "type": "pro_blackbox",
+          "label": "PRO Black-Box Royalties",
+          "organization": "ASCAP/BMI",
+          "registered": false,
+          "estimated_missing": 4352.59
+        }
+      ],
+      "total_uncollected": 15868.47,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_046",
+      "name": "Reese Frost",
+      "ytd_earnings": 35717.16,
+      "connected_sources": [
+        {
+          "name": "Songtrust",
+          "status": "connected"
+        },
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "DistroKid",
+          "status": "connected"
+        },
+        {
+          "name": "ASCAP",
+          "status": "connected"
+        },
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 5765.11
+        }
+      ],
+      "total_uncollected": 5765.11,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_047",
+      "name": "Sienna Tanaka",
+      "ytd_earnings": 125918.37,
+      "connected_sources": [
+        {
+          "name": "Apple Music",
+          "status": "connected"
+        },
+        {
+          "name": "ASCAP",
+          "status": "connected"
+        },
+        {
+          "name": "CD Baby",
+          "status": "connected"
+        },
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "TuneCore",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 8759.89
+        }
+      ],
+      "total_uncollected": 8759.89,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_048",
+      "name": "Aurora Marino",
+      "ytd_earnings": 232599.81,
+      "connected_sources": [
+        {
+          "name": "TuneCore",
+          "status": "connected"
+        },
+        {
+          "name": "BMI",
+          "status": "connected"
+        },
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "ASCAP",
+          "status": "connected"
+        },
+        {
+          "name": "YouTube Content ID",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 6772.38
+        },
+        {
+          "type": "pro_blackbox",
+          "label": "PRO Black-Box Royalties",
+          "organization": "ASCAP/BMI",
+          "registered": false,
+          "estimated_missing": 5905.72
+        }
+      ],
+      "total_uncollected": 12678.1,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_049",
+      "name": "Imani Voss",
+      "ytd_earnings": 65696.6,
+      "connected_sources": [
+        {
+          "name": "TuneCore",
+          "status": "connected"
+        },
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "YouTube Content ID",
+          "status": "connected"
+        },
+        {
+          "name": "Apple Music",
+          "status": "connected"
+        },
+        {
+          "name": "DistroKid",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 3844.3
+        },
+        {
+          "type": "unclaimed_mechanicals",
+          "label": "Unclaimed Mechanical Royalties",
+          "organization": "MLC",
+          "registered": false,
+          "estimated_missing": 3988.85
+        }
+      ],
+      "total_uncollected": 7833.15,
+      "status": "action_required"
+    },
+    {
+      "id": "artist_050",
+      "name": "Jonah Voss",
+      "ytd_earnings": 129903.48,
+      "connected_sources": [
+        {
+          "name": "Spotify",
+          "status": "connected"
+        },
+        {
+          "name": "SoundExchange",
+          "status": "connected"
+        },
+        {
+          "name": "BMI",
+          "status": "connected"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "neighboring_rights",
+          "label": "Unregistered Neighboring Rights",
+          "organization": "SoundExchange",
+          "registered": false,
+          "estimated_missing": 4403.37
+        }
+      ],
+      "total_uncollected": 4403.37,
+      "status": "action_required"
+    }
+  ]
+}
