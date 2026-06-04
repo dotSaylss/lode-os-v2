@@ -9,11 +9,53 @@ Flash):
 
 Delegation in ADK is automatic: the orchestrator's LLM reads each sub-agent's
 `name` + `description` and transfers control when the user's intent matches.
+
+Data access is via **MCP** (Model Context Protocol): the specialist agents reach
+the artist's royalty data through the Mogul MCP server (`mcp_server.py`), exactly
+as Claude connects to Google Drive over MCP. If the MCP subprocess can't start,
+the agents fall back to the in-process `get_artist_data` tool so the demo never
+breaks.
 """
+
+import sys
+from pathlib import Path
 
 from google.adk import Agent
 
 from agents.tools import get_artist_data
+
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+
+def _mogul_data_tools():
+    """Return the data-access tools for the specialist agents.
+
+    Prefers the Mogul MCP server (Track 1: ADK + MCP). Falls back to the
+    in-process Python tool if the MCP toolset can't be constructed.
+    """
+    try:
+        from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
+        from google.adk.tools.mcp_tool.mcp_session_manager import (
+            StdioConnectionParams,
+        )
+        from mcp import StdioServerParameters
+
+        mogul_mcp = MCPToolset(
+            connection_params=StdioConnectionParams(
+                server_params=StdioServerParameters(
+                    command=sys.executable,
+                    args=[str(_PROJECT_ROOT / "mcp_server.py")],
+                    cwd=str(_PROJECT_ROOT),
+                ),
+            ),
+        )
+        return [mogul_mcp]
+    except Exception as exc:  # noqa: BLE001 — resilience over purity for the demo
+        print(f"[graph] MCP toolset unavailable, using in-process tool: {exc}")
+        return [get_artist_data]
+
+
+_data_tools = _mogul_data_tools()
 
 # ── Specialist sub-agents (Gemini 2.5 Flash — fast, cheap) ───────────────────
 
@@ -35,7 +77,7 @@ analysis_agent = Agent(
         "Report findings concisely with concrete dollar figures and name the "
         "specific source/PRO involved. Be direct and specific."
     ),
-    tools=[get_artist_data],
+    tools=_data_tools,
 )
 
 action_agent = Agent(
@@ -56,7 +98,7 @@ action_agent = Agent(
         "Include a clear subject line and the artist's relevant details. Output "
         "the full email draft."
     ),
-    tools=[get_artist_data],
+    tools=_data_tools,
 )
 
 # ── Orchestrator (Gemini 2.5 Pro — routing + synthesis) ──────────────────────

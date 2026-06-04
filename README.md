@@ -16,7 +16,8 @@ to recover it. Built during a Google hackathon.
 
 | Layer | Tech |
 |-------|------|
-| Agent runtime | Google ADK 2.0 (Gemini 2.5 Pro + Flash) |
+| Agent runtime | Google ADK 2.x (Gemini 2.5 Pro + Flash) |
+| Data access | Model Context Protocol (MCP) — Mogul connector |
 | Backend | Python · FastAPI |
 | Frontend | SvelteKit · TailwindCSS |
 | Deployment | Google Cloud Run · Cloud Build |
@@ -26,6 +27,10 @@ to recover it. Built during a Google hackathon.
 - **OrchestratorAgent** (Gemini 2.5 Pro) — router + session memory, holds artist context.
 - **RoyaltyAnalysisAgent** (Gemini 2.5 Flash) — finds gaps and registration issues.
 - **ActionAgent** (Gemini 2.5 Flash) — generates registration drafts.
+
+The specialist agents reach the artist's royalty data over **MCP** via the Mogul
+connector (`mcp_server.py`) — the same pattern by which Claude connects to Google
+Drive or Slack. Swap the MCP server for a live Mogul API and nothing else changes.
 
 ## Getting started
 
