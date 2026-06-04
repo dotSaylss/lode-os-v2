@@ -1,5 +1,6 @@
 <script lang="ts">
     import '../app.css';
+    import { page } from '$app/state';
     let { children } = $props();
 </script>
 
@@ -11,8 +12,8 @@
                 <span>MOGUL <span class="text-slate-400 font-normal">Label Manager</span></span>
             </div>
             <nav class="flex gap-6 items-center">
-                <button class="text-sm font-medium text-blue-600 dark:text-blue-400">Dashboard</button>
-                <button class="text-sm font-medium text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors">Artists</button>
+                <a href="/" class="text-sm font-medium {page.url.pathname === '/' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'} transition-colors">Dashboard</a>
+                <a href="/label" class="text-sm font-medium {page.url.pathname.startsWith('/label') ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'} transition-colors">Label</a>
                 <button class="text-sm font-medium text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors">Settings</button>
                 <div class="w-px h-4 bg-slate-300 dark:bg-slate-700 mx-2"></div>
                 <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center text-xs font-bold text-slate-600 dark:text-slate-300">
