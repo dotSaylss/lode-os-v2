@@ -63,10 +63,12 @@ live_research_agent = Agent(
         "You research music-industry service providers (mixing, mastering, cover "
         "art, sync, etc.) on the live web. Use the google_search tool to find "
         "real, currently-operating providers, then report 1-3 concrete options "
-        "with what makes them a fit. For EACH option, include the source link "
-        "(full URL) you found it on, formatted as 'Source: <url>', so the result "
-        "can be cited. Always note that these are live web results, not vetted "
-        "marketplace partners, so they require independent diligence."
+        "with what makes them a fit. For EACH option, on its own line, name the "
+        "site/provider and its link exactly as 'Source: <Site or Provider Name> "
+        "— <full url>' (the readable name FIRST, then the URL), so the result can "
+        "be cited with a human-readable label. Always note that these are live "
+        "web results, not vetted marketplace partners, so they require "
+        "independent diligence."
     ),
     tools=[google_search],
 )
@@ -108,10 +110,16 @@ matchmaker_agent = Agent(
         "or session player may take a small points/songwriting split). Keep it "
         "practical and label it clearly as a proposal to negotiate.\n"
         "5. Give a rough total cost estimate by summing the per-track rates.\n\n"
-        "If — and only if — the marketplace has NO good match for a stated need, "
-        "you may call the LiveProviderResearchAgent tool to research live web "
-        "options, and clearly flag those as unvetted. When you use live results, "
-        "include the source links the tool returns so they can be cited.\n\n"
+        "LIVE WEB RESEARCH — call the `LiveProviderResearchAgent` tool when EITHER:\n"
+        "  (a) the vetted marketplace has NO good match for a stated need, OR\n"
+        "  (b) the user explicitly asks for live, current, or up-to-date market "
+        "information — e.g. current going rates, recent/trending providers, "
+        "who is active right now, or to 'check the web' / 'research live options'. "
+        "In case (b), still ground your core recommendation in the vetted "
+        "marketplace first, then ADD the live web findings as a clearly-labeled "
+        "'Live web research' section.\n"
+        "Always flag live results as unvetted, and include the source links the "
+        "tool returns so they can be cited.\n\n"
         "Be specific, concrete, and concise. Use the providers' real names and "
         "rates. This is a multi-turn conversation: remember earlier choices when "
         "the artist refines the brief (adds a need, sets a budget, asks for the "
@@ -141,6 +149,12 @@ root_agent = matchmaker_agent
 
 _URL_RE = re.compile(r"https?://[^\s)\]<>\"'`]+")
 _DOMAIN_RE = re.compile(r"https?://(?:www\.)?([^/\s]+)")
+# Matches the research agent's 'Source: <Name> — <url>' provenance lines so we
+# can label a source chip with a human-readable name instead of a redirect host.
+_SOURCE_LINE_RE = re.compile(
+    r"Source:\s*(?P<label>.+?)\s*[—–-]\s*(?P<uri>https?://[^\s)\]<>\"'`]+)",
+    re.IGNORECASE,
+)
 
 
 def _safe_providers() -> list[dict]:
@@ -206,15 +220,29 @@ def _extract_web_sources(evidence: dict, text: str) -> None:
     GroundingMetadata does not surface on the parent event stream, so we recover
     the provenance from the URLs the research agent is instructed to include.
     """
+    # First, prefer the readable 'Source: <Name> — <url>' lines the research
+    # agent is instructed to emit, so chips show a real site name rather than the
+    # opaque Vertex grounding-redirect host.
+    named = {}  # uri -> readable label
+    for sm in _SOURCE_LINE_RE.finditer(text or ""):
+        label = (sm.group("label") or "").strip(" -–—\t")
+        uri = (sm.group("uri") or "").rstrip(").,'\"`*]")
+        if uri and label:
+            named[uri] = label
+
     for match in _URL_RE.finditer(text or ""):
         uri = match.group(0).rstrip(").,'\"`*]")
         domain = ""
         m = _DOMAIN_RE.search(uri)
         if m:
             domain = m.group(1)
-        # Vertex returns opaque grounding-redirect links; give them a readable
-        # label so the source chip reads "Google Search" instead of a UUID host.
-        label = "Google Search" if "vertexaisearch" in domain else (domain or uri)
+        if uri in named:
+            label = named[uri]
+        elif "vertexaisearch" in domain:
+            # Opaque grounding-redirect link with no readable name nearby.
+            label = "Live web source"
+        else:
+            label = domain or uri
         entry = {"title": label, "uri": uri, "domain": label}
         if uri not in {w["uri"] for w in evidence["web_sources"]}:
             evidence["web_sources"].append(entry)

@@ -83,7 +83,7 @@
     const examples = [
         'I need my track mixed, mastered, and cover art for a lo-fi hip-hop single.',
         'Assemble a team for a pop single: vocal production, mix, master, and a music video.',
-        'I have a finished electronic track — find me mastering, sync licensing, and playlist promo.'
+        'Find me a mastering engineer, and check the live web for current going rates in 2026.'
     ];
 </script>
 
