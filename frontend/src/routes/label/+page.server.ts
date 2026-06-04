@@ -1,8 +1,9 @@
 import type { PageServerLoad } from './$types';
+import { api } from '$lib/api';
 
 export const load: PageServerLoad = async ({ fetch }) => {
     try {
-        const res = await fetch('http://localhost:8001/api/v1/label/portfolio');
+        const res = await fetch(api('/api/v1/label/portfolio'));
         if (res.ok) {
             const data = await res.json();
             return { portfolio: data };

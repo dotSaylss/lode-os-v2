@@ -1,7 +1,8 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { fade, slide } from 'svelte/transition';
-    
+    import { api } from '$lib/api';
+
     let messages = $state([
         { id: 1, role: 'agent', content: "Hi there! I'm your Mogul Orchestrator. I've analyzed June Freedom's profile and noticed missing Neighboring Rights. Would you like me to draft an email to ASCAP or SoundExchange to claim the estimated $2,400?" }
     ]);
@@ -16,7 +17,7 @@
         isTyping = true;
         
         try {
-            const res = await fetch('http://localhost:8000/api/v1/chat', {
+            const res = await fetch(api('/api/v1/chat'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: userMsg })

@@ -1,5 +1,6 @@
 <script lang="ts">
     import { fade, slide } from 'svelte/transition';
+    import { api } from '$lib/api';
 
     let { greeting = "I'm your LabelAgent. I can scan your entire catalog for missing money and register artists in bulk. Ask me \"what's the biggest opportunity across my roster?\"" }: { greeting?: string } = $props();
 
@@ -23,7 +24,7 @@
         isTyping = true;
 
         try {
-            const res = await fetch('http://localhost:8001/api/v1/label/chat', {
+            const res = await fetch(api('/api/v1/label/chat'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: userMsg, session_id: sessionId })

@@ -1,4 +1,3 @@
-import os
 import uuid
 
 from dotenv import load_dotenv
@@ -17,23 +16,28 @@ from google.genai import types
 from services.db_service import DBService
 from models.artist import ArtistContext
 from models.label import LabelPortfolio
+from models.service import Provider
 from agents.graph import root_agent
 from agents.label_graph import label_agent
+from agents.service_graph import matchmaker_agent
 
 APP_NAME = "mogul-agent"
 LABEL_APP_NAME = "mogul-label-agent"
+SERVICES_APP_NAME = "lodeos-matchmaker"
 
 app = FastAPI(
     title="Mogul Agent Backend",
     description="Real Google ADK multi-agent backend for Mogul royalty aggregation",
 )
 
-# Add CORS middleware for frontend communication
+# Add CORS middleware for frontend communication. 5173 = main dashboard,
+# 5174 = label ops view, 5175 = service ecosystem view (dev), plus prod.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
         "http://localhost:5174",
+        "http://localhost:5175",
         "http://localhost:3000",
     ],
     allow_credentials=True,
@@ -43,20 +47,23 @@ app.add_middleware(
 
 db_service = DBService()
 
-# A single Runner + session service is reused across requests (the Runner is
-# stateless and safe for concurrent FastAPI handlers).
+# A single session service is shared across all Runners (it's stateless and safe
+# for concurrent FastAPI handlers), giving multi-turn Sessions for every agent.
 session_service = InMemorySessionService()
-runner = Runner(
-    app_name=APP_NAME,
-    agent=root_agent,
-    session_service=session_service,
-)
 
-# A second Runner drives the B2B LabelAgent (catalog-wide reasoning + A2A
-# coordination with the ActionAgent). It reuses the same session service.
+# One Runner per agent graph:
+#   - runner            → Mogul Orchestrator (single-artist royalties, Track 1)
+#   - label_runner      → B2B LabelAgent (catalog-wide + A2A → ActionAgent, Track 3)
+#   - matchmaker_runner → Service-Provider MatchmakerAgent (grounded, Track 2)
+runner = Runner(
+    app_name=APP_NAME, agent=root_agent, session_service=session_service
+)
 label_runner = Runner(
-    app_name=LABEL_APP_NAME,
-    agent=label_agent,
+    app_name=LABEL_APP_NAME, agent=label_agent, session_service=session_service
+)
+matchmaker_runner = Runner(
+    app_name=SERVICES_APP_NAME,
+    agent=matchmaker_agent,
     session_service=session_service,
 )
 
@@ -64,7 +71,8 @@ label_runner = Runner(
 class ChatRequest(BaseModel):
     message: str
     session_id: str | None = None
-    # Optional graph selector: "orchestrator" (default) or "label".
+    # Optional agent selector: "label" → LabelAgent, "matchmaker" → MatchmakerAgent,
+    # default/None → Mogul royalty Orchestrator.
     agent: str | None = None
 
 
@@ -90,11 +98,19 @@ def get_label_portfolio():
     return portfolio
 
 
-async def _run_agent(
-    selected_runner: Runner, app_name: str, message: str, session_id: str
-) -> str:
-    """Shared driver for any ADK Runner — keeps the chat handlers DRY."""
+@app.get("/api/v1/services/providers", response_model=list[Provider])
+def get_service_providers():
+    """Return the vetted service-provider marketplace (Track 2)."""
+    return db_service.get_providers()
+
+
+async def _run_chat(active_runner: Runner, app_name: str, req: ChatRequest) -> ChatResponse:
+    """Shared ADK chat loop for every agent: ensure a session exists, run the
+    agent, and collect the final response. Keeps every endpoint on the same
+    {response, session_id} shape with consistent multi-turn Sessions behavior.
+    """
     user_id = "demo-user"
+    session_id = req.session_id or str(uuid.uuid4())
 
     session = await session_service.get_session(
         app_name=app_name, user_id=user_id, session_id=session_id
@@ -105,63 +121,57 @@ async def _run_agent(
         )
 
     new_message = types.Content(
-        role="user", parts=[types.Part.from_text(text=message)]
+        role="user", parts=[types.Part.from_text(text=req.message)]
     )
 
     final_text = ""
-    async for event in selected_runner.run_async(
-        user_id=user_id, session_id=session_id, new_message=new_message
-    ):
-        if event.is_final_response() and event.content and event.content.parts:
-            final_text = "".join(
-                part.text for part in event.content.parts if part.text
-            )
-    return final_text
+    try:
+        async for event in active_runner.run_async(
+            user_id=user_id, session_id=session_id, new_message=new_message
+        ):
+            if event.is_final_response() and event.content and event.content.parts:
+                final_text = "".join(
+                    part.text for part in event.content.parts if part.text
+                )
+    except Exception as exc:  # surface model/auth errors to the client cleanly
+        raise HTTPException(status_code=500, detail=f"Agent error: {exc}") from exc
+
+    if not final_text:
+        final_text = "I wasn't able to generate a response just now. Please try again."
+
+    return ChatResponse(response=final_text, session_id=session_id)
+
+
+def _runner_for(agent: str | None) -> tuple[Runner, str]:
+    """Map an optional agent selector to its (Runner, app_name)."""
+    match (agent or "").lower():
+        case "label":
+            return label_runner, LABEL_APP_NAME
+        case "matchmaker":
+            return matchmaker_runner, SERVICES_APP_NAME
+        case _:
+            return runner, APP_NAME
 
 
 @app.post("/api/v1/chat", response_model=ChatResponse)
 async def chat_with_agent(req: ChatRequest):
     """Run the real ADK multi-agent graph and return the agent's reply.
 
-    `agent` selects which graph drives the turn: "orchestrator" (default,
-    single-artist) or "label" (the B2B catalog/A2A LabelAgent).
+    `agent` selects which graph drives the turn: "label" (B2B catalog/A2A
+    LabelAgent), "matchmaker" (grounded Service-Provider agent), or default
+    (single-artist Mogul Orchestrator).
     """
-    session_id = req.session_id or str(uuid.uuid4())
-
-    if (req.agent or "orchestrator").lower() == "label":
-        selected_runner, app_name = label_runner, LABEL_APP_NAME
-    else:
-        selected_runner, app_name = runner, APP_NAME
-
-    try:
-        final_text = await _run_agent(
-            selected_runner, app_name, req.message, session_id
-        )
-    except Exception as exc:  # surface model/auth errors to the client cleanly
-        raise HTTPException(status_code=500, detail=f"Agent error: {exc}") from exc
-
-    if not final_text:
-        final_text = (
-            "I wasn't able to generate a response just now. Please try again."
-        )
-
-    return ChatResponse(response=final_text, session_id=session_id)
+    active_runner, app_name = _runner_for(req.agent)
+    return await _run_chat(active_runner, app_name, req)
 
 
 @app.post("/api/v1/label/chat", response_model=ChatResponse)
 async def chat_with_label_agent(req: ChatRequest):
     """Drive the B2B LabelAgent (catalog-wide reasoning + A2A to ActionAgent)."""
-    session_id = req.session_id or str(uuid.uuid4())
-    try:
-        final_text = await _run_agent(
-            label_runner, LABEL_APP_NAME, req.message, session_id
-        )
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Agent error: {exc}") from exc
+    return await _run_chat(label_runner, LABEL_APP_NAME, req)
 
-    if not final_text:
-        final_text = (
-            "I wasn't able to generate a response just now. Please try again."
-        )
 
-    return ChatResponse(response=final_text, session_id=session_id)
+@app.post("/api/v1/services/chat", response_model=ChatResponse)
+async def chat_with_matchmaker(req: ChatRequest):
+    """Multi-turn chat with the grounded MatchmakerAgent (Gemini 2.5 Pro)."""
+    return await _run_chat(matchmaker_runner, SERVICES_APP_NAME, req)

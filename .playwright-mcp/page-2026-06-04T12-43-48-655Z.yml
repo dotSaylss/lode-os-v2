@@ -1,0 +1,458 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]: M
+        - generic [ref=e8]: MOGUL Label Manager
+      - navigation [ref=e9]:
+        - link "Dashboard" [ref=e10] [cursor=pointer]:
+          - /url: /
+        - link "Service Ecosystem" [ref=e11] [cursor=pointer]:
+          - /url: /services
+        - button "Settings" [ref=e12]
+        - generic [ref=e14]: JF
+  - main [ref=e15]:
+    - generic [ref=e16]:
+      - heading "Service Ecosystem" [level=1] [ref=e17]
+      - paragraph [ref=e18]: Bring your song to life. Describe what it needs and the Matchmaker assembles a vetted team — grounded in the provider marketplace.
+    - generic [ref=e19]:
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - heading "Describe your song's needs" [level=2] [ref=e22]: Describe your song's needs
+          - generic [ref=e24]:
+            - textbox "e.g. I need my track mixed, mastered, and cover art for a lo-fi hip-hop single." [ref=e25]
+            - generic [ref=e26]:
+              - generic [ref=e27]:
+                - button "I need my track mixed, mastered, and c…" [ref=e28]
+                - 'button "Assemble a team for a pop single: voca…" [ref=e29]'
+                - button "I have a finished electronic track — f…" [ref=e30]
+              - button "Find my team →" [disabled] [ref=e31]:
+                - text: Find my team
+                - generic [ref=e32]: →
+        - generic [ref=e33]:
+          - generic [ref=e34]:
+            - heading "Vetted Marketplace" [level=2] [ref=e35]: Vetted Marketplace
+            - generic [ref=e37]: 19 providers
+          - generic [ref=e38]:
+            - button "All" [ref=e39]
+            - button "Mixing" [ref=e40]
+            - button "Mastering" [ref=e41]
+            - button "Cover Art" [ref=e42]
+            - button "Vocal Production" [ref=e43]
+            - button "Sync Licensing" [ref=e44]
+            - button "Music Video" [ref=e45]
+            - button "Promotion" [ref=e46]
+            - button "Session Players" [ref=e47]
+          - generic [ref=e48]:
+            - generic [ref=e49]:
+              - generic [ref=e50]:
+                - generic [ref=e51]: LP
+                - generic [ref=e52]:
+                  - generic [ref=e53]:
+                    - heading "Logan Pierce" [level=3] [ref=e54]
+                    - img "Verified" [ref=e55]
+                  - generic [ref=e57]: Mixing
+                - generic [ref=e58]:
+                  - generic [ref=e59]:
+                    - img [ref=e60]
+                    - text: "4.9"
+                  - paragraph [ref=e62]: 212 reviews
+              - paragraph [ref=e63]: Lo-fi hip-hop, boom-bap, and warm analog mixing
+              - generic [ref=e64]:
+                - generic [ref=e65]: lo-fi hip-hop
+                - generic [ref=e66]: hip-hop
+                - generic [ref=e67]: r&b
+              - generic [ref=e68]:
+                - generic [ref=e69]: $350 / track
+                - generic [ref=e70]: 3-5 days
+            - generic [ref=e71]:
+              - generic [ref=e72]:
+                - generic [ref=e73]: PN
+                - generic [ref=e74]:
+                  - generic [ref=e75]:
+                    - heading "Priya Nadkarni" [level=3] [ref=e76]
+                    - img "Verified" [ref=e77]
+                  - generic [ref=e79]: Mixing
+                - generic [ref=e80]:
+                  - generic [ref=e81]:
+                    - img [ref=e82]
+                    - text: "4.8"
+                  - paragraph [ref=e84]: 178 reviews
+              - paragraph [ref=e85]: Pop and electronic clarity, vocal-forward radio mixes
+              - generic [ref=e86]:
+                - generic [ref=e87]: pop
+                - generic [ref=e88]: electronic
+                - generic [ref=e89]: dance
+              - generic [ref=e90]:
+                - generic [ref=e91]: $450 / track
+                - generic [ref=e92]: 4-6 days
+            - generic [ref=e93]:
+              - generic [ref=e94]:
+                - generic [ref=e95]: MW
+                - generic [ref=e96]:
+                  - generic [ref=e97]:
+                    - heading "Marcus Webb" [level=3] [ref=e98]
+                    - img "Verified" [ref=e99]
+                  - generic [ref=e101]: Mixing
+                - generic [ref=e102]:
+                  - generic [ref=e103]:
+                    - img [ref=e104]
+                    - text: "4.7"
+                  - paragraph [ref=e106]: 96 reviews
+              - paragraph [ref=e107]: Rock, alternative, and live-band energy
+              - generic [ref=e108]:
+                - generic [ref=e109]: rock
+                - generic [ref=e110]: alternative
+                - generic [ref=e111]: indie
+              - generic [ref=e112]:
+                - generic [ref=e113]: $400 / track
+                - generic [ref=e114]: 5-7 days
+            - generic [ref=e115]:
+              - generic [ref=e116]:
+                - generic [ref=e117]: SF
+                - generic [ref=e118]:
+                  - generic [ref=e119]:
+                    - heading "Sound Forge Mastering" [level=3] [ref=e120]
+                    - img "Verified" [ref=e121]
+                  - generic [ref=e123]: Mastering
+                - generic [ref=e124]:
+                  - generic [ref=e125]:
+                    - img [ref=e126]
+                    - text: "4.9"
+                  - paragraph [ref=e128]: 341 reviews
+              - paragraph [ref=e129]: Streaming-loudness mastering for hip-hop and lo-fi
+              - generic [ref=e130]:
+                - generic [ref=e131]: lo-fi hip-hop
+                - generic [ref=e132]: hip-hop
+                - generic [ref=e133]: r&b
+              - generic [ref=e134]:
+                - generic [ref=e135]: $120 / track
+                - generic [ref=e136]: 1-2 days
+            - generic [ref=e137]:
+              - generic [ref=e138]:
+                - generic [ref=e139]: HB
+                - generic [ref=e140]:
+                  - generic [ref=e141]:
+                    - heading "Helena Brandt" [level=3] [ref=e142]
+                    - img "Verified" [ref=e143]
+                  - generic [ref=e145]: Mastering
+                - generic [ref=e146]:
+                  - generic [ref=e147]:
+                    - img [ref=e148]
+                    - text: "5"
+                  - paragraph [ref=e150]: 87 reviews
+              - paragraph [ref=e151]: Audiophile and vinyl-ready mastering
+              - generic [ref=e152]:
+                - generic [ref=e153]: classical
+                - generic [ref=e154]: jazz
+                - generic [ref=e155]: ambient
+              - generic [ref=e156]:
+                - generic [ref=e157]: $200 / track
+                - generic [ref=e158]: 3-4 days
+            - generic [ref=e159]:
+              - generic [ref=e160]:
+                - generic [ref=e161]: AA
+                - generic [ref=e162]:
+                  - generic [ref=e163]:
+                    - heading "Apex Audio Labs" [level=3] [ref=e164]
+                    - img "Verified" [ref=e165]
+                  - generic [ref=e167]: Mastering
+                - generic [ref=e168]:
+                  - generic [ref=e169]:
+                    - img [ref=e170]
+                    - text: "4.6"
+                  - paragraph [ref=e172]: 502 reviews
+              - paragraph [ref=e173]: High-volume, fast mastering for indie releases
+              - generic [ref=e174]:
+                - generic [ref=e175]: pop
+                - generic [ref=e176]: rock
+                - generic [ref=e177]: electronic
+              - generic [ref=e178]:
+                - generic [ref=e179]: $80 / track
+                - generic [ref=e180]: 24 hours
+            - generic [ref=e181]:
+              - generic [ref=e182]:
+                - generic [ref=e183]: SL
+                - generic [ref=e184]:
+                  - generic [ref=e185]:
+                    - heading "Sora Lin" [level=3] [ref=e186]
+                    - img "Verified" [ref=e187]
+                  - generic [ref=e189]: Cover Art
+                - generic [ref=e190]:
+                  - generic [ref=e191]:
+                    - img [ref=e192]
+                    - text: "4.9"
+                  - paragraph [ref=e194]: 156 reviews
+              - paragraph [ref=e195]: Hand-illustrated lo-fi and anime-inspired cover art
+              - generic [ref=e196]:
+                - generic [ref=e197]: lo-fi hip-hop
+                - generic [ref=e198]: indie
+                - generic [ref=e199]: bedroom pop
+              - generic [ref=e200]:
+                - generic [ref=e201]: $300 / cover
+                - generic [ref=e202]: 5-7 days
+            - generic [ref=e203]:
+              - generic [ref=e204]:
+                - generic [ref=e205]: D&
+                - generic [ref=e206]:
+                  - generic [ref=e207]:
+                    - heading "Dust & Pixel Studio" [level=3] [ref=e208]
+                    - img "Verified" [ref=e209]
+                  - generic [ref=e211]: Cover Art
+                - generic [ref=e212]:
+                  - generic [ref=e213]:
+                    - img [ref=e214]
+                    - text: "4.8"
+                  - paragraph [ref=e216]: 113 reviews
+              - paragraph [ref=e217]: 3D render and surreal digital cover art
+              - generic [ref=e218]:
+                - generic [ref=e219]: electronic
+                - generic [ref=e220]: hyperpop
+                - generic [ref=e221]: experimental
+              - generic [ref=e222]:
+                - generic [ref=e223]: $550 / cover
+                - generic [ref=e224]: 6-8 days
+            - generic [ref=e225]:
+              - generic [ref=e226]:
+                - generic [ref=e227]: CD
+                - generic [ref=e228]:
+                  - generic [ref=e229]:
+                    - heading "Camille Dubois" [level=3] [ref=e230]
+                    - img "Verified" [ref=e231]
+                  - generic [ref=e233]: Cover Art
+                - generic [ref=e234]:
+                  - generic [ref=e235]:
+                    - img [ref=e236]
+                    - text: "4.7"
+                  - paragraph [ref=e238]: 64 reviews
+              - paragraph [ref=e239]: Photography-led art direction and band imagery
+              - generic [ref=e240]:
+                - generic [ref=e241]: rock
+                - generic [ref=e242]: indie
+                - generic [ref=e243]: folk
+              - generic [ref=e244]:
+                - generic [ref=e245]: $700 / shoot
+                - generic [ref=e246]: 7-10 days
+            - generic [ref=e247]:
+              - generic [ref=e248]:
+                - generic [ref=e249]: AC
+                - generic [ref=e250]:
+                  - generic [ref=e251]:
+                    - heading "Andre Castellano" [level=3] [ref=e252]
+                    - img "Verified" [ref=e253]
+                  - generic [ref=e255]: Vocal Production
+                - generic [ref=e256]:
+                  - generic [ref=e257]:
+                    - img [ref=e258]
+                    - text: "4.9"
+                  - paragraph [ref=e260]: 188 reviews
+              - paragraph [ref=e261]: Vocal comping, tuning, and adlib production
+              - generic [ref=e262]:
+                - generic [ref=e263]: hip-hop
+                - generic [ref=e264]: r&b
+                - generic [ref=e265]: lo-fi hip-hop
+              - generic [ref=e266]:
+                - generic [ref=e267]: $250 / track
+                - generic [ref=e268]: 2-4 days
+            - generic [ref=e269]:
+              - generic [ref=e270]:
+                - generic [ref=e271]: MT
+                - generic [ref=e272]:
+                  - generic [ref=e273]:
+                    - heading "Mei Tanaka" [level=3] [ref=e274]
+                    - img "Verified" [ref=e275]
+                  - generic [ref=e277]: Vocal Production
+                - generic [ref=e278]:
+                  - generic [ref=e279]:
+                    - img [ref=e280]
+                    - text: "4.8"
+                  - paragraph [ref=e282]: 142 reviews
+              - paragraph [ref=e283]: Topline writing and vocal arrangement
+              - generic [ref=e284]:
+                - generic [ref=e285]: pop
+                - generic [ref=e286]: electronic
+                - generic [ref=e287]: dance
+              - generic [ref=e288]:
+                - generic [ref=e289]: $400 / track
+                - generic [ref=e290]: 4-6 days
+            - generic [ref=e291]:
+              - generic [ref=e292]:
+                - generic [ref=e293]: RS
+                - generic [ref=e294]:
+                  - generic [ref=e295]:
+                    - heading "Resonant Sync Agency" [level=3] [ref=e296]
+                    - img "Verified" [ref=e297]
+                  - generic [ref=e299]: Sync Licensing
+                - generic [ref=e300]:
+                  - generic [ref=e301]:
+                    - img [ref=e302]
+                    - text: "4.8"
+                  - paragraph [ref=e304]: 74 reviews
+              - paragraph [ref=e305]: TV, film, and advertising placements
+              - generic [ref=e306]:
+                - generic [ref=e307]: lo-fi hip-hop
+                - generic [ref=e308]: electronic
+                - generic [ref=e309]: indie
+              - generic [ref=e310]:
+                - generic [ref=e311]: 30% of placement fee
+                - generic [ref=e312]: Ongoing pitching
+            - generic [ref=e313]:
+              - generic [ref=e314]:
+                - generic [ref=e315]: GM
+                - generic [ref=e316]:
+                  - generic [ref=e317]:
+                    - heading "Greenlight Music Licensing" [level=3] [ref=e318]
+                    - img "Verified" [ref=e319]
+                  - generic [ref=e321]: Sync Licensing
+                - generic [ref=e322]:
+                  - generic [ref=e323]:
+                    - img [ref=e324]
+                    - text: "4.6"
+                  - paragraph [ref=e326]: 51 reviews
+              - paragraph [ref=e327]: Gaming, trailers, and brand campaigns
+              - generic [ref=e328]:
+                - generic [ref=e329]: electronic
+                - generic [ref=e330]: rock
+                - generic [ref=e331]: epic
+              - generic [ref=e332]:
+                - generic [ref=e333]: 25% of placement fee
+                - generic [ref=e334]: Ongoing pitching
+            - generic [ref=e335]:
+              - generic [ref=e336]:
+                - generic [ref=e337]: NV
+                - generic [ref=e338]:
+                  - generic [ref=e339]:
+                    - heading "Nightloop Visuals" [level=3] [ref=e340]
+                    - img "Verified" [ref=e341]
+                  - generic [ref=e343]: Music Video
+                - generic [ref=e344]:
+                  - generic [ref=e345]:
+                    - img [ref=e346]
+                    - text: "4.9"
+                  - paragraph [ref=e348]: 129 reviews
+              - paragraph [ref=e349]: Animated loops and lyric videos
+              - generic [ref=e350]:
+                - generic [ref=e351]: lo-fi hip-hop
+                - generic [ref=e352]: electronic
+                - generic [ref=e353]: bedroom pop
+              - generic [ref=e354]:
+                - generic [ref=e355]: $1,200 / video
+                - generic [ref=e356]: 7-10 days
+            - generic [ref=e357]:
+              - generic [ref=e358]:
+                - generic [ref=e359]: RO
+                - generic [ref=e360]:
+                  - generic [ref=e361]:
+                    - heading "Riley Okafor" [level=3] [ref=e362]
+                    - img "Verified" [ref=e363]
+                  - generic [ref=e365]: Music Video
+                - generic [ref=e366]:
+                  - generic [ref=e367]:
+                    - img [ref=e368]
+                    - text: "4.7"
+                  - paragraph [ref=e370]: 58 reviews
+              - paragraph [ref=e371]: Narrative and performance music videos
+              - generic [ref=e372]:
+                - generic [ref=e373]: hip-hop
+                - generic [ref=e374]: r&b
+                - generic [ref=e375]: pop
+              - generic [ref=e376]:
+                - generic [ref=e377]: $5,000 / video
+                - generic [ref=e378]: 2-3 weeks
+            - generic [ref=e379]:
+              - generic [ref=e380]:
+                - generic [ref=e381]: WP
+                - generic [ref=e382]:
+                  - generic [ref=e383]:
+                    - heading "Wavelength Playlist Promo" [level=3] [ref=e384]
+                    - img "Verified" [ref=e385]
+                  - generic [ref=e387]: Promotion
+                - generic [ref=e388]:
+                  - generic [ref=e389]:
+                    - img [ref=e390]
+                    - text: "4.5"
+                  - paragraph [ref=e392]: 233 reviews
+              - paragraph [ref=e393]: Editorial and independent playlist pitching
+              - generic [ref=e394]:
+                - generic [ref=e395]: lo-fi hip-hop
+                - generic [ref=e396]: electronic
+                - generic [ref=e397]: pop
+              - generic [ref=e398]:
+                - generic [ref=e399]: $600 / campaign
+                - generic [ref=e400]: 2-4 weeks campaign
+            - generic [ref=e401]:
+              - generic [ref=e402]:
+                - generic [ref=e403]: ES
+                - generic [ref=e404]:
+                  - generic [ref=e405]:
+                    - heading "Echo Social Lab" [level=3] [ref=e406]
+                    - img "Verified" [ref=e407]
+                  - generic [ref=e409]: Promotion
+                - generic [ref=e410]:
+                  - generic [ref=e411]:
+                    - img [ref=e412]
+                    - text: "4.6"
+                  - paragraph [ref=e414]: 167 reviews
+              - paragraph [ref=e415]: TikTok and short-form creator campaigns
+              - generic [ref=e416]:
+                - generic [ref=e417]: pop
+                - generic [ref=e418]: hip-hop
+                - generic [ref=e419]: hyperpop
+              - generic [ref=e420]:
+                - generic [ref=e421]: $900 / campaign
+                - generic [ref=e422]: 3-5 weeks campaign
+            - generic [ref=e423]:
+              - generic [ref=e424]:
+                - generic [ref=e425]: TM
+                - generic [ref=e426]:
+                  - generic [ref=e427]:
+                    - heading "Theo Marchetti" [level=3] [ref=e428]
+                    - img "Verified" [ref=e429]
+                  - generic [ref=e431]: Session Players
+                - generic [ref=e432]:
+                  - generic [ref=e433]:
+                    - img [ref=e434]
+                    - text: "4.9"
+                  - paragraph [ref=e436]: 91 reviews
+              - paragraph [ref=e437]: Live keys, Rhodes, and jazz chords
+              - generic [ref=e438]:
+                - generic [ref=e439]: lo-fi hip-hop
+                - generic [ref=e440]: jazz
+                - generic [ref=e441]: soul
+              - generic [ref=e442]:
+                - generic [ref=e443]: $200 / track
+                - generic [ref=e444]: 3-5 days
+            - generic [ref=e445]:
+              - generic [ref=e446]:
+                - generic [ref=e447]: AS
+                - generic [ref=e448]:
+                  - generic [ref=e449]:
+                    - heading "Ana Sofia Reyes" [level=3] [ref=e450]
+                    - img "Verified" [ref=e451]
+                  - generic [ref=e453]: Session Players
+                - generic [ref=e454]:
+                  - generic [ref=e455]:
+                    - img [ref=e456]
+                    - text: "5"
+                  - paragraph [ref=e458]: 73 reviews
+              - paragraph [ref=e459]: Live strings and orchestral arrangement
+              - generic [ref=e460]:
+                - generic [ref=e461]: pop
+                - generic [ref=e462]: cinematic
+                - generic [ref=e463]: indie
+              - generic [ref=e464]:
+                - generic [ref=e465]: $500 / arrangement
+                - generic [ref=e466]: 5-8 days
+      - generic [ref=e468]:
+        - generic [ref=e469]:
+          - generic [ref=e470]:
+            - generic [ref=e471]: MM
+            - generic [ref=e473]:
+              - heading "Matchmaker" [level=2] [ref=e474]
+              - paragraph [ref=e475]: Gemini 2.5 Pro · grounded in marketplace
+          - generic [ref=e476]: Multi-turn
+        - generic [ref=e482]: Hi! I'm the LodeOS Matchmaker. Describe your song and what it needs — mixing, mastering, cover art, vocals, sync, video, promo — and I'll assemble the right team of vetted providers, explain why each fits, and propose how splits and rights get routed.
+        - generic [ref=e484]:
+          - 'textbox "Refine the brief: add a music video, set a budget, adjust the splits..." [ref=e486]'
+          - button "Send message" [disabled] [ref=e487]:
+            - img [ref=e488]

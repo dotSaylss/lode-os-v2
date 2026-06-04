@@ -1,9 +1,10 @@
 import json
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 from models.artist import ArtistContext
 from models.label import LabelPortfolio, LabelProfile, RosterArtist
+from models.service import Provider
 
 # Anchor data paths to the project root so loading works regardless of the
 # process's current working directory.
@@ -14,6 +15,7 @@ class DBService:
     def __init__(self, db_path: str = "data/mock_mogul_db.json"):
         self.db_path = Path(db_path)
         self.label_db_path = _PROJECT_ROOT / "data" / "mock_label_db.json"
+        self.providers_path = _PROJECT_ROOT / "data" / "mock_providers_db.json"
 
     def get_artist_context(self) -> Optional[ArtistContext]:
         if not self.db_path.exists():
@@ -65,3 +67,10 @@ class DBService:
             neighboring_rights_uncollected=nr_uncollected,
             artists=artists,
         )
+
+    def get_providers(self) -> List[Provider]:
+        if not self.providers_path.exists():
+            return []
+        with open(self.providers_path, "r") as f:
+            data = json.load(f)
+            return [Provider(**p) for p in data.get("providers", [])]

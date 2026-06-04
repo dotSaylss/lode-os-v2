@@ -1,8 +1,9 @@
 import type { PageServerLoad } from './$types';
+import { api } from '$lib/api';
 
 export const load: PageServerLoad = async ({ fetch }) => {
     try {
-        const res = await fetch('http://localhost:8000/api/v1/artist/context');
+        const res = await fetch(api('/api/v1/artist/context'));
         if (res.ok) {
             const data = await res.json();
             return { artistContext: data };
