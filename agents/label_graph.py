@@ -1,0 +1,95 @@
+"""
+LodeOS / Mogul — B2B "Label / Catalog Ops" agent graph (Google ADK 2.x).
+
+This is the enterprise scaling story. Where the single-artist Orchestrator
+reasons over ONE artist's data, the LabelAgent (Gemini 2.5 Pro) reasons over an
+entire label's CATALOG — a roster of ~50 artists — to find the largest
+aggregate missing-money opportunities and propose BULK remediation.
+
+──────────────────────────────────────────────────────────────────────────────
+A2A (Agent-to-Agent) protocol story
+──────────────────────────────────────────────────────────────────────────────
+The LabelAgent does NOT draft emails itself. Instead it delegates the actual
+registration drafting to a specialist `ActionAgent` exposed as a `sub_agent`.
+In ADK, sub-agent delegation IS the agent-to-agent (A2A) protocol: the
+LabelAgent's LLM reads the ActionAgent's `name` + `description` and transfers
+control (with shared session context) when a bulk action needs to be drafted.
+
+So the flow is a real two-agent A2A coordination:
+
+    LabelAgent  ──(A2A transfer)──▶  ActionAgent
+    (scans the whole catalog,         (drafts the concrete registration
+     identifies the bulk opportunity,  email / submission to recover the
+     decides what to register)         money for the roster)
+
+This is the pattern that scales: one strategic catalog agent fanning work out to
+execution agents — the enterprise / A2A track.
+"""
+
+from google.adk import Agent
+
+from agents.tools import get_label_portfolio, get_artist_data
+
+# ── A2A execution specialist (Gemini 2.5 Flash — drafts the registrations) ────
+#
+# This mirrors the proven single-artist ActionAgent from agents/graph.py, but is
+# a SEPARATE instance: ADK forbids one Agent object having two parents, so the
+# Label graph gets its own bulk-oriented ActionAgent. Same role, scaled to the
+# whole roster.
+bulk_action_agent = Agent(
+    name="ActionAgent",
+    model="gemini-2.5-flash",
+    description=(
+        "Drafts professional registration emails/submissions to neighboring "
+        "rights organizations (SoundExchange), the MLC, and PROs to recover "
+        "uncollected royalties. For the label use case, drafts a single BULK "
+        "registration covering many artists at once. Use this when the user "
+        "wants to register, draft, submit, or 'do it' for the roster."
+    ),
+    instruction=(
+        "You are the execution specialist for the Mogul Label platform. "
+        "You may call `get_label_portfolio` to pull the affected artists or "
+        "`get_artist_data` for a single artist. Draft a professional, "
+        "ready-to-send BULK registration (default to SoundExchange for "
+        "neighboring rights) that lists the artists being registered and the "
+        "total amount being recovered. Include a clear subject line. Output the "
+        "full draft."
+    ),
+    tools=[get_label_portfolio, get_artist_data],
+)
+
+# ── Catalog strategist (Gemini 2.5 Pro — reasons over the whole roster) ───────
+
+label_agent = Agent(
+    name="LabelAgent",
+    model="gemini-2.5-pro",
+    description=(
+        "B2B catalog operations agent for a record label. Reasons over the "
+        "ENTIRE artist roster to find the biggest aggregate missing-money "
+        "opportunities and propose BULK actions across many artists at once."
+    ),
+    instruction=(
+        "You are the Mogul LabelAgent — the AI catalog-operations layer for a "
+        "record label managing a roster of ~50 artists.\n\n"
+        "ALWAYS call the `get_label_portfolio` tool first to load the full "
+        "catalog. Then reason over the WHOLE roster, not just one artist:\n"
+        "  - Compute and state the total uncollected royalties across the label.\n"
+        "  - Identify the single biggest aggregate opportunity. Usually this is "
+        "    unregistered neighboring rights (SoundExchange): say how MANY artists "
+        "    are affected and the TOTAL dollar value of registering them all.\n"
+        "  - Surface the other gap categories (unclaimed mechanicals via the MLC, "
+        "    unmatched sync placements, PRO black-box royalties) with their totals.\n"
+        "  - Name the top few artists by individual uncollected amount.\n\n"
+        "Always frame recommendations as BULK actions, e.g. 'Register all 30 "
+        "artists missing neighboring rights to recover $274,692 in one batch.'\n\n"
+        "When the user wants you to actually DO it (draft the registration, "
+        "'register them all', 'draft the batch', 'yes go ahead'), delegate to the "
+        "ActionAgent specialist — this is an Agent-to-Agent (A2A) hand-off where "
+        "you pass the bulk task to an execution agent that produces the concrete "
+        "registration draft. Be concrete, use real dollar figures, and keep "
+        "responses crisp and executive-friendly."
+    ),
+    tools=[get_label_portfolio],
+    # A2A: the catalog strategist coordinates with the execution specialist.
+    sub_agents=[bulk_action_agent],
+)
