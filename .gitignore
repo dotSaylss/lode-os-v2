@@ -88,11 +88,18 @@ temp/
 .claude/settings.local.json
 
 # ─── Private working material (NOT for public repo) ──────────────
+# Strategy, internal notes, handoffs, competition guide — keep OUT of the
+# public repo. Source of truth lives in ../LodeOS-private/.
+hackathon-resources/
+missonary.md
 mogul_email_draft.md
 mogul_linkedin_draft.md
 this is good, I like the dig into cartography and.md
-
 build_plan_and_prompts.md
+*HANDOFF*.md
+*SESSION-REPORT*.md
+*strategy*.md
+*non-deliverable*
 
 # Playwright MCP scratch output
 .playwright-mcp/
