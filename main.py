@@ -124,6 +124,19 @@ def get_label_portfolio():
     return portfolio
 
 
+@app.get("/api/v1/label/forecast")
+def get_label_forecast_route():
+    """Per-category gap breakdown + 12-month cumulative recovery forecast.
+
+    Backs the enterprise forecast panel in the Label view; derived entirely from
+    the real roster data (the same source the LabelAgent's `get_label_forecast`
+    tool reads), so the UI numbers match what the agent reports."""
+    from agents.tools import get_label_forecast as _forecast
+    import json as _json
+
+    return _json.loads(_forecast())
+
+
 @app.get("/api/v1/services/providers", response_model=list[Provider])
 def get_service_providers():
     """Return the vetted service-provider marketplace (Track 2)."""

@@ -3,6 +3,23 @@
 
     let { data } = $props();
     let p = $derived(data.portfolio);
+    let forecast = $derived(data.forecast);
+
+    // Forecast curve geometry for the inline SVG sparkline.
+    let curve = $derived.by(() => {
+        const pts = forecast?.forecast ?? [];
+        const max = forecast?.total_recoverable || 1;
+        if (pts.length === 0) return { line: '', area: '', last: { x: 0, y: 100 } };
+        const W = 100, H = 100;
+        const coords = pts.map((d, i) => {
+            const x = pts.length > 1 ? (i / (pts.length - 1)) * W : 0;
+            const y = H - (d.cumulative_recovered / max) * H;
+            return { x, y };
+        });
+        const line = coords.map((c, i) => `${i === 0 ? 'M' : 'L'}${c.x.toFixed(2)},${c.y.toFixed(2)}`).join(' ');
+        const area = `${line} L${W},${H} L0,${H} Z`;
+        return { line, area, last: coords[coords.length - 1] };
+    });
 
     let chat = $state<LabelAgentChat>();
 
@@ -94,6 +111,67 @@
         </div>
     </div>
 </div>
+
+<!-- Recovery forecast + per-category gap breakdown -->
+{#if forecast?.categories?.length}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+    <!-- Per-category gap breakdown -->
+    <div class="lg:col-span-2 bg-white dark:bg-slate-800/50 backdrop-blur-xl rounded-3xl shadow-sm border border-slate-200/60 dark:border-slate-700 p-8 transition-all hover:shadow-md">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-medium tracking-tight text-slate-800 dark:text-slate-100 flex items-center gap-3">
+                <span class="w-2 h-8 rounded-full bg-amber-500/20 block"></span>
+                Gap Breakdown by Category
+            </h2>
+            <span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-full text-xs font-medium tracking-wide">
+                {forecast.artists_with_gaps} artists with gaps
+            </span>
+        </div>
+        <div class="space-y-5">
+            {#each forecast.categories as c (c.type)}
+                <div>
+                    <div class="flex items-baseline justify-between mb-1.5">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-md border text-[11px] font-medium {gapColor(c.type)}">{c.label}</span>
+                            <span class="text-xs text-slate-400">{c.artists_affected} artists · ~{c.recovery_months}mo to recover</span>
+                        </div>
+                        <span class="text-sm font-semibold text-slate-800 dark:text-slate-100 tabular-nums">{fmt(c.recoverable)}</span>
+                    </div>
+                    <div class="h-2 w-full rounded-full bg-slate-100 dark:bg-slate-700/50 overflow-hidden">
+                        <div
+                            class="h-full rounded-full bg-gradient-to-r from-rose-400 to-rose-500 dark:from-rose-500 dark:to-rose-400"
+                            style="width: {Math.max(2, (c.recoverable / forecast.total_recoverable) * 100)}%"
+                        ></div>
+                    </div>
+                </div>
+            {/each}
+        </div>
+    </div>
+
+    <!-- 12-month recovery forecast -->
+    <div class="bg-white dark:bg-slate-800/50 backdrop-blur-xl rounded-3xl shadow-sm border border-slate-200/60 dark:border-slate-700 p-6 flex flex-col transition-all hover:shadow-md">
+        <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-widest font-semibold mb-1">12-Month Recovery Forecast</p>
+        <p class="text-3xl font-light text-slate-900 dark:text-white tracking-tighter">{fmt(forecast.total_recoverable)}</p>
+        <p class="text-xs text-slate-400 mb-3">projected recovered if bulk registration starts now</p>
+        <div class="relative flex-1 min-h-[120px]">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="absolute inset-0 w-full h-full">
+                <defs>
+                    <linearGradient id="fc-grad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="rgb(16 185 129)" stop-opacity="0.25" />
+                        <stop offset="100%" stop-color="rgb(16 185 129)" stop-opacity="0" />
+                    </linearGradient>
+                </defs>
+                <path d={curve.area} fill="url(#fc-grad)" />
+                <path d={curve.line} fill="none" stroke="rgb(16 185 129)" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round" />
+            </svg>
+        </div>
+        <div class="flex justify-between text-[11px] text-slate-400 mt-2 font-medium">
+            <span>Now</span>
+            <span>Month 6</span>
+            <span>Month 12</span>
+        </div>
+    </div>
+</div>
+{/if}
 
 <!-- Roster table + chat -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
