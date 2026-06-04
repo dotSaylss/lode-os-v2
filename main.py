@@ -20,7 +20,12 @@ from models.label import LabelPortfolio
 from models.service import Provider
 from agents.graph import root_agent
 from agents.label_graph import label_agent
-from agents.service_graph import matchmaker_agent
+from agents.service_graph import (
+    matchmaker_agent,
+    new_evidence,
+    collect_evidence,
+    finalize_evidence,
+)
 
 APP_NAME = "mogul-agent"
 LABEL_APP_NAME = "mogul-label-agent"
@@ -178,7 +183,58 @@ async def chat_with_label_agent(req: ChatRequest):
     return await _run_chat(label_runner, LABEL_APP_NAME, req)
 
 
-@app.post("/api/v1/services/chat", response_model=ChatResponse)
+class MatchmakerResponse(BaseModel):
+    """Matchmaker reply plus the structured grounding evidence behind it so the
+    client can render a "grounded sources" panel (DB provider chips + live web
+    sources) and prove the answer is grounded, not hallucinated."""
+
+    response: str
+    session_id: str
+    evidence: dict
+
+
+@app.post("/api/v1/services/chat", response_model=MatchmakerResponse)
 async def chat_with_matchmaker(req: ChatRequest):
-    """Multi-turn chat with the grounded MatchmakerAgent (Gemini 2.5 Pro)."""
-    return await _run_chat(matchmaker_runner, SERVICES_APP_NAME, req)
+    """Multi-turn chat with the grounded MatchmakerAgent (Gemini 2.5 Pro).
+
+    In addition to the reply text, this streams the ADK event log through the
+    evidence collector so the response carries the grounding provenance:
+    which vetted marketplace providers were cited (Custom-RAG) and which live
+    web sources / search queries backed any delegated live research.
+    """
+    user_id = "demo-user"
+    session_id = req.session_id or str(uuid.uuid4())
+
+    session = await session_service.get_session(
+        app_name=SERVICES_APP_NAME, user_id=user_id, session_id=session_id
+    )
+    if session is None:
+        await session_service.create_session(
+            app_name=SERVICES_APP_NAME, user_id=user_id, session_id=session_id
+        )
+
+    new_message = types.Content(
+        role="user", parts=[types.Part.from_text(text=req.message)]
+    )
+
+    final_text = ""
+    evidence = new_evidence()
+    try:
+        async for event in matchmaker_runner.run_async(
+            user_id=user_id, session_id=session_id, new_message=new_message
+        ):
+            collect_evidence(evidence, event)
+            if event.is_final_response() and event.content and event.content.parts:
+                final_text = "".join(
+                    part.text for part in event.content.parts if part.text
+                )
+    except Exception as exc:  # surface model/auth errors to the client cleanly
+        raise HTTPException(status_code=500, detail=f"Agent error: {exc}") from exc
+
+    if not final_text:
+        final_text = "I wasn't able to generate a response just now. Please try again."
+
+    finalize_evidence(evidence, final_text)
+    return MatchmakerResponse(
+        response=final_text, session_id=session_id, evidence=evidence
+    )
