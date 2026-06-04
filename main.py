@@ -25,6 +25,9 @@ from agents.service_graph import (
     new_evidence,
     collect_evidence,
     finalize_evidence,
+    setup_observability,
+    matchmaker_span,
+    annotate_span,
 )
 
 APP_NAME = "mogul-agent"
@@ -78,6 +81,11 @@ matchmaker_runner = Runner(
     agent=matchmaker_agent,
     session_service=session_service,
 )
+
+# Observability is OFF unless ENABLE_OBSERVABILITY=true. When on, this installs
+# an OpenTelemetry tracer so the matchmaker's agent/LLM/tool spans are exported
+# (Cloud Trace if available, else console). No-op + zero overhead when off.
+setup_observability()
 
 
 class ChatRequest(BaseModel):
@@ -219,22 +227,28 @@ async def chat_with_matchmaker(req: ChatRequest):
 
     final_text = ""
     evidence = new_evidence()
-    try:
-        async for event in matchmaker_runner.run_async(
-            user_id=user_id, session_id=session_id, new_message=new_message
-        ):
-            collect_evidence(evidence, event)
-            if event.is_final_response() and event.content and event.content.parts:
-                final_text = "".join(
-                    part.text for part in event.content.parts if part.text
-                )
-    except Exception as exc:  # surface model/auth errors to the client cleanly
-        raise HTTPException(status_code=500, detail=f"Agent error: {exc}") from exc
+    # `matchmaker_span` is a no-op context manager unless ENABLE_OBSERVABILITY is
+    # set, so the run path is identical by default.
+    with matchmaker_span(req.message) as span:
+        try:
+            async for event in matchmaker_runner.run_async(
+                user_id=user_id, session_id=session_id, new_message=new_message
+            ):
+                collect_evidence(evidence, event)
+                if event.is_final_response() and event.content and event.content.parts:
+                    final_text = "".join(
+                        part.text for part in event.content.parts if part.text
+                    )
+        except Exception as exc:  # surface model/auth errors to the client cleanly
+            raise HTTPException(status_code=500, detail=f"Agent error: {exc}") from exc
 
-    if not final_text:
-        final_text = "I wasn't able to generate a response just now. Please try again."
+        if not final_text:
+            final_text = (
+                "I wasn't able to generate a response just now. Please try again."
+            )
 
-    finalize_evidence(evidence, final_text)
+        finalize_evidence(evidence, final_text)
+        annotate_span(span, evidence)
     return MatchmakerResponse(
         response=final_text, session_id=session_id, evidence=evidence
     )

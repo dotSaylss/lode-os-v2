@@ -6,3 +6,7 @@ google-adk
 google-genai
 python-dotenv
 mcp
+
+# Optional: managed Cloud Trace export for the matchmaker (ENABLE_OBSERVABILITY=true).
+# Not required for the default in-process path, which falls back to console traces.
+# opentelemetry-exporter-gcp-trace

@@ -28,7 +28,9 @@ InMemorySessionService, so a conversation ("now add a music video", "what's the
 total budget?", "route the splits") accumulates context across turns.
 """
 
+import contextlib
 import json
+import os
 import re
 
 from google.adk import Agent
@@ -289,3 +291,125 @@ def finalize_evidence(evidence: dict, final_text: str) -> dict:
     except Exception:
         pass
     return evidence
+
+
+# ── Observability (ENV-GATED) ─────────────────────────────────────────────────
+# ADK already instruments LLM calls and tool calls with OpenTelemetry spans. By
+# DEFAULT we install no TracerProvider, so those spans go nowhere — zero extra
+# setup, zero overhead, the demo path is untouched.
+#
+# Set ENABLE_OBSERVABILITY=true to turn tracing ON. We then configure an OTel
+# TracerProvider and a span exporter, preferring Google Cloud Trace when its
+# exporter is installed and a project is configured, and falling back to a
+# console exporter so traces are still visible with nothing else installed.
+# Any failure during setup degrades silently back to the no-op path — a broken
+# tracing backend must never break the matchmaker.
+
+_TRUTHY = ("1", "true", "yes", "on")
+_observability_ready = False
+
+
+def observability_enabled() -> bool:
+    return os.getenv("ENABLE_OBSERVABILITY", "").lower() in _TRUTHY
+
+
+def setup_observability() -> bool:
+    """Idempotently install an OTel TracerProvider when the env gate is on.
+
+    Returns True if tracing is active, False if disabled or unavailable. Safe to
+    call repeatedly (e.g. at FastAPI startup); never raises.
+    """
+    global _observability_ready
+    if _observability_ready:
+        return True
+    if not observability_enabled():
+        return False
+    try:
+        from opentelemetry import trace
+        from opentelemetry.sdk.resources import Resource
+        from opentelemetry.sdk.trace import TracerProvider
+        from opentelemetry.sdk.trace.export import (
+            BatchSpanProcessor,
+            ConsoleSpanExporter,
+            SimpleSpanProcessor,
+        )
+
+        # Don't clobber a TracerProvider someone else already installed.
+        existing = trace.get_tracer_provider()
+        if isinstance(existing, TracerProvider):
+            _observability_ready = True
+            return True
+
+        resource = Resource.create({"service.name": "lodeos-matchmaker"})
+        provider = TracerProvider(resource=resource)
+
+        exporter = None
+        processor = None
+        project = os.getenv("GOOGLE_CLOUD_PROJECT")
+        try:  # Prefer managed Cloud Trace when available + a project is set.
+            if project:
+                from opentelemetry.exporter.cloud_trace import (
+                    CloudTraceSpanExporter,
+                )
+
+                exporter = CloudTraceSpanExporter(project_id=project)
+                processor = BatchSpanProcessor(exporter)
+        except Exception:
+            exporter = None  # exporter not installed → console fallback below
+
+        if processor is None:  # graceful fallback: still emit traces locally
+            processor = SimpleSpanProcessor(ConsoleSpanExporter())
+
+        provider.add_span_processor(processor)
+        trace.set_tracer_provider(provider)
+        _observability_ready = True
+        return True
+    except Exception:
+        # Tracing is best-effort: never let it break the request path.
+        return False
+
+
+@contextlib.contextmanager
+def matchmaker_span(message: str):
+    """Wrap one matchmaker turn in a top-level span when tracing is active.
+
+    A no-op context manager when observability is disabled, so callers can use
+    it unconditionally without branching.
+    """
+    if not setup_observability():
+        yield None
+        return
+    try:
+        from opentelemetry import trace
+
+        tracer = trace.get_tracer("lodeos.matchmaker")
+        with tracer.start_as_current_span("matchmaker.turn") as span:
+            try:
+                span.set_attribute("matchmaker.message_chars", len(message or ""))
+                span.set_attribute("gen_ai.system", "vertex_ai")
+                span.set_attribute("gen_ai.request.model", "gemini-2.5-pro")
+            except Exception:
+                pass
+            yield span
+    except Exception:
+        yield None
+
+
+def annotate_span(span, evidence: dict) -> None:
+    """Attach grounding-evidence summary attributes to the turn span."""
+    if span is None:
+        return
+    try:
+        span.set_attribute("matchmaker.grounded", bool(evidence.get("grounded")))
+        span.set_attribute("matchmaker.rag_loaded", int(evidence.get("rag_loaded", 0)))
+        span.set_attribute(
+            "matchmaker.providers_cited", len(evidence.get("providers", []))
+        )
+        span.set_attribute(
+            "matchmaker.web_sources", len(evidence.get("web_sources", []))
+        )
+        tool_calls = evidence.get("tool_calls", [])
+        if tool_calls:
+            span.set_attribute("matchmaker.tool_calls", ",".join(tool_calls))
+    except Exception:
+        pass
