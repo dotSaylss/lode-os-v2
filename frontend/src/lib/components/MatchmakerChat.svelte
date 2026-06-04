@@ -4,7 +4,34 @@
 
     let { seedMessage = '' } = $props<{ seedMessage?: string }>();
 
-    let messages = $state([
+    type ProviderEvidence = {
+        id?: string;
+        name: string;
+        category?: string;
+        specialty?: string;
+        genres?: string[];
+        rating?: number;
+        rate?: string;
+        turnaround?: string;
+        verified?: boolean;
+    };
+    type WebSource = { title: string; uri: string; domain: string };
+    type Evidence = {
+        providers: ProviderEvidence[];
+        web_sources: WebSource[];
+        search_queries: string[];
+        grounded: boolean;
+        rag_loaded: number;
+        tool_calls: string[];
+    };
+    type Message = {
+        id: number;
+        role: 'agent' | 'user';
+        content: string;
+        evidence?: Evidence;
+    };
+
+    let messages = $state<Message[]>([
         {
             id: 1,
             role: 'agent',
@@ -12,6 +39,20 @@
                 "Hi! I'm the LodeOS Matchmaker. Describe your song and what it needs — mixing, mastering, cover art, vocals, sync, video, promo — and I'll assemble the right team of vetted providers, explain why each fits, and propose how splits and rights get routed."
         }
     ]);
+
+    const CATEGORY_LABELS: Record<string, string> = {
+        mixing: 'Mixing',
+        mastering: 'Mastering',
+        cover_art: 'Cover Art',
+        vocal_production: 'Vocal Production',
+        sync_licensing: 'Sync Licensing',
+        music_video: 'Music Video',
+        promotion: 'Promotion',
+        session_musician: 'Session Players'
+    };
+    const catLabel = (c?: string) => (c ? (CATEGORY_LABELS[c] ?? c) : '');
+    const hasEvidence = (e?: Evidence) =>
+        !!e && (e.providers.length > 0 || e.web_sources.length > 0);
     let inputMessage = $state('');
     let isTyping = $state(false);
     let sessionId = $state<string | null>(null);
@@ -45,7 +86,12 @@
                 sessionId = data.session_id;
                 messages = [
                     ...messages,
-                    { id: Date.now() + 1, role: 'agent', content: data.response }
+                    {
+                        id: Date.now() + 1,
+                        role: 'agent',
+                        content: data.response,
+                        evidence: data.evidence as Evidence | undefined
+                    }
                 ];
             } else {
                 throw new Error('Backend responded with an error');
@@ -115,7 +161,7 @@
         {#each messages as msg (msg.id)}
             <div
                 in:slide={{ duration: 300 }}
-                class="flex {msg.role === 'user' ? 'justify-end' : 'justify-start'}"
+                class="flex flex-col {msg.role === 'user' ? 'items-end' : 'items-start'}"
             >
                 <div
                     class="max-w-[85%] rounded-2xl px-5 py-3.5 text-[15px] leading-relaxed shadow-sm whitespace-pre-wrap {msg.role ===
@@ -125,6 +171,147 @@
                 >
                     {msg.content}
                 </div>
+
+                {#if msg.role === 'agent' && hasEvidence(msg.evidence)}
+                    {@const ev = msg.evidence!}
+                    <div
+                        in:slide={{ duration: 300 }}
+                        class="mt-2.5 max-w-[92%] w-full rounded-2xl border border-emerald-200/70 dark:border-emerald-800/50 bg-emerald-50/50 dark:bg-emerald-900/10 px-4 py-3.5"
+                    >
+                        <div class="flex items-center gap-2 mb-3">
+                            <svg
+                                class="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                />
+                            </svg>
+                            <span
+                                class="text-[11px] font-bold uppercase tracking-wide text-emerald-700 dark:text-emerald-300"
+                            >
+                                Grounded sources
+                            </span>
+                            {#if ev.rag_loaded > 0}
+                                <span
+                                    class="ml-auto text-[10.5px] font-medium text-emerald-600/80 dark:text-emerald-400/80"
+                                >
+                                    {ev.rag_loaded} vetted providers searched
+                                </span>
+                            {/if}
+                        </div>
+
+                        {#if ev.providers.length > 0}
+                            <p
+                                class="text-[10.5px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-1.5"
+                            >
+                                From the vetted marketplace
+                            </p>
+                            <div class="flex flex-col gap-1.5 mb-3">
+                                {#each ev.providers as p (p.name)}
+                                    <div
+                                        class="flex items-center gap-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/70 dark:border-slate-700 px-3 py-2"
+                                    >
+                                        <span
+                                            class="shrink-0 w-1.5 h-1.5 rounded-full bg-emerald-500"
+                                        ></span>
+                                        <span
+                                            class="text-[13px] font-semibold text-slate-800 dark:text-white truncate"
+                                        >
+                                            {p.name}
+                                        </span>
+                                        {#if p.verified}
+                                            <svg
+                                                class="w-3.5 h-3.5 text-blue-500 shrink-0"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                                aria-label="Verified"
+                                            >
+                                                <path
+                                                    fill-rule="evenodd"
+                                                    d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812z"
+                                                    clip-rule="evenodd"
+                                                />
+                                            </svg>
+                                        {/if}
+                                        {#if p.category}
+                                            <span
+                                                class="text-[10px] font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded shrink-0"
+                                            >
+                                                {catLabel(p.category)}
+                                            </span>
+                                        {/if}
+                                        <span
+                                            class="ml-auto flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 shrink-0"
+                                        >
+                                            {#if p.rating}
+                                                <span class="flex items-center gap-0.5">
+                                                    <svg
+                                                        class="w-3 h-3 text-amber-400"
+                                                        fill="currentColor"
+                                                        viewBox="0 0 20 20"
+                                                    >
+                                                        <path
+                                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                                                        />
+                                                    </svg>
+                                                    {p.rating}
+                                                </span>
+                                            {/if}
+                                            {#if p.rate}
+                                                <span
+                                                    class="font-medium text-slate-600 dark:text-slate-300"
+                                                    >{p.rate}</span
+                                                >
+                                            {/if}
+                                        </span>
+                                    </div>
+                                {/each}
+                            </div>
+                        {/if}
+
+                        {#if ev.web_sources.length > 0}
+                            <p
+                                class="text-[10.5px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-1.5"
+                            >
+                                Live web research
+                                <span class="font-normal lowercase text-slate-400/80"
+                                    >· unvetted</span
+                                >
+                            </p>
+                            <div class="flex flex-wrap gap-1.5">
+                                {#each ev.web_sources as w (w.uri)}
+                                    <a
+                                        href={w.uri}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="group inline-flex items-center gap-1.5 rounded-lg bg-white dark:bg-slate-800 border border-blue-200/70 dark:border-blue-900/40 px-2.5 py-1.5 text-[11.5px] text-blue-700 dark:text-blue-300 hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors max-w-full"
+                                    >
+                                        <svg
+                                            class="w-3 h-3 shrink-0 opacity-70"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                                            />
+                                        </svg>
+                                        <span class="font-medium truncate">{w.domain || w.title}</span>
+                                    </a>
+                                {/each}
+                            </div>
+                        {/if}
+                    </div>
+                {/if}
             </div>
         {/each}
         {#if isTyping}

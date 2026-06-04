@@ -26,11 +26,28 @@ This is the pattern that scales: one strategic catalog agent fanning work out to
 execution agents — the enterprise / A2A track.
 """
 
+import os
+
 from google.adk import Agent
 
-from agents.tools import get_label_portfolio, get_artist_data
+from agents.tools import (
+    get_label_portfolio,
+    get_artist_data,
+    get_label_forecast,
+)
 
-# ── A2A execution specialist (Gemini 2.5 Flash — drafts the registrations) ────
+# ── Model routing (Model Garden ready) ───────────────────────────────────────
+#
+# The two agents are split by workload: a high-reasoning STRATEGIST model for
+# catalog-wide planning, and a fast, cheap EXECUTION model for drafting. Both
+# resolve through Vertex AI, so either can be repointed at any Model Garden
+# model (a tuned Gemini, or a partner/open model served on Vertex) WITHOUT code
+# changes, via env override — the enterprise model-routing seam. Defaults are
+# the proven Gemini 2.5 pair.
+STRATEGIST_MODEL = os.getenv("LABEL_STRATEGIST_MODEL", "gemini-2.5-pro")
+EXECUTION_MODEL = os.getenv("LABEL_EXECUTION_MODEL", "gemini-2.5-flash")
+
+# ── A2A execution specialist (drafts the registrations) ───────────────────────
 #
 # This mirrors the proven single-artist ActionAgent from agents/graph.py, but is
 # a SEPARATE instance: ADK forbids one Agent object having two parents, so the
@@ -38,7 +55,7 @@ from agents.tools import get_label_portfolio, get_artist_data
 # whole roster.
 bulk_action_agent = Agent(
     name="ActionAgent",
-    model="gemini-2.5-flash",
+    model=EXECUTION_MODEL,
     description=(
         "Drafts professional registration emails/submissions to neighboring "
         "rights organizations (SoundExchange), the MLC, and PROs to recover "
@@ -62,7 +79,7 @@ bulk_action_agent = Agent(
 
 label_agent = Agent(
     name="LabelAgent",
-    model="gemini-2.5-pro",
+    model=STRATEGIST_MODEL,
     description=(
         "B2B catalog operations agent for a record label. Reasons over the "
         "ENTIRE artist roster to find the biggest aggregate missing-money "
@@ -80,6 +97,10 @@ label_agent = Agent(
         "  - Surface the other gap categories (unclaimed mechanicals via the MLC, "
         "    unmatched sync placements, PRO black-box royalties) with their totals.\n"
         "  - Name the top few artists by individual uncollected amount.\n\n"
+        "For a per-category gap breakdown or a forward royalty-recovery forecast "
+        "('what's the breakdown by category?', 'forecast my recovery', 'how does "
+        "this land over the next year?'), call the `get_label_forecast` tool and "
+        "report the category figures and the 12-month cumulative recovery curve.\n\n"
         "Always frame recommendations as BULK actions, e.g. 'Register all 30 "
         "artists missing neighboring rights to recover $274,692 in one batch.'\n\n"
         "When the user wants you to actually DO it (draft the registration, "
@@ -89,7 +110,60 @@ label_agent = Agent(
         "registration draft. Be concrete, use real dollar figures, and keep "
         "responses crisp and executive-friendly."
     ),
-    tools=[get_label_portfolio],
+    tools=[get_label_portfolio, get_label_forecast],
     # A2A: the catalog strategist coordinates with the execution specialist.
     sub_agents=[bulk_action_agent],
+)
+
+# Exported under both names: `label_agent` (used by the FastAPI Runner) and
+# `root_agent` (ADK convention — what Agent Engine / `adk deploy` look for).
+root_agent = label_agent
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Managed runtime readiness (ENV-GATED — default path is unchanged)
+# ──────────────────────────────────────────────────────────────────────────────
+#
+# By default the LabelAgent graph runs IN-PROCESS inside the FastAPI app (one
+# `Runner` per graph). That path needs zero extra setup and is what every demo
+# uses. For the enterprise/scale story this same graph is portable to two
+# managed Google Cloud runtimes WITHOUT code changes, selected via the
+# LABEL_AGENT_RUNTIME env var (mirrors the USE_MCP gate in agents/graph.py):
+#
+#   LABEL_AGENT_RUNTIME=in_process   (default) — Runner inside FastAPI on Cloud Run.
+#   LABEL_AGENT_RUNTIME=agent_engine           — wrap the SAME graph in Vertex AI
+#                                                Agent Engine (managed Agent Runtime:
+#                                                autoscaling, sessions, tracing).
+#
+# `build_agent_engine_app()` is only invoked when the gate is on, so importing
+# this module never requires the Agent Engine SDK. Any failure degrades back to
+# the in-process agent so the core flywheel always demos.
+
+LABEL_AGENT_RUNTIME = os.getenv("LABEL_AGENT_RUNTIME", "in_process").lower()
+
+
+def build_agent_engine_app():
+    """Wrap the LabelAgent graph for Vertex AI Agent Engine (managed runtime).
+
+    Returns an `AdkApp` ready for `agent_engines.create(...)`, or `None` if the
+    Agent Engine SDK isn't installed — in which case the caller keeps using the
+    in-process `label_agent`. This is the deploy-readiness seam for the managed
+    Agent Runtime; it does not run at import time and never affects the default
+    in-process path.
+    """
+    try:
+        from vertexai.preview.reasoning_engines import AdkApp
+
+        return AdkApp(agent=root_agent, enable_tracing=True)
+    except Exception as exc:  # noqa: BLE001 — graceful degradation to in-process
+        print(
+            f"[label_graph] Agent Engine SDK unavailable ({exc}); "
+            "serving the in-process LabelAgent instead."
+        )
+        return None
+
+
+# Built only when the gate is explicitly flipped to the managed runtime.
+agent_engine_app = (
+    build_agent_engine_app() if LABEL_AGENT_RUNTIME == "agent_engine" else None
 )

@@ -1,4 +1,5 @@
 import json
+from collections import defaultdict
 from pathlib import Path
 
 # Project root = parent of the /agents directory. Anchoring here keeps the tool
@@ -42,6 +43,95 @@ def get_label_portfolio() -> str:
     if _LABEL_DB.exists():
         return _LABEL_DB.read_text()
     return "{}"
+
+
+# Indicative time-to-recover per gap category, in months (registration +
+# back-claim processing windows). Used to spread recoverable money into a
+# forward forecast so a label can plan cash flow, not just see a lump sum.
+_RECOVERY_MONTHS = {
+    "neighboring_rights": 6,
+    "unclaimed_mechanicals": 9,
+    "sync_unmatched": 4,
+    "pro_blackbox": 12,
+}
+_CATEGORY_LABELS = {
+    "neighboring_rights": "Unregistered Neighboring Rights",
+    "unclaimed_mechanicals": "Unclaimed Mechanicals",
+    "sync_unmatched": "Unmatched Sync Placements",
+    "pro_blackbox": "PRO Black-Box Royalties",
+}
+
+
+def get_label_forecast() -> str:
+    """Compute the label's per-category gap breakdown and a recovery forecast.
+
+    Aggregates every artist's gaps across the whole roster into:
+      - `categories`: for each gap type, the number of artists affected, the
+        total recoverable dollars, and a typical time-to-recover (months).
+      - `total_recoverable`: catalog-wide uncollected total.
+      - `forecast`: the recoverable money spread over the next 12 months
+        (cumulative), assuming bulk registration starts now — so the label can
+        plan cash flow, not just see a single lump sum.
+
+    The LabelAgent uses this to give an executive royalty-recovery forecast and
+    a category-by-category gap breakdown. All figures are derived from the real
+    roster data; nothing is invented.
+
+    Returns:
+        A JSON string of the forecast, or "{}" if no label data is available.
+    """
+    if not _LABEL_DB.exists():
+        return "{}"
+
+    data = json.loads(_LABEL_DB.read_text())
+    artists = data.get("artists", [])
+
+    counts: dict[str, int] = defaultdict(int)
+    totals: dict[str, float] = defaultdict(float)
+    for a in artists:
+        for g in a.get("gaps", []):
+            t = g.get("type", "other")
+            counts[t] += 1
+            totals[t] += float(g.get("estimated_missing", 0) or 0)
+
+    categories = []
+    # Recoverable dollars landing in each future month (1-indexed), evenly
+    # spread across each category's recovery window.
+    monthly = defaultdict(float)
+    for t, amount in totals.items():
+        months = _RECOVERY_MONTHS.get(t, 12)
+        categories.append(
+            {
+                "type": t,
+                "label": _CATEGORY_LABELS.get(t, t),
+                "artists_affected": counts[t],
+                "recoverable": round(amount, 2),
+                "recovery_months": months,
+            }
+        )
+        for m in range(1, months + 1):
+            monthly[m] += amount / months
+
+    categories.sort(key=lambda c: c["recoverable"], reverse=True)
+
+    cumulative = 0.0
+    forecast = []
+    for m in range(1, 13):
+        cumulative += monthly.get(m, 0.0)
+        forecast.append({"month": m, "cumulative_recovered": round(cumulative, 2)})
+
+    total_recoverable = round(sum(totals.values()), 2)
+
+    return json.dumps(
+        {
+            "total_recoverable": total_recoverable,
+            "artists_with_gaps": sum(
+                1 for a in artists if a.get("gaps")
+            ),
+            "categories": categories,
+            "forecast": forecast,
+        }
+    )
 
 
 def get_providers() -> str:
