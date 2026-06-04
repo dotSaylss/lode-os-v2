@@ -4,7 +4,10 @@
 
     let { greeting = "I'm your LabelAgent. I can scan your entire catalog for missing money and register artists in bulk. Ask me \"what's the biggest opportunity across my roster?\"" }: { greeting?: string } = $props();
 
-    let messages = $state([
+    type TraceEvent = { kind: 'agent' | 'tool' | 'handoff'; agent?: string | null; label: string; detail?: string | null };
+    type Msg = { id: number; role: 'agent' | 'user'; content: string; trace?: TraceEvent[]; runtime?: string };
+
+    let messages = $state<Msg[]>([
         { id: 1, role: 'agent', content: greeting }
     ]);
     let inputMessage = $state('');
@@ -33,7 +36,13 @@
             if (res.ok) {
                 const data = await res.json();
                 sessionId = data.session_id;
-                messages = [...messages, { id: Date.now() + 1, role: 'agent', content: data.response }];
+                messages = [...messages, {
+                    id: Date.now() + 1,
+                    role: 'agent',
+                    content: data.response,
+                    trace: data.trace ?? [],
+                    runtime: data.runtime
+                }];
             } else {
                 throw new Error('Backend responded with an error');
             }
@@ -68,6 +77,45 @@
 
     <div class="flex-1 overflow-y-auto p-6 space-y-6 bg-[#fcfcfc] dark:bg-transparent">
         {#each messages as msg (msg.id)}
+            {#if msg.role === 'agent' && msg.trace && msg.trace.length > 0}
+                <div in:slide={{ duration: 300 }} class="space-y-1.5">
+                    <div class="flex items-center gap-2 mb-1 pl-0.5">
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Agent Trace</span>
+                        <span class="h-px flex-1 bg-slate-100 dark:bg-slate-700/60"></span>
+                        {#if msg.runtime}
+                            <span class="text-[10px] font-medium text-slate-400 dark:text-slate-500 font-mono">{msg.runtime}</span>
+                        {/if}
+                    </div>
+                    {#each msg.trace as step, i (i)}
+                        <div class="flex items-start gap-2.5 pl-0.5">
+                            <div class="flex flex-col items-center pt-0.5">
+                                {#if step.kind === 'handoff'}
+                                    <span class="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900/40 ring-2 ring-blue-200/60 dark:ring-blue-800/50">
+                                        <svg class="w-3 h-3 text-blue-600 dark:text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m4 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                                    </span>
+                                {:else if step.kind === 'tool'}
+                                    <span class="flex items-center justify-center w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-700">
+                                        <svg class="w-3 h-3 text-slate-500 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085"/></svg>
+                                    </span>
+                                {:else}
+                                    <span class="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-900/40">
+                                        <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                    </span>
+                                {/if}
+                                {#if i < (msg.trace?.length ?? 0) - 1}
+                                    <span class="w-px flex-1 min-h-[10px] bg-slate-200 dark:bg-slate-700 mt-1"></span>
+                                {/if}
+                            </div>
+                            <div class="pb-1 -mt-px">
+                                <p class="text-xs font-semibold {step.kind === 'handoff' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-slate-200'}">{step.label}</p>
+                                {#if step.detail}
+                                    <p class="text-[11px] text-slate-400 dark:text-slate-500 leading-snug">{step.detail}</p>
+                                {/if}
+                            </div>
+                        </div>
+                    {/each}
+                </div>
+            {/if}
             <div in:slide={{ duration: 300 }} class="flex {msg.role === 'user' ? 'justify-end' : 'justify-start'}">
                 <div class="max-w-[85%] whitespace-pre-wrap rounded-2xl px-5 py-3.5 text-[15px] leading-relaxed shadow-sm {msg.role === 'user' ? 'bg-slate-800 text-white rounded-br-sm dark:bg-indigo-600' : 'bg-white border border-slate-200/60 dark:bg-slate-700 dark:border-slate-600 text-slate-700 dark:text-slate-200 rounded-bl-sm'}">
                     {msg.content}
