@@ -1,3 +1,4 @@
+import os
 import uuid
 
 from dotenv import load_dotenv
@@ -30,16 +31,22 @@ app = FastAPI(
     description="Real Google ADK multi-agent backend for Mogul royalty aggregation",
 )
 
-# Add CORS middleware for frontend communication. 5173 = main dashboard,
-# 5174 = label ops view, 5175 = service ecosystem view (dev), plus prod.
+# Add CORS middleware for frontend communication. 5173/5174/5175 = local dev
+# views; FRONTEND_ORIGINS (comma-separated) adds the deployed Cloud Run URL.
+_dev_origins = [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:5175",
+    "http://localhost:3000",
+]
+_prod_origins = [
+    o.strip()
+    for o in os.getenv("FRONTEND_ORIGINS", "").split(",")
+    if o.strip()
+]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://localhost:5174",
-        "http://localhost:5175",
-        "http://localhost:3000",
-    ],
+    allow_origins=_dev_origins + _prod_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
