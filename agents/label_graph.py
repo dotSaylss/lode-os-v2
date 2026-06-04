@@ -26,6 +26,8 @@ This is the pattern that scales: one strategic catalog agent fanning work out to
 execution agents — the enterprise / A2A track.
 """
 
+import os
+
 from google.adk import Agent
 
 from agents.tools import get_label_portfolio, get_artist_data
@@ -92,4 +94,57 @@ label_agent = Agent(
     tools=[get_label_portfolio],
     # A2A: the catalog strategist coordinates with the execution specialist.
     sub_agents=[bulk_action_agent],
+)
+
+# Exported under both names: `label_agent` (used by the FastAPI Runner) and
+# `root_agent` (ADK convention — what Agent Engine / `adk deploy` look for).
+root_agent = label_agent
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Managed runtime readiness (ENV-GATED — default path is unchanged)
+# ──────────────────────────────────────────────────────────────────────────────
+#
+# By default the LabelAgent graph runs IN-PROCESS inside the FastAPI app (one
+# `Runner` per graph). That path needs zero extra setup and is what every demo
+# uses. For the enterprise/scale story this same graph is portable to two
+# managed Google Cloud runtimes WITHOUT code changes, selected via the
+# LABEL_AGENT_RUNTIME env var (mirrors the USE_MCP gate in agents/graph.py):
+#
+#   LABEL_AGENT_RUNTIME=in_process   (default) — Runner inside FastAPI on Cloud Run.
+#   LABEL_AGENT_RUNTIME=agent_engine           — wrap the SAME graph in Vertex AI
+#                                                Agent Engine (managed Agent Runtime:
+#                                                autoscaling, sessions, tracing).
+#
+# `build_agent_engine_app()` is only invoked when the gate is on, so importing
+# this module never requires the Agent Engine SDK. Any failure degrades back to
+# the in-process agent so the core flywheel always demos.
+
+LABEL_AGENT_RUNTIME = os.getenv("LABEL_AGENT_RUNTIME", "in_process").lower()
+
+
+def build_agent_engine_app():
+    """Wrap the LabelAgent graph for Vertex AI Agent Engine (managed runtime).
+
+    Returns an `AdkApp` ready for `agent_engines.create(...)`, or `None` if the
+    Agent Engine SDK isn't installed — in which case the caller keeps using the
+    in-process `label_agent`. This is the deploy-readiness seam for the managed
+    Agent Runtime; it does not run at import time and never affects the default
+    in-process path.
+    """
+    try:
+        from vertexai.preview.reasoning_engines import AdkApp
+
+        return AdkApp(agent=root_agent, enable_tracing=True)
+    except Exception as exc:  # noqa: BLE001 — graceful degradation to in-process
+        print(
+            f"[label_graph] Agent Engine SDK unavailable ({exc}); "
+            "serving the in-process LabelAgent instead."
+        )
+        return None
+
+
+# Built only when the gate is explicitly flipped to the managed runtime.
+agent_engine_app = (
+    build_agent_engine_app() if LABEL_AGENT_RUNTIME == "agent_engine" else None
 )
