@@ -12,11 +12,16 @@ Delegation in ADK is automatic: the orchestrator's LLM reads each sub-agent's
 
 Data access is via **MCP** (Model Context Protocol): the specialist agents reach
 the artist's royalty data through the Mogul MCP server (`mcp_server.py`), exactly
-as Claude connects to Google Drive over MCP. If the MCP subprocess can't start,
-the agents fall back to the in-process `get_artist_data` tool so the demo never
-breaks.
+as Claude connects to Google Drive over MCP.
+
+The Mogul connector is exposed as a real MCP server (`mcp_server.py`) — runnable
+and demoable standalone. For the live API the agents use the equivalent
+in-process `get_artist_data` tool by default (the stdio MCP transport is
+fragile under multi-Runner FastAPI async); set `USE_MCP=true` to route the
+agents through the MCP toolset instead.
 """
 
+import os
 import sys
 from pathlib import Path
 
@@ -30,9 +35,12 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 def _mogul_data_tools():
     """Return the data-access tools for the specialist agents.
 
-    Prefers the Mogul MCP server (Track 1: ADK + MCP). Falls back to the
-    in-process Python tool if the MCP toolset can't be constructed.
+    Defaults to the reliable in-process `get_artist_data` tool. When
+    `USE_MCP=true`, routes through the Mogul MCP server instead (Track 1:
+    ADK + MCP) — same data, reached over the Model Context Protocol.
     """
+    if os.getenv("USE_MCP", "").lower() not in ("1", "true", "yes"):
+        return [get_artist_data]
     try:
         from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
         from google.adk.tools.mcp_tool.mcp_session_manager import (
