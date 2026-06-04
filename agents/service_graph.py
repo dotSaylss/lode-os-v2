@@ -23,9 +23,12 @@ them on separate agents and let LLM-driven delegation route between them. If
 google_search is ever unavailable in an environment, the matchmaker still works
 fully on DB-only grounding — that is the safe demo fallback.
 
-Multi-turn Sessions/Memory: the agent runs over the FastAPI Runner's
+Multi-turn Sessions/Memory: by default the agent runs over the FastAPI Runner's
 InMemorySessionService, so a conversation ("now add a music video", "what's the
-total budget?", "route the splits") accumulates context across turns.
+total budget?", "route the splits") accumulates context across turns. Setting
+USE_MEMORY_BANK=true (with a deployed AGENT_ENGINE_ID) upgrades this to Vertex's
+managed Sessions + Memory Bank for durable, cross-session recall; the in-memory
+path remains the safe fallback if the managed services are unavailable.
 """
 
 import contextlib
@@ -413,3 +416,69 @@ def annotate_span(span, evidence: dict) -> None:
             span.set_attribute("matchmaker.tool_calls", ",".join(tool_calls))
     except Exception:
         pass
+
+
+# ── Persistent Sessions / Memory Bank (ENV-GATED) ─────────────────────────────
+# By DEFAULT the matchmaker's multi-turn conversation lives in ADK's
+# InMemorySessionService — reliable, zero setup, the safe demo path.
+#
+# Set USE_MEMORY_BANK=true AND provide AGENT_ENGINE_ID (a deployed Vertex AI
+# Agent Engine id) to persist sessions in Vertex's managed Sessions service and
+# enable a Vertex Memory Bank for cross-session recall. If the gate is on but
+# the managed services can't be constructed (missing id, auth, etc.), we fall
+# back to the in-memory services so the matchmaker keeps working unchanged.
+
+
+def memory_bank_enabled() -> bool:
+    return os.getenv("USE_MEMORY_BANK", "").lower() in _TRUTHY
+
+
+def _agent_engine_id() -> str | None:
+    return os.getenv("AGENT_ENGINE_ID") or os.getenv("AGENT_ENGINE_RESOURCE_ID")
+
+
+def build_session_service():
+    """Return the session service for the matchmaker runner.
+
+    Managed Vertex Sessions when USE_MEMORY_BANK=true and an Agent Engine id is
+    configured; otherwise the in-process default. Never raises.
+    """
+    from google.adk.sessions import InMemorySessionService
+
+    if memory_bank_enabled():
+        engine_id = _agent_engine_id()
+        if engine_id:
+            try:
+                from google.adk.sessions import VertexAiSessionService
+
+                return VertexAiSessionService(
+                    project=os.getenv("GOOGLE_CLOUD_PROJECT"),
+                    location=os.getenv("GOOGLE_CLOUD_LOCATION"),
+                    agent_engine_id=engine_id,
+                )
+            except Exception:
+                pass  # fall through to in-memory
+    return InMemorySessionService()
+
+
+def build_memory_service():
+    """Return a Vertex Memory Bank service when enabled, else None.
+
+    Returning None leaves the Runner without long-term memory — the default,
+    fully-working behavior. Never raises.
+    """
+    if not memory_bank_enabled():
+        return None
+    engine_id = _agent_engine_id()
+    if not engine_id:
+        return None
+    try:
+        from google.adk.memory import VertexAiMemoryBankService
+
+        return VertexAiMemoryBankService(
+            project=os.getenv("GOOGLE_CLOUD_PROJECT"),
+            location=os.getenv("GOOGLE_CLOUD_LOCATION"),
+            agent_engine_id=engine_id,
+        )
+    except Exception:
+        return None

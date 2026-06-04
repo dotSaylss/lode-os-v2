@@ -28,6 +28,8 @@ from agents.service_graph import (
     setup_observability,
     matchmaker_span,
     annotate_span,
+    build_session_service,
+    build_memory_service,
 )
 
 APP_NAME = "mogul-agent"
@@ -76,10 +78,16 @@ runner = Runner(
 label_runner = Runner(
     app_name=LABEL_APP_NAME, agent=label_agent, session_service=session_service
 )
+# The matchmaker gets its OWN session/memory services so its persistence can be
+# upgraded independently. Defaults to the shared in-memory behavior unless
+# USE_MEMORY_BANK=true selects managed Vertex Sessions + Memory Bank.
+matchmaker_session_service = build_session_service()
+matchmaker_memory_service = build_memory_service()
 matchmaker_runner = Runner(
     app_name=SERVICES_APP_NAME,
     agent=matchmaker_agent,
-    session_service=session_service,
+    session_service=matchmaker_session_service,
+    memory_service=matchmaker_memory_service,
 )
 
 # Observability is OFF unless ENABLE_OBSERVABILITY=true. When on, this installs
@@ -213,13 +221,21 @@ async def chat_with_matchmaker(req: ChatRequest):
     user_id = "demo-user"
     session_id = req.session_id or str(uuid.uuid4())
 
-    session = await session_service.get_session(
-        app_name=SERVICES_APP_NAME, user_id=user_id, session_id=session_id
-    )
+    # Managed Vertex Sessions assign their own session ids, so let create_session
+    # return the authoritative id rather than forcing a client-supplied one.
+    session = None
+    if req.session_id:
+        try:
+            session = await matchmaker_session_service.get_session(
+                app_name=SERVICES_APP_NAME, user_id=user_id, session_id=session_id
+            )
+        except Exception:
+            session = None
     if session is None:
-        await session_service.create_session(
+        session = await matchmaker_session_service.create_session(
             app_name=SERVICES_APP_NAME, user_id=user_id, session_id=session_id
         )
+    session_id = getattr(session, "id", session_id) or session_id
 
     new_message = types.Content(
         role="user", parts=[types.Part.from_text(text=req.message)]

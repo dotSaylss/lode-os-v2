@@ -10,3 +10,8 @@ mcp
 # Optional: managed Cloud Trace export for the matchmaker (ENABLE_OBSERVABILITY=true).
 # Not required for the default in-process path, which falls back to console traces.
 # opentelemetry-exporter-gcp-trace
+
+# Optional: managed Vertex Sessions + Memory Bank for the matchmaker
+# (USE_MEMORY_BANK=true with AGENT_ENGINE_ID). Not required for the default
+# in-process path, which uses ADK's InMemorySessionService.
+# google-adk[gcp]
