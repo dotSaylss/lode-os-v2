@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+/* Explicitly scan all source files so utility generation never depends on
+   .gitignore heuristics (Tailwind v4 auto-detection skips git-ignored paths). */
+@source "./";
+
+@theme {
+  --color-primary: #3b82f6;
+}
