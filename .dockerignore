@@ -1,0 +1,15 @@
+.git
+.gitignore
+.venv
+__pycache__
+**/__pycache__
+*.pyc
+.env
+.env.*
+!.env.example
+frontend
+hackathon-resources
+.claude
+.playwright-mcp
+*.md
+!README.md
