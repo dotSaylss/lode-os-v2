@@ -1,10 +1,27 @@
 <script lang="ts">
 	import '../app.css';
+	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import Icon from '$lib/components/Icon.svelte';
 	import LodeOrb from '$lib/components/LodeOrb.svelte';
+	import Onboarding from '$lib/components/Onboarding.svelte';
 
 	let { children } = $props();
+
+	// Show the guided intro on first visit, or any time ?intro=1 is present
+	// (handy for demos). Dismissal is remembered in localStorage.
+	let showIntro = $state(false);
+	onMount(() => {
+		const forced = page.url.searchParams.get('intro') === '1';
+		const seen = localStorage.getItem('lode_intro_seen') === '1';
+		showIntro = forced || !seen;
+	});
+	function dismissIntro() {
+		showIntro = false;
+		try {
+			localStorage.setItem('lode_intro_seen', '1');
+		} catch {}
+	}
 
 	const nav = [
 		{ href: '/', label: 'Today', icon: 'sun', match: (p: string) => p === '/' },
@@ -49,3 +66,7 @@
 
 	<LodeOrb />
 </div>
+
+{#if showIntro}
+	<Onboarding onEnter={dismissIntro} />
+{/if}
