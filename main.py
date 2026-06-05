@@ -20,6 +20,7 @@ from models.label import LabelPortfolio
 from models.service import Provider
 from agents.graph import root_agent
 from agents.label_graph import label_agent
+from agents.orb_graph import concierge_agent, ROUTE_BY_AGENT
 from agents.service_graph import (
     matchmaker_agent,
     new_evidence,
@@ -35,6 +36,7 @@ from agents.service_graph import (
 APP_NAME = "mogul-agent"
 LABEL_APP_NAME = "mogul-label-agent"
 SERVICES_APP_NAME = "lodeos-matchmaker"
+ORB_APP_NAME = "lode-concierge"
 
 app = FastAPI(
     title="Mogul Agent Backend",
@@ -69,9 +71,9 @@ db_service = DBService()
 session_service = InMemorySessionService()
 
 # One Runner per agent graph:
-#   - runner            → Mogul Orchestrator (single-artist royalties, Track 1)
-#   - label_runner      → B2B LabelAgent (catalog-wide + A2A → ActionAgent, Track 3)
-#   - matchmaker_runner → Service-Provider MatchmakerAgent (grounded, Track 2)
+#   - runner            → Mogul Orchestrator (single-artist royalties)
+#   - label_runner      → B2B LabelAgent (catalog-wide + A2A → ActionAgent)
+#   - matchmaker_runner → Service-Provider MatchmakerAgent (grounded)
 runner = Runner(
     app_name=APP_NAME, agent=root_agent, session_service=session_service
 )
@@ -88,6 +90,12 @@ matchmaker_runner = Runner(
     agent=matchmaker_agent,
     session_service=matchmaker_session_service,
     memory_service=matchmaker_memory_service,
+)
+# The omniscient "Lode" concierge powering the floating orb — sits above all
+# three domain agents and routes any question to the right specialist (see
+# agents/orb_graph.py). Shares the in-memory session service for multi-turn.
+concierge_runner = Runner(
+    app_name=ORB_APP_NAME, agent=concierge_agent, session_service=session_service
 )
 
 # Observability is OFF unless ENABLE_OBSERVABILITY=true. When on, this installs
@@ -128,6 +136,24 @@ class LabelChatResponse(ChatResponse):
     runtime: str = "in_process"
 
 
+class RouteHint(BaseModel):
+    """Where the omniscient orb should send the user to see the full answer —
+    derived from which domain specialist the concierge consulted."""
+
+    page: str  # "/", "/label", or "/services"
+    label: str  # human label for the destination (e.g. "Catalog")
+    reason: str | None = None
+
+
+class OrbResponse(ChatResponse):
+    """The Lode concierge reply, plus an optional route hint nudging the user to
+    the page where the full detail (A2A trace, grounding evidence) renders, and
+    a trace of which specialists it consulted."""
+
+    route_hint: RouteHint | None = None
+    trace: list[TraceEvent] = []
+
+
 @app.get("/api/v1/artist/context", response_model=ArtistContext)
 def get_artist_context():
     context = db_service.get_artist_context()
@@ -160,7 +186,7 @@ def get_label_forecast_route():
 
 @app.get("/api/v1/services/providers", response_model=list[Provider])
 def get_service_providers():
-    """Return the vetted service-provider marketplace (Track 2)."""
+    """Return the vetted service-provider marketplace."""
     return db_service.get_providers()
 
 
@@ -405,4 +431,83 @@ async def chat_with_matchmaker(req: ChatRequest):
         annotate_span(span, evidence)
     return MatchmakerResponse(
         response=final_text, session_id=session_id, evidence=evidence
+    )
+
+
+# Which specialist tool the concierge invokes → friendly label for the trace.
+_SPECIALIST_LABELS = {
+    "OrchestratorAgent": "Consulted the royalty orchestrator",
+    "LabelAgent": "Consulted the catalog strategist",
+    "MatchmakerAgent": "Consulted the service matchmaker",
+}
+
+
+@app.post("/api/v1/ask", response_model=OrbResponse)
+async def ask_lode(req: ChatRequest):
+    """The omniscient Lode orb: answer anything, then point to the right page.
+
+    Drives the ConciergeAgent, which consults exactly one domain specialist
+    (rights / catalog / services) as a tool. We watch the event stream for which
+    specialist it called and turn that into a `route_hint` so the orb can nudge
+    the user to the page where the full detail (A2A trace, grounding evidence)
+    renders at full width."""
+    user_id = "demo-user"
+    session_id = req.session_id or str(uuid.uuid4())
+
+    session = await session_service.get_session(
+        app_name=ORB_APP_NAME, user_id=user_id, session_id=session_id
+    )
+    if session is None:
+        await session_service.create_session(
+            app_name=ORB_APP_NAME, user_id=user_id, session_id=session_id
+        )
+
+    new_message = types.Content(
+        role="user", parts=[types.Part.from_text(text=req.message)]
+    )
+
+    final_text = ""
+    trace: list[TraceEvent] = []
+    route_hint: RouteHint | None = None
+
+    try:
+        async for event in concierge_runner.run_async(
+            user_id=user_id, session_id=session_id, new_message=new_message
+        ):
+            # Watch for the concierge calling a specialist tool — that tells us
+            # both what work happened and which page to surface.
+            try:
+                for fc in event.get_function_calls() or []:
+                    specialist = fc.name
+                    if specialist in _SPECIALIST_LABELS:
+                        trace.append(
+                            TraceEvent(
+                                kind="handoff",
+                                agent="LodeConcierge",
+                                label=_SPECIALIST_LABELS[specialist],
+                            )
+                        )
+                    if route_hint is None and specialist in ROUTE_BY_AGENT:
+                        r = ROUTE_BY_AGENT[specialist]
+                        route_hint = RouteHint(
+                            page=r["page"], label=r["label"], reason=r["reason"]
+                        )
+            except Exception:  # noqa: BLE001 — trace/hint are best-effort
+                pass
+
+            if event.is_final_response() and event.content and event.content.parts:
+                final_text = "".join(
+                    part.text for part in event.content.parts if part.text
+                )
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Agent error: {exc}") from exc
+
+    if not final_text:
+        final_text = "I wasn't able to look into that just now. Please try again."
+
+    return OrbResponse(
+        response=final_text,
+        session_id=session_id,
+        route_hint=route_hint,
+        trace=trace,
     )
