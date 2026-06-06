@@ -57,7 +57,10 @@
 		const pending = $pendingAsk;
 		if (pending && pending.page === '/label') {
 			clearPending();
-			revealPanel().then(() => chat?.ask(pending.prompt));
+			revealPanel().then(async () => {
+				if (!chat) await tick(); // one more flush in case the bind hasn't resolved
+				chat?.ask(pending.prompt);
+			});
 		}
 	});
 

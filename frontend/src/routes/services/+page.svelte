@@ -46,7 +46,10 @@
 		const pending = $pendingAsk;
 		if (pending && pending.page === '/services') {
 			clearPending();
-			revealPanel().then(() => chat?.send(pending.prompt));
+			revealPanel().then(async () => {
+				if (!chat) await tick(); // one more flush in case the bind hasn't resolved
+				chat?.send(pending.prompt);
+			});
 		}
 	});
 
