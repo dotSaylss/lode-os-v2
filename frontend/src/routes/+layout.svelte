@@ -1,30 +1,95 @@
 <script lang="ts">
-    import '../app.css';
-    import { page } from '$app/state';
-    let { children } = $props();
+	import '../app.css';
+	import { onMount } from 'svelte';
+	import { page } from '$app/state';
+	import Icon from '$lib/components/Icon.svelte';
+	import LodeOrb from '$lib/components/LodeOrb.svelte';
+	import Onboarding from '$lib/components/Onboarding.svelte';
+
+	let { children } = $props();
+
+	// Show the guided intro on first visit, or any time ?intro=1 is present
+	// (handy for demos). Dismissal is remembered in localStorage.
+	let showIntro = $state(false);
+
+	// Rail lock: when locked the rail stays expanded and the main content is
+	// pushed over so nothing is covered. When unlocked it auto-reveals on hover.
+	let railLocked = $state(false);
+
+	onMount(() => {
+		const forced = page.url.searchParams.get('intro') === '1';
+		const seen = localStorage.getItem('lode_intro_seen') === '1';
+		showIntro = forced || !seen;
+		railLocked = localStorage.getItem('lode_rail_locked') === '1';
+	});
+
+	function dismissIntro() {
+		showIntro = false;
+		try {
+			localStorage.setItem('lode_intro_seen', '1');
+		} catch {}
+	}
+
+	function toggleRailLock() {
+		railLocked = !railLocked;
+		try {
+			localStorage.setItem('lode_rail_locked', railLocked ? '1' : '0');
+		} catch {}
+	}
+
+	const nav = [
+		{ href: '/', label: 'Today', icon: 'sun', match: (p: string) => p === '/' },
+		{ href: '/label', label: 'Catalog', icon: 'audio-lines', match: (p: string) => p.startsWith('/label') },
+		{ href: '/services', label: 'Services', icon: 'handshake', match: (p: string) => p.startsWith('/services') }
+	];
 </script>
 
-<div class="min-h-screen bg-[#f8f9fa] text-slate-800 dark:bg-slate-900 dark:text-slate-100 font-sans transition-colors duration-300">
-    <header class="border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="font-bold text-xl tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-                <div class="w-8 h-8 rounded-lg bg-blue-600 dark:bg-blue-500 flex items-center justify-center text-white font-black">M</div>
-                <span>MOGUL <span class="text-slate-400 font-normal">Label Manager</span></span>
-            </div>
-            <nav class="flex gap-6 items-center">
-                <a href="/" class="text-sm font-medium {page.url.pathname === '/' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'} transition-colors">Dashboard</a>
-                <a href="/label" class="text-sm font-medium {page.url.pathname.startsWith('/label') ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'} transition-colors">Label</a>
-                <a href="/services" class="text-sm font-medium {page.url.pathname.startsWith('/services') ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'} transition-colors">Services</a>
-                <button class="text-sm font-medium text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors">Settings</button>
-                <div class="w-px h-4 bg-slate-300 dark:bg-slate-700 mx-2"></div>
-                <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center text-xs font-bold text-slate-600 dark:text-slate-300">
-                    JF
-                </div>
-            </nav>
-        </div>
-    </header>
-    
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {@render children()}
-    </main>
+<div class="appv3" class:rail-locked={railLocked}>
+	<aside class="v3-rail">
+		<div class="v3-rail-panel">
+			<div class="v3-rail-brand">
+				<img src="/logo-mark.svg" alt="" width="30" height="30" />
+				<span class="v3-rail-word">Lode<i>OS</i></span>
+				<button
+					class="v3-rail-lock"
+					type="button"
+					onclick={toggleRailLock}
+					title={railLocked ? 'Unlock sidebar (auto-hide)' : 'Lock sidebar open'}
+					aria-label={railLocked ? 'Unlock sidebar' : 'Lock sidebar open'}
+				>
+					<Icon name={railLocked ? 'panel-left-close' : 'panel-left-open'} size={17} color="var(--ink-500)" />
+				</button>
+			</div>
+
+			<nav class="v3-rail-nav">
+				{#each nav as item}
+					<a href={item.href} class="v3-rail-item {item.match(page.url.pathname) ? 'active' : ''}">
+						<span class="v3-rail-ico"><Icon name={item.icon} size={20} /></span>
+						<span class="v3-rail-label">{item.label}</span>
+					</a>
+				{/each}
+			</nav>
+
+			<div class="v3-rail-foot">
+				<button class="v3-rail-item" type="button">
+					<span class="v3-rail-ico"><Icon name="settings-2" size={20} /></span>
+					<span class="v3-rail-label">Settings</span>
+				</button>
+				<button class="v3-rail-item" type="button">
+					<span class="v3-rail-ico v3-rail-avatar">JF</span>
+					<span class="v3-rail-label">June Freedom</span>
+				</button>
+			</div>
+		</div>
+	</aside>
+
+	<main class="v3-main">
+		{@render children()}
+	</main>
+
+	<LodeOrb />
 </div>
+
+{#if showIntro}
+	<Onboarding onEnter={dismissIntro} />
+{/if}
