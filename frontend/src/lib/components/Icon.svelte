@@ -35,6 +35,9 @@
 	import Users from '@lucide/svelte/icons/users-round';
 	import Library from '@lucide/svelte/icons/library-big';
 	import Activity from '@lucide/svelte/icons/activity';
+	import Handshake from '@lucide/svelte/icons/handshake';
+	import PanelLeftOpen from '@lucide/svelte/icons/panel-left-open';
+	import PanelLeftClose from '@lucide/svelte/icons/panel-left-close';
 
 	const icons: Record<string, any> = {
 		sun: Sun,
@@ -67,7 +70,10 @@
 		'pin-off': PinOff,
 		users: Users,
 		library: Library,
-		activity: Activity
+		activity: Activity,
+		handshake: Handshake,
+		'panel-left-open': PanelLeftOpen,
+		'panel-left-close': PanelLeftClose
 	};
 
 	let {

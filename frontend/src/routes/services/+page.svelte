@@ -1,6 +1,9 @@
 <script lang="ts">
+	import { tick } from 'svelte';
+	import { slide } from 'svelte/transition';
 	import MatchmakerChat from '$lib/components/MatchmakerChat.svelte';
 	import Icon from '$lib/components/Icon.svelte';
+	import { pendingAsk, clearPending } from '$lib/lodeStore';
 
 	let { data } = $props();
 
@@ -24,6 +27,28 @@
 	let chat = $state<MatchmakerChat | null>(null);
 	let brief = $state('');
 	let activeCategory = $state<string>('all');
+
+	// The matchmaker panel (with its grounding-evidence panel) stays hidden until
+	// a brief is submitted or the orb hands off — then it reveals full-width in
+	// place, where the cited providers + web sources render at full size.
+	let panelOpen = $state(false);
+	let panelEl: HTMLDivElement | undefined = $state();
+
+	async function revealPanel() {
+		panelOpen = true;
+		await tick();
+		panelEl?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+	}
+
+	// React to an orb handoff even when we're already on this route (goto to the
+	// current path won't remount, so onMount alone would miss it). One-shot.
+	$effect(() => {
+		const pending = $pendingAsk;
+		if (pending && pending.page === '/services') {
+			clearPending();
+			revealPanel().then(() => chat?.send(pending.prompt));
+		}
+	});
 
 	const CATEGORY_LABELS: Record<string, string> = {
 		mixing: 'Mixing',
@@ -76,10 +101,11 @@
 		activeCategory === 'all' ? providers : providers.filter((p) => p.category === activeCategory)
 	);
 
-	function runBrief() {
+	async function runBrief() {
 		const text = brief.trim();
-		if (!text || !chat) return;
-		chat.send(text);
+		if (!text) return;
+		await revealPanel();
+		chat?.send(text);
 		brief = '';
 	}
 
@@ -102,39 +128,45 @@
 		</div>
 	</header>
 
-	<div class="svc-grid">
-		<div class="svc-left">
-			<!-- Brief composer -->
-			<section class="svc-card svc-brief">
-				<span class="eyebrow">Describe your song's needs</span>
-				<form
-					onsubmit={(e) => {
-						e.preventDefault();
-						runBrief();
-					}}
-				>
-					<textarea
-						bind:value={brief}
-						rows="3"
-						placeholder="e.g. I need my track mixed, mastered, and cover art for a lo-fi hip-hop single."
-					></textarea>
-					<div class="svc-brief-foot">
-						<div class="svc-examples">
-							{#each examples as ex}
-								<button type="button" class="v3-orb-chip" onclick={() => (brief = ex)}>
-									{ex.length > 40 ? ex.slice(0, 40) + '…' : ex}
-								</button>
-							{/each}
-						</div>
-						<button type="submit" class="v3-act" disabled={!brief.trim()}>
-							Find my team <Icon name="arrow-right" size={16} color="#fff" />
-						</button>
+	<div class="svc-stack">
+		<!-- Brief composer -->
+		<section class="svc-card svc-brief">
+			<span class="eyebrow">Describe your song's needs</span>
+			<form
+				onsubmit={(e) => {
+					e.preventDefault();
+					runBrief();
+				}}
+			>
+				<textarea
+					bind:value={brief}
+					rows="3"
+					placeholder="e.g. I need my track mixed, mastered, and cover art for a lo-fi hip-hop single."
+				></textarea>
+				<div class="svc-brief-foot">
+					<div class="svc-examples">
+						{#each examples as ex}
+							<button type="button" class="v3-orb-chip" onclick={() => (brief = ex)}>
+								{ex.length > 40 ? ex.slice(0, 40) + '…' : ex}
+							</button>
+						{/each}
 					</div>
-				</form>
-			</section>
+					<button type="submit" class="v3-act" disabled={!brief.trim()}>
+						Find my team <Icon name="arrow-right" size={16} color="#fff" />
+					</button>
+				</div>
+			</form>
+		</section>
 
-			<!-- Marketplace -->
-			<section class="svc-card">
+		<!-- Revealable matchmaker panel: holds the grounding evidence when invoked -->
+		{#if panelOpen}
+			<div class="svc-panel" bind:this={panelEl} transition:slide={{ duration: 280 }}>
+				<MatchmakerChat bind:this={chat} />
+			</div>
+		{/if}
+
+		<!-- Marketplace -->
+		<section class="svc-card">
 				<div class="svc-card-head">
 					<span class="eyebrow">Vetted marketplace</span>
 					<span class="svc-pill">{providers.length} providers</span>
@@ -191,30 +223,17 @@
 					</div>
 				{/if}
 			</section>
-		</div>
-
-		<div class="svc-chat">
-			<MatchmakerChat bind:this={chat} />
-		</div>
 	</div>
 </div>
 
 <style>
-	.svc-grid {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: 22px;
-	}
-	@media (min-width: 1024px) {
-		.svc-grid {
-			grid-template-columns: 2fr 1fr;
-			align-items: start;
-		}
-	}
-	.svc-left {
+	.svc-stack {
 		display: flex;
 		flex-direction: column;
 		gap: 22px;
+	}
+	.svc-panel {
+		height: 600px;
 	}
 	.svc-card {
 		background: var(--paper-0);
@@ -313,6 +332,11 @@
 	@media (min-width: 640px) {
 		.svc-providers {
 			grid-template-columns: 1fr 1fr;
+		}
+	}
+	@media (min-width: 1024px) {
+		.svc-providers {
+			grid-template-columns: 1fr 1fr 1fr;
 		}
 	}
 	.svc-prov {
@@ -455,10 +479,5 @@
 	.svc-turnaround {
 		font-size: 12px;
 		color: var(--ink-muted);
-	}
-	.svc-chat {
-		height: 660px;
-		position: sticky;
-		top: 24px;
 	}
 </style>

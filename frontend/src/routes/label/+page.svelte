@@ -1,6 +1,9 @@
 <script lang="ts">
+	import { tick } from 'svelte';
+	import { slide } from 'svelte/transition';
 	import LabelAgentChat from '$lib/components/LabelAgentChat.svelte';
 	import Icon from '$lib/components/Icon.svelte';
+	import { pendingAsk, clearPending } from '$lib/lodeStore';
 
 	type Gap = { type: string; organization: string };
 	type Artist = {
@@ -36,6 +39,28 @@
 
 	let chat = $state<LabelAgentChat>();
 
+	// The agent panel (with its A2A trace) stays out of the way until the orb
+	// hands off a question or the user runs the bulk action — then it reveals
+	// full-width in place, where the handoff trace renders at full size.
+	let panelOpen = $state(false);
+	let panelEl: HTMLDivElement | undefined = $state();
+
+	async function revealPanel() {
+		panelOpen = true;
+		await tick();
+		panelEl?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+	}
+
+	// React to an orb handoff even when we're already on this route (goto to the
+	// current path won't remount, so onMount alone would miss it). One-shot.
+	$effect(() => {
+		const pending = $pendingAsk;
+		if (pending && pending.page === '/label') {
+			clearPending();
+			revealPanel().then(() => chat?.ask(pending.prompt));
+		}
+	});
+
 	const fmt = (n: number) =>
 		new Intl.NumberFormat('en-US', {
 			style: 'currency',
@@ -68,13 +93,11 @@
 		}
 	};
 
-	function bulkRegister() {
+	async function bulkRegister() {
+		await revealPanel();
 		chat?.ask(
 			`Register all ${p.neighboring_rights_artists} artists missing neighboring rights to recover ${fmt(p.neighboring_rights_uncollected)}. Draft the bulk SoundExchange registration now.`
 		);
-		if (typeof document !== 'undefined') {
-			document.getElementById('label-chat')?.scrollIntoView({ behavior: 'smooth' });
-		}
 	}
 
 	const initials = (name: string) =>
@@ -88,7 +111,7 @@
 <div class="v3-stage-wide">
 	<header class="v3-header">
 		<div>
-			<span class="v3-date">Catalog · A2A</span>
+			<span class="v3-date">Catalog</span>
 			<h1>{p.label_profile?.name ?? 'Label'} catalog</h1>
 		</div>
 		<div class="v3-header-recovered">
@@ -132,6 +155,13 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- Revealable agent panel: holds the live A2A trace when invoked -->
+	{#if panelOpen}
+		<div class="lab-panel" bind:this={panelEl} transition:slide={{ duration: 280 }}>
+			<LabelAgentChat bind:this={chat} />
+		</div>
+	{/if}
 
 	<!-- Recovery forecast + per-category gap breakdown -->
 	{#if forecast?.categories?.length}
@@ -191,62 +221,56 @@
 		</div>
 	{/if}
 
-	<!-- Roster table + chat -->
-	<div class="lab-grid lab-roster-grid">
-		<section class="lab-card lab-roster">
-			<div class="lab-card-head">
-				<span class="eyebrow">Catalog roster</span>
-				<span class="lab-pill">sorted by opportunity</span>
-			</div>
-			<div class="lab-table-scroll">
-				<table class="lab-table">
-					<thead>
-						<tr>
-							<th>Artist</th>
-							<th class="num">YTD</th>
-							<th class="gaps">Gaps</th>
-							<th class="num">Uncollected</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each roster as a (a.id)}
-							<tr>
-								<td>
-									<div class="lab-artist">
-										<span class="lab-avatar">{initials(a.name)}</span>
-										<span class="lab-artist-name">{a.name}</span>
-									</div>
-								</td>
-								<td class="num mono lab-ytd">{fmt(a.ytd_earnings)}</td>
-								<td class="gaps">
-									{#if a.gaps.length === 0}
-										<span class="lab-clear"><span class="lab-clear-dot"></span> All clear</span>
-									{:else}
-										<div class="lab-gap-row">
-											{#each a.gaps as g}
-												<span class="lab-tag {gapTone(g.type)}">{g.organization}</span>
-											{/each}
-										</div>
-									{/if}
-								</td>
-								<td class="num mono">
-									{#if a.total_uncollected > 0}
-										<span class="lab-uncollected">{fmtCents(a.total_uncollected)}</span>
-									{:else}
-										<span class="lab-dash">—</span>
-									{/if}
-								</td>
-							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</div>
-		</section>
-
-		<div id="label-chat" class="lab-chat">
-			<LabelAgentChat bind:this={chat} />
+	<!-- Roster table (full width) -->
+	<section class="lab-card lab-roster">
+		<div class="lab-card-head">
+			<span class="eyebrow">Catalog roster</span>
+			<span class="lab-pill">sorted by opportunity</span>
 		</div>
-	</div>
+		<div class="lab-table-scroll">
+			<table class="lab-table">
+				<thead>
+					<tr>
+						<th>Artist</th>
+						<th class="num">YTD</th>
+						<th class="gaps">Gaps</th>
+						<th class="num">Uncollected</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each roster as a (a.id)}
+						<tr>
+							<td>
+								<div class="lab-artist">
+									<span class="lab-avatar">{initials(a.name)}</span>
+									<span class="lab-artist-name">{a.name}</span>
+								</div>
+							</td>
+							<td class="num mono lab-ytd">{fmt(a.ytd_earnings)}</td>
+							<td class="gaps">
+								{#if a.gaps.length === 0}
+									<span class="lab-clear"><span class="lab-clear-dot"></span> All clear</span>
+								{:else}
+									<div class="lab-gap-row">
+										{#each a.gaps as g}
+											<span class="lab-tag {gapTone(g.type)}">{g.organization}</span>
+										{/each}
+									</div>
+								{/if}
+							</td>
+							<td class="num mono">
+								{#if a.total_uncollected > 0}
+									<span class="lab-uncollected">{fmtCents(a.total_uncollected)}</span>
+								{:else}
+									<span class="lab-dash">—</span>
+								{/if}
+							</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+		</div>
+	</section>
 </div>
 
 <style>
@@ -263,9 +287,11 @@
 		.lab-forecast-grid {
 			grid-template-columns: 2fr 1fr;
 		}
-		.lab-roster-grid {
-			grid-template-columns: 2fr 1fr;
-		}
+	}
+
+	.lab-panel {
+		margin-bottom: 22px;
+		height: 560px;
 	}
 
 	.lab-hero {
@@ -316,6 +342,7 @@
 
 	.lab-card {
 		padding: 26px 28px;
+		margin-bottom: 22px;
 	}
 	.lab-card-head {
 		display: flex;
@@ -534,9 +561,5 @@
 	}
 	.lab-dash {
 		color: var(--paper-300);
-	}
-
-	.lab-chat {
-		height: 620px;
 	}
 </style>

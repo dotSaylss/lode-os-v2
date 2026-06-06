@@ -242,15 +242,30 @@ body {
 .v3-ico-btn.approve:hover { background: var(--sg-100); }
 
 /* ICON RAIL */
-.v3-rail { width: 76px; flex: none; position: relative; z-index: 40; }
+/* The rail reserves layout width (`.v3-rail`) while the visible panel is
+   absolutely positioned inside it. Unlocked: panel = 76px, hover-expands to
+   236px as an overlay (rail width stays 76px, so content doesn't shift).
+   Locked: rail width grows to 236px so the panel pushes content over and never
+   covers it; hover-expansion is disabled. */
+.v3-rail { width: 76px; flex: none; position: relative; z-index: 40; transition: width .26s cubic-bezier(0.22,1,0.36,1); }
+.appv3.rail-locked .v3-rail { width: 236px; }
 .v3-rail-panel { position: absolute; top: 0; left: 0; bottom: 0; width: 76px; background: var(--paper-0);
   border-right: 1px solid var(--paper-200); display: flex; flex-direction: column; padding: 18px 14px;
   overflow: hidden; transition: width .26s cubic-bezier(0.22,1,0.36,1), box-shadow .26s; }
 .v3-rail:hover .v3-rail-panel { width: 236px; box-shadow: var(--v3-sh-lg); }
+.appv3.rail-locked .v3-rail-panel { width: 236px; box-shadow: none; }
 .v3-rail-brand { display: flex; align-items: center; gap: 12px; padding: 4px 6px 20px; }
-.v3-rail-word { font-size: 18px; font-weight: 600; letter-spacing: -0.4px; color: var(--ink-900); white-space: nowrap; opacity: 0; transition: opacity .2s; }
+.v3-rail-word { font-size: 18px; font-weight: 600; letter-spacing: -0.4px; color: var(--ink-900); white-space: nowrap; opacity: 0; transition: opacity .2s; flex: 1; }
 .v3-rail-word i { font-style: normal; color: var(--sg-500); }
-.v3-rail:hover .v3-rail-word { opacity: 1; }
+.v3-rail:hover .v3-rail-word,
+.appv3.rail-locked .v3-rail-word { opacity: 1; }
+/* lock toggle — only visible once the panel is open */
+.v3-rail-lock { flex: none; width: 30px; height: 30px; border-radius: var(--r-sm); border: none; background: transparent;
+  display: inline-flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0;
+  transition: opacity .2s, background .14s; }
+.v3-rail-lock:hover { background: var(--paper-100); }
+.v3-rail:hover .v3-rail-lock,
+.appv3.rail-locked .v3-rail-lock { opacity: 1; }
 .v3-rail-nav { display: flex; flex-direction: column; gap: 3px; }
 .v3-rail-foot { margin-top: auto; display: flex; flex-direction: column; gap: 3px; }
 .v3-rail-item { display: flex; align-items: center; gap: 14px; padding: 10px; border-radius: var(--r-md);
@@ -260,7 +275,8 @@ body {
 .v3-rail-item.active .v3-rail-ico { color: var(--sg-600); }
 .v3-rail-ico { width: 24px; display: inline-flex; align-items: center; justify-content: center; flex: none; color: inherit; }
 .v3-rail-label { font-size: 14px; font-weight: 500; white-space: nowrap; opacity: 0; transition: opacity .2s; }
-.v3-rail:hover .v3-rail-label { opacity: 1; }
+.v3-rail:hover .v3-rail-label,
+.appv3.rail-locked .v3-rail-label { opacity: 1; }
 .v3-rail-avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--sg-300); color: var(--sg-700); font-size: 10.5px; font-weight: 700; }
 
 /* STAGE / HEADER */
@@ -339,12 +355,12 @@ body {
 .v3-orb-badge { position: absolute; top: -2px; right: -2px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; background: var(--sg-500); color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid var(--paper-50); }
 .v3-orb-hint { position: absolute; right: 72px; top: 50%; transform: translateY(-50%) translateX(6px); white-space: nowrap; background: var(--ink-900); color: var(--paper-50); font-size: 12.5px; font-weight: 500; padding: 7px 12px; border-radius: var(--r-md); box-shadow: var(--v3-sh-md); opacity: 0; pointer-events: none; transition: opacity .18s, transform .18s; }
 .v3-orb-hint::after { content: ""; position: absolute; right: -5px; top: 50%; transform: translateY(-50%) rotate(45deg); width: 9px; height: 9px; background: var(--ink-900); }
-.v3-orb-wrap:not(.pinned) .v3-orb:hover .v3-orb-hint { opacity: 0; }
-.v3-orb-wrap:not(:hover):not(.pinned) .v3-orb .v3-orb-hint { opacity: 1; transform: translateY(-50%); }
-.v3-orb-panel { width: 380px; max-width: calc(100vw - 56px); background: var(--paper-0); border: 1px solid var(--paper-200); border-radius: var(--r-xl); box-shadow: var(--v3-sh-xl); display: flex; flex-direction: column; overflow: hidden; transform-origin: bottom right; opacity: 0; transform: translateY(12px) scale(0.96); pointer-events: none; transition: opacity .22s cubic-bezier(0.22,1,0.36,1), transform .22s cubic-bezier(0.22,1,0.36,1); }
-.v3-orb-wrap:hover .v3-orb-panel,
-.v3-orb-wrap:focus-within .v3-orb-panel,
-.v3-orb-wrap.pinned .v3-orb-panel { opacity: 1; transform: none; pointer-events: auto; }
+/* The hint tooltip shows only when the panel is closed. */
+.v3-orb-wrap.open .v3-orb-hint { opacity: 0 !important; }
+.v3-orb-wrap:not(.open):not(:hover) .v3-orb .v3-orb-hint { opacity: 1; transform: translateY(-50%); }
+.v3-orb-wrap:hover .v3-orb-hint { opacity: 0; }
+/* Panel is conditionally mounted; Svelte's scale transition handles enter/exit. */
+.v3-orb-panel { width: 380px; max-width: calc(100vw - 56px); background: var(--paper-0); border: 1px solid var(--paper-200); border-radius: var(--r-xl); box-shadow: var(--v3-sh-xl); display: flex; flex-direction: column; overflow: hidden; transform-origin: bottom right; }
 .v3-orb-head { display: flex; align-items: center; gap: 11px; padding: 15px 16px; border-bottom: 1px solid var(--paper-200); background: linear-gradient(180deg, var(--sg-50), var(--paper-0)); }
 .v3-orb-meta { flex: 1; min-width: 0; }
 .v3-orb-meta b { display: block; font-size: 13.5px; font-weight: 700; color: var(--ink-900); }
