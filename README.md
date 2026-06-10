@@ -1,36 +1,49 @@
 # LodeOS
 
-> AI Royalty Agent for the music industry — built on Google's Agent Development Kit (ADK) + SvelteKit.
+> The agentic control plane for the music business — Google ADK multi-agent system + SvelteKit.
 
-LodeOS is a multi-agent system that helps artists and labels surface **missing money** —
-unregistered neighboring rights, royalty gaps, and registration issues — then takes action
-to recover it. Built during a Google hackathon.
+An artist's catalog lives across half a dozen platforms — distribution, rights orgs,
+royalty collection, creation tools, sync marketplaces — and money falls through the
+gaps between them. LodeOS puts a team of agents **across** those platforms: they read
+from every connected source, surface the **missing money** (unregistered neighboring
+rights, unclaimed mechanicals, black-box royalties, unpitched sync briefs), and act to
+recover it — under human-set, per-capability permissions that genuinely gate what each
+agent may do.
 
 ## What it does
 
-- **Aggregates** an artist's royalty context across sources (DistroKid, Spotify, ASCAP, SoundExchange).
-- **Analyzes** earnings to flag gaps, unregistered rights, and missing payouts.
-- **Acts** by drafting registration requests (ASCAP/BMI/Neighboring Rights) on the artist's behalf.
+- **Finds missing money** — audits an artist's (or a whole label roster's) rights and
+  royalties across connected sources and quantifies what's recoverable.
+- **Acts to recover it** — drafts ASCAP/BMI/SoundExchange registrations, proposes bulk
+  catalog remediation, and pitches the catalog into live sync-licensing briefs.
+- **Matches collaborators** — pairs a song's needs (mix, master, art) with vetted
+  service providers, citing concrete evidence for every match.
+- **Stays on a leash you set** — every connector capability carries a human-set
+  permission (*allow / needs approval / deny*) that agents read first and obey; actions
+  return a visible tool trace so you can watch the settings being honored.
+
+One assistant — the floating **Lode orb** — is the single point of contact. It consults
+the right specialist agent and routes you to the view where the full detail (agent
+handoff traces, grounding evidence) renders.
 
 ## Architecture
 
 | Layer | Tech |
 |-------|------|
-| Agent runtime | Google ADK 2.x (Gemini 2.5 Pro + Flash) |
+| Agents | Google ADK 2.x — 5 specialist graphs, agent-to-agent delegation |
+| Models | Gemini 2.5 Pro + Flash via Vertex AI (per-seat Model Garden overrides) |
+| Grounding | Custom RAG over catalog/providers/briefs + Grounding with Google Search |
 | Data access | Model Context Protocol (MCP) — Mogul connector |
+| State | ADK Sessions (in-memory) → Vertex Agent Engine Sessions + Memory Bank (gated) |
 | Backend | Python · FastAPI |
-| Frontend | SvelteKit · TailwindCSS |
-| Deployment | Google Cloud Run · Cloud Build |
+| Frontend | SvelteKit · Tailwind CSS |
+| Deployment | Google Cloud Run · Cloud Build (`./deploy.sh`) |
 
-### Agent graph
+The agent team, A2A intents, connector permission model, grounding sources, env gates,
+and deployment mapping are documented in **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)**.
 
-- **OrchestratorAgent** (Gemini 2.5 Pro) — router + session memory, holds artist context.
-- **RoyaltyAnalysisAgent** (Gemini 2.5 Flash) — finds gaps and registration issues.
-- **ActionAgent** (Gemini 2.5 Flash) — generates registration drafts.
-
-The specialist agents reach the artist's royalty data over **MCP** via the Mogul
-connector (`mcp_server.py`) — the same pattern by which Claude connects to Google
-Drive or Slack. Swap the MCP server for a live Mogul API and nothing else changes.
+Every managed-service integration is env-gated with an in-process fallback, so the
+product keeps working even if any single cloud dependency is unavailable.
 
 ## Getting started
 
