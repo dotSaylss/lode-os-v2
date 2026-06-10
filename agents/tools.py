@@ -36,7 +36,21 @@ def get_artist_data() -> str:
     Returns:
         A JSON string of the user's context, or "{}" if no data is available.
     """
-    db = _CREATOR_DB if _active_persona() == "kai" else _DEFAULT_DB
+    persona = _active_persona()
+    if persona == "label":
+        # The label workspace has no single-artist context — steer the agent
+        # to the catalog tools instead of leaking another workspace's data.
+        return json.dumps(
+            {
+                "note": (
+                    "This is the Lode Records label workspace; there is no "
+                    "single-artist context here. For earnings, gaps, or roster "
+                    "questions use the label portfolio (LabelAgent / catalog "
+                    "specialist)."
+                )
+            }
+        )
+    db = _CREATOR_DB if persona == "kai" else _DEFAULT_DB
     if db.exists():
         return db.read_text()
     return "{}"

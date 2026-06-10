@@ -21,6 +21,7 @@
 	};
 	type Config = {
 		enabled: boolean;
+		connected?: boolean | null;
 		account?: string;
 		capabilities: Record<string, CapConfig>;
 		settings: Record<string, unknown>;
@@ -48,8 +49,12 @@
 	// ── Autosave (debounced PUT) ──────────────────────────────────────────────
 	let saveState = $state<'idle' | 'saving' | 'saved'>('idle');
 	let saveTimer: ReturnType<typeof setTimeout> | undefined;
+	// Guards against overlapping PUTs: only the most recent request may write
+	// its response back into `config`, so a slow stale save can't revert edits.
+	let saveSeq = 0;
 
 	async function persist() {
+		const seq = ++saveSeq;
 		saveState = 'saving';
 		try {
 			const res = await fetch(api(`/api/v1/connectors/${connector.id}/config`), {
@@ -57,6 +62,7 @@
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(config)
 			});
+			if (seq !== saveSeq) return; // a newer save is in flight or done
 			if (res.ok) {
 				config = await res.json();
 				saveState = 'saved';
@@ -65,7 +71,7 @@
 				saveState = 'idle';
 			}
 		} catch {
-			saveState = 'idle';
+			if (seq === saveSeq) saveState = 'idle';
 		}
 	}
 
@@ -178,7 +184,10 @@
 		<div class="cfg-id">
 			<div class="cfg-name-row">
 				<h1>{connector.name}</h1>
-				<span class="cfg-status"><span class="cfg-dot"></span> Connected</span>
+				<span class="cfg-status" class:off={connector.status !== 'connected'}>
+					<span class="cfg-dot"></span>
+					{connector.status === 'connected' ? 'Connected' : 'Available'}
+				</span>
 			</div>
 			<p>{connector.tagline}</p>
 		</div>
@@ -348,6 +357,13 @@
 		background: var(--sg-50);
 		padding: 3px 10px;
 		border-radius: var(--r-pill);
+	}
+	.cfg-status.off {
+		color: var(--amber-600);
+		background: var(--amber-50);
+	}
+	.cfg-status.off .cfg-dot {
+		background: var(--amber-500);
 	}
 	.cfg-dot {
 		width: 7px;
