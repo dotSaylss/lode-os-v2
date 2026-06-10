@@ -57,7 +57,7 @@
 	// Next-step actions offered under an answer, keyed by the destination the
 	// concierge routed to — so the conversation keeps moving after the first ask.
 	const FOLLOWUPS: Record<string, string[]> = {
-		'/': ['Draft the SoundExchange registration for me', 'How did you find this money?'],
+		'/today': ['Draft the SoundExchange registration for me', 'How did you find this money?'],
 		'/label': ['Which artists should we register first?', 'Forecast the recovery for the top five'],
 		'/services': ['Set up an intro with the top match', 'What would mastering cost me?'],
 		'/connectors/disco': ['Draft the pitch for the best brief', 'Forecast the placement fees']

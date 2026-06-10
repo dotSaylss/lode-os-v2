@@ -5,6 +5,7 @@
 	import { page } from '$app/state';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { api } from '$lib/api';
+	import { activeThreadId } from '$lib/chatStore';
 	import Icon from '$lib/components/Icon.svelte';
 	import LodeOrb from '$lib/components/LodeOrb.svelte';
 	import Onboarding from '$lib/components/Onboarding.svelte';
@@ -84,15 +85,23 @@
 		} catch {}
 	}
 
-	// Each workspace sees only its own views: artists/creators get Today +
-	// Services; the label gets Catalog. Connectors are everyone's control plane.
+	// Chat is the focal surface for every workspace; the rest are the deeper
+	// detail views. Artists/creators get Today + Services; the label gets
+	// Catalog. Connectors are everyone's control plane.
 	const NAV = [
-		{ href: '/', label: 'Today', icon: 'sun', match: (p: string) => p === '/', for: ['june', 'kai'] },
+		{ href: '/today', label: 'Today', icon: 'sun', match: (p: string) => p.startsWith('/today'), for: ['june', 'kai'] },
 		{ href: '/label', label: 'Catalog', icon: 'audio-lines', match: (p: string) => p.startsWith('/label'), for: ['label'] },
 		{ href: '/services', label: 'Services', icon: 'handshake', match: (p: string) => p.startsWith('/services'), for: ['june', 'kai'] },
 		{ href: '/connectors', label: 'Connectors', icon: 'plug', match: (p: string) => p.startsWith('/connectors'), for: ['june', 'label', 'kai'] }
 	];
 	const nav = $derived(NAV.filter((item) => item.for.includes(data.activePersona ?? 'june')));
+
+	// "New chat" clears the active thread and lands on the chat home; a fresh
+	// thread is created on the first send.
+	function newChat() {
+		activeThreadId.set(null);
+		goto('/');
+	}
 </script>
 
 <div class="appv3" class:rail-locked={railLocked}>
@@ -113,6 +122,15 @@
 			</div>
 
 			<nav class="v3-rail-nav">
+				<a href="/" class="v3-rail-item {page.url.pathname === '/' ? 'active' : ''}">
+					<span class="v3-rail-ico"><Icon name="message-circle" size={20} /></span>
+					<span class="v3-rail-label">Chat</span>
+				</a>
+				<button class="v3-rail-item" type="button" onclick={newChat}>
+					<span class="v3-rail-ico"><Icon name="plus" size={20} /></span>
+					<span class="v3-rail-label">New chat</span>
+				</button>
+				<span class="v3-rail-sep" aria-hidden="true"></span>
 				{#each nav as item}
 					<a href={item.href} class="v3-rail-item {item.match(page.url.pathname) ? 'active' : ''}">
 						<span class="v3-rail-ico"><Icon name={item.icon} size={20} /></span>
@@ -168,7 +186,11 @@
 		{@render children()}
 	</main>
 
-	<LodeOrb />
+	<!-- On the chat home the conversation IS Lode; the floating orb only
+	     accompanies the deeper workspace views. -->
+	{#if page.url.pathname !== '/'}
+		<LodeOrb />
+	{/if}
 </div>
 
 {#if showIntro}

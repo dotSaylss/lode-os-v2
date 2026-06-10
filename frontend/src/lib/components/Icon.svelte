@@ -42,6 +42,7 @@
 	import CircleCheck from '@lucide/svelte/icons/circle-check-big';
 	import Gem from '@lucide/svelte/icons/gem';
 	import Zap from '@lucide/svelte/icons/zap';
+	import MessageCircle from '@lucide/svelte/icons/message-circle';
 
 	const icons: Record<string, any> = {
 		sun: Sun,
@@ -81,7 +82,8 @@
 		plug: Plug,
 		'circle-check': CircleCheck,
 		gem: Gem,
-		zap: Zap
+		zap: Zap,
+		'message-circle': MessageCircle
 	};
 
 	let {

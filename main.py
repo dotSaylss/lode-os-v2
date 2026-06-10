@@ -649,6 +649,13 @@ _SPECIALIST_LABELS = {
     "SyncAgent": "Consulted the sync dealmaker",
 }
 
+# The concierge's own read tools → friendly labels, so the chat surface can show
+# the context-gathering step ("declarative intent in, grounded context out").
+_READ_TOOL_LABELS = {
+    "get_artist_data": "Read your royalty & library data",
+    "get_connectors_overview": "Checked your connected platforms",
+}
+
 
 @app.post("/api/v1/ask", response_model=OrbResponse)
 async def ask_lode(req: ChatRequest):
@@ -695,6 +702,14 @@ async def ask_lode(req: ChatRequest):
                                 label=_SPECIALIST_LABELS[specialist],
                             )
                         )
+                    elif specialist in _READ_TOOL_LABELS:
+                        trace.append(
+                            TraceEvent(
+                                kind="tool",
+                                agent="LodeConcierge",
+                                label=_READ_TOOL_LABELS[specialist],
+                            )
+                        )
                     if route_hint is None and specialist in ROUTE_BY_AGENT:
                         r = ROUTE_BY_AGENT[specialist]
                         route_hint = RouteHint(
@@ -720,5 +735,5 @@ async def ask_lode(req: ChatRequest):
         trace=trace,
         # Specialist consulted → the deep-reasoning path served this answer;
         # otherwise the Flash concierge handled it from its own read tools.
-        tier="reasoning" if trace else "fast",
+        tier="reasoning" if any(t.kind == "handoff" for t in trace) else "fast",
     )

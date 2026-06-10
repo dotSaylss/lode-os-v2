@@ -270,6 +270,7 @@ body {
 .v3-rail:hover .v3-rail-lock,
 .appv3.rail-locked .v3-rail-lock { opacity: 1; }
 .v3-rail-nav { display: flex; flex-direction: column; gap: 3px; }
+.v3-rail-sep { height: 1px; background: var(--paper-200); margin: 8px 10px; }
 .v3-rail-foot { margin-top: auto; display: flex; flex-direction: column; gap: 3px; }
 .v3-rail-item { display: flex; align-items: center; gap: 14px; padding: 10px; border-radius: var(--r-md);
   background: transparent; border: none; color: var(--ink-500); width: 100%; transition: all .14s; text-decoration: none; }
@@ -416,6 +417,70 @@ body {
 .v3-orb-send { width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--sg-500); flex: none; display: flex; align-items: center; justify-content: center; transition: background .15s; cursor: pointer; }
 .v3-orb-send:hover { background: var(--sg-600); }
 .v3-orb-send:disabled { background: var(--paper-200); cursor: not-allowed; }
+
+/* CHAT-FIRST HOME
+   The conversation is the focal surface; workspace pages are the deep views.
+   Same Ambient Sage system: paper canvas, serif voice for Lode, slate for the
+   user, sage for affordances. */
+.v3-chat { height: 100%; display: flex; flex-direction: column; }
+
+/* Empty state — the greeting is the front door. */
+.v3-chat-hero { margin: auto; width: 100%; max-width: 680px; padding: 0 36px 4vh; display: flex; flex-direction: column; align-items: center; text-align: center; animation: rise .5s cubic-bezier(0.22,1,0.36,1) both; }
+.v3-chat-mark { margin-bottom: 18px; }
+.v3-chat-hero h1 { margin: 0 0 10px; font-family: var(--font-serif); font-size: 38px; font-weight: 400; letter-spacing: -0.02em; line-height: 1.12; color: var(--ink-900); }
+.v3-chat-vp { margin: 0 0 30px; max-width: 52ch; font-size: 14.5px; line-height: 1.6; color: var(--ink-500); }
+
+/* Composer — an oversized cousin of the orb composer; the page's one big affordance. */
+.v3-chat-composer { width: 100%; display: flex; align-items: flex-end; gap: 10px; background: var(--paper-0); border: 1px solid var(--paper-200); border-radius: var(--r-xl); box-shadow: var(--v3-sh-md); padding: 12px 12px 12px 20px; transition: border-color .15s, box-shadow .2s; }
+.v3-chat-composer:focus-within { border-color: var(--sg-300); box-shadow: var(--v3-sh-lg); }
+.v3-chat-composer textarea { flex: 1; border: none; outline: none; background: transparent; resize: none; font-family: var(--font-sans); font-size: 15.5px; line-height: 1.5; color: var(--ink-900); padding: 7px 0; max-height: 180px; overflow-y: hidden; }
+.v3-chat-composer textarea::placeholder { color: var(--ink-muted); }
+.v3-chat-send { width: 38px; height: 38px; border-radius: 50%; border: none; background: var(--sg-500); flex: none; display: flex; align-items: center; justify-content: center; transition: background .15s, transform .12s; cursor: pointer; }
+.v3-chat-send:hover { background: var(--sg-600); }
+.v3-chat-send:active { transform: scale(0.94); }
+.v3-chat-send:disabled { background: var(--paper-200); cursor: not-allowed; }
+.v3-chat-tab { flex: none; align-self: center; font-size: 10.5px; font-weight: 600; letter-spacing: .02em; color: var(--ink-muted); background: var(--paper-0); border: 1px solid var(--paper-200); border-bottom-width: 2px; border-radius: var(--r-xs); padding: 2px 7px; }
+
+.v3-chat-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 18px; }
+.v3-chat-chip { font-size: 13px; font-weight: 500; color: var(--ink-700); background: var(--paper-0); border: 1px solid var(--paper-200); border-radius: var(--r-pill); padding: 8px 15px; transition: border-color .14s, color .14s, box-shadow .14s; cursor: pointer; }
+.v3-chat-chip:hover { border-color: var(--sg-300); color: var(--ink-900); box-shadow: var(--v3-sh-xs); }
+
+.v3-chat-recents { width: 100%; max-width: 480px; margin-top: 34px; display: flex; flex-direction: column; gap: 2px; }
+.v3-chat-recents-head { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-muted); text-align: left; padding: 0 12px 7px; }
+.v3-chat-recent { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: var(--r-md); border: none; background: transparent; text-align: left; cursor: pointer; transition: background .13s; }
+.v3-chat-recent:hover { background: var(--paper-100); }
+.v3-chat-recent span { flex: 1; min-width: 0; font-size: 13.5px; font-weight: 500; color: var(--ink-700); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* The quiet stack line — names the engine for anyone judging the plumbing. */
+.v3-chat-stack { margin: 36px 0 0; font-size: 11px; font-weight: 500; letter-spacing: .03em; color: var(--ink-muted); font-family: var(--font-mono); }
+
+/* Conversation view. */
+.v3-chat-thread { flex: 1; overflow-y: auto; min-height: 0; }
+.v3-chat-scroll { max-width: 740px; margin: 0 auto; padding: 40px 36px 24px; display: flex; flex-direction: column; gap: 26px; }
+.v3-chat-msg.user { align-self: flex-end; max-width: 76%; background: var(--slate-500); border-radius: 16px 16px 4px 16px; padding: 11px 16px; }
+.v3-chat-msg.user p { margin: 0; font-size: 14.5px; line-height: 1.5; color: #fff; white-space: pre-wrap; }
+.v3-chat-msg.lode { display: flex; gap: 14px; align-items: flex-start; animation: rise .4s cubic-bezier(0.22,1,0.36,1) both; }
+.v3-chat-avatar { flex: none; margin-top: 3px; }
+.v3-chat-body { flex: 1; min-width: 0; }
+.v3-chat-text { margin: 0; font-family: var(--font-serif); font-size: 17px; line-height: 1.62; color: var(--ink-900); white-space: pre-wrap; }
+
+/* Inline agent observability: what was read (MCP tools), who was consulted (A2A). */
+.v3-chat-trace { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.v3-chat-step { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 600; color: var(--ink-500); background: var(--paper-0); border: 1px solid var(--paper-200); border-radius: var(--r-pill); padding: 4px 11px; }
+.v3-chat-tier { display: inline-flex; align-items: center; gap: 4px; margin-top: 8px; font-size: 10.5px; font-weight: 600; letter-spacing: .01em; color: var(--ink-muted); }
+
+/* Route card — the bridge from chat into the deep workspace view. */
+.v3-chat-route { display: flex; align-items: center; gap: 14px; width: 100%; max-width: 420px; margin-top: 14px; background: var(--sg-50); border: 1px solid var(--sg-100); border-radius: var(--r-lg); padding: 13px 16px; text-align: left; cursor: pointer; transition: border-color .14s, background .14s, box-shadow .14s; }
+.v3-chat-route:hover { background: var(--sg-100); border-color: var(--sg-200); box-shadow: var(--v3-sh-sm); }
+.v3-chat-route-text { flex: 1; min-width: 0; }
+.v3-chat-route-text b { display: block; font-size: 13.5px; font-weight: 700; color: var(--sg-700); }
+.v3-chat-route-text span { display: block; font-size: 12px; color: var(--ink-500); margin-top: 2px; }
+.v3-chat-followups { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.v3-chat-followup { font-size: 12px; font-weight: 500; color: var(--ink-500); background: var(--paper-0); border: 1px solid var(--paper-200); border-radius: var(--r-pill); padding: 6px 12px; transition: border-color .14s, color .14s; cursor: pointer; }
+.v3-chat-followup:hover { border-color: var(--sg-200); color: var(--ink-900); }
+
+/* Docked composer under the thread. */
+.v3-chat-dock { flex: none; padding: 10px 36px 26px; max-width: 740px; margin: 0 auto; width: 100%; box-sizing: border-box; }
 
 /* ONBOARDING */
 .v3-onb { position: fixed; inset: 0; background: var(--paper-50); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; z-index: 80; }

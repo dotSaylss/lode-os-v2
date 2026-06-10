@@ -56,6 +56,9 @@ def _mogul_data_tools():
                     cwd=str(_PROJECT_ROOT),
                 ),
             ),
+            # The Lode MCP server exposes the whole connector control plane;
+            # this graph only needs the Mogul rights/royalty slice of it.
+            tool_filter=["get_artist_data"],
         )
         return [mogul_mcp]
     except Exception as exc:  # noqa: BLE001 — resilience over purity for the demo

@@ -15,7 +15,7 @@ reads the question, calls the single best-fit specialist as a tool, and weaves
 the result into one calm answer. Whichever specialist it calls also tells us
 which workspace page to surface (the ``route_hint``):
 
-    "what am I owed?"              → RightsSpecialist   → page "/"        (Today)
+    "what am I owed?"              → RightsSpecialist   → page "/today"   (Today)
     "biggest catalog opportunity" → CatalogSpecialist  → page "/label"   (Catalog)
     "who can master my track?"    → ServicesSpecialist → page "/services" (Services)
 
@@ -58,7 +58,7 @@ sync_tool = AgentTool(agent=sync_agent)
 # Map the specialist tool/agent names → the workspace page the orb should offer.
 # We match on agent name (AgentTool derives its tool name from the wrapped agent).
 ROUTE_BY_AGENT = {
-    orchestrator.name: {"page": "/", "label": "Today", "reason": "your royalties & rights"},
+    orchestrator.name: {"page": "/today", "label": "Today", "reason": "your royalties & rights"},
     label_agent.name: {"page": "/label", "label": "Catalog", "reason": "your catalog & bulk actions"},
     matchmaker_agent.name: {"page": "/services", "label": "Services", "reason": "the service marketplace"},
     sync_agent.name: {"page": "/connectors/disco", "label": "Disco", "reason": "your sync-licensing pitches"},
