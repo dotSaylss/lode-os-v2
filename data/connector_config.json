@@ -1,74 +1,67 @@
 {
-  "mogul": {
-    "enabled": true,
-    "account": "June Freedom",
-    "capabilities": {
-      "read_catalog": {
-        "enabled": true,
-        "permission": "allow"
+  "june": {
+    "mogul": {
+      "enabled": true,
+      "connected": true,
+      "account": "June Freedom",
+      "capabilities": {
+        "read_catalog": { "enabled": true, "permission": "allow" },
+        "read_royalties": { "enabled": true, "permission": "allow" },
+        "flag_gaps": { "enabled": true, "permission": "allow" },
+        "draft_registrations": { "enabled": true, "permission": "approval" }
       },
-      "read_royalties": {
-        "enabled": true,
-        "permission": "allow"
-      },
-      "flag_gaps": {
-        "enabled": true,
-        "permission": "allow"
-      },
-      "draft_registrations": {
-        "enabled": true,
-        "permission": "approval"
-      }
-    },
-    "settings": {
-      "sync_frequency": "daily"
+      "settings": { "sync_frequency": "daily" }
     }
   },
-  "suno": {
-    "enabled": true,
-    "account": "Lode Records",
-    "capabilities": {
-      "import_releases": {
-        "enabled": true,
-        "permission": "allow"
+  "label": {
+    "mogul": {
+      "enabled": true,
+      "connected": true,
+      "account": "Lode Records",
+      "capabilities": {
+        "read_catalog": { "enabled": true, "permission": "allow" },
+        "read_royalties": { "enabled": true, "permission": "allow" },
+        "flag_gaps": { "enabled": true, "permission": "allow" },
+        "draft_registrations": { "enabled": true, "permission": "approval" }
       },
-      "export_stems": {
-        "enabled": true,
-        "permission": "allow"
-      },
-      "catalog_sync": {
-        "enabled": true,
-        "permission": "approval"
-      }
-    },
-    "settings": {
-      "sync_frequency": "on_release"
+      "settings": { "sync_frequency": "daily" }
     }
   },
-  "disco": {
-    "enabled": true,
-    "account": "Lode Records",
-    "capabilities": {
-      "active_briefs": {
-        "enabled": true,
-        "permission": "allow"
+  "kai": {
+    "mogul": {
+      "enabled": true,
+      "connected": true,
+      "account": "Kai Rivers",
+      "capabilities": {
+        "read_catalog": { "enabled": true, "permission": "allow" },
+        "read_royalties": { "enabled": true, "permission": "allow" },
+        "flag_gaps": { "enabled": true, "permission": "allow" },
+        "draft_registrations": { "enabled": true, "permission": "approval" }
       },
-      "catalog_match": {
-        "enabled": true,
-        "permission": "allow"
-      },
-      "draft_pitch": {
-        "enabled": true,
-        "permission": "approval"
-      },
-      "auto_submit": {
-        "enabled": false,
-        "permission": "deny"
-      }
+      "settings": { "sync_frequency": "daily" }
     },
-    "settings": {
-      "sync_frequency": "daily",
-      "min_fee_floor": 1500
+    "suno": {
+      "enabled": true,
+      "connected": true,
+      "account": "Kai Rivers",
+      "capabilities": {
+        "import_releases": { "enabled": true, "permission": "allow" },
+        "export_stems": { "enabled": true, "permission": "allow" },
+        "catalog_sync": { "enabled": true, "permission": "approval" }
+      },
+      "settings": { "sync_frequency": "on_release" }
+    },
+    "disco": {
+      "enabled": true,
+      "connected": true,
+      "account": "Kai Rivers",
+      "capabilities": {
+        "active_briefs": { "enabled": true, "permission": "allow" },
+        "catalog_match": { "enabled": true, "permission": "allow" },
+        "draft_pitch": { "enabled": true, "permission": "approval" },
+        "auto_submit": { "enabled": false, "permission": "deny" }
+      },
+      "settings": { "sync_frequency": "daily", "min_fee_floor": 1500 }
     }
   }
 }

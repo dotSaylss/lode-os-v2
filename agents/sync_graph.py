@@ -16,14 +16,15 @@ is what makes the connector configuration genuinely gate agent behavior rather
 than being UI theater — a human+agent workflow, not agent-only.
 
 Grounding: the agent is grounded in the vetted brief set via `get_sync_briefs`
-(Custom-RAG) and in the real catalog via `get_label_portfolio`; it may only
-reference briefs and tracks that exist in those sources. Runs over the FastAPI
-Runner's InMemorySessionService by default (multi-turn), like the other graphs.
+(Custom-RAG) and in the active workspace's catalog via `get_sync_catalog` (a
+creator's tracks or a label's roster — both carrying `sound` profiles); it may
+only reference briefs and catalog entries that exist in those sources. Runs over
+the FastAPI Runner's InMemorySessionService by default (multi-turn).
 """
 
 from google.adk import Agent
 
-from agents.tools import get_sync_briefs, get_connector_config, get_label_portfolio
+from agents.tools import get_sync_briefs, get_connector_config, get_sync_catalog
 
 sync_agent = Agent(
     name="SyncAgent",
@@ -52,16 +53,17 @@ sync_agent = Agent(
         "catalog_match (matching catalog to briefs), draft_pitch (writing a "
         "pitch), auto_submit (submitting without approval — usually off).\n\n"
         "GROUNDING (non-negotiable): if active_briefs is allowed, call "
-        "`get_sync_briefs` to load the live briefs, and `get_label_portfolio` to "
-        "load the catalog. You may ONLY reference briefs and artists/tracks that "
-        "appear in that data — never invent a brief, buyer, or track.\n\n"
+        "`get_sync_briefs` to load the live briefs, and `get_sync_catalog` to "
+        "load the pitchable catalog (a creator's tracks or a label's roster). "
+        "You may ONLY reference briefs and catalog entries that appear in that "
+        "data — never invent a brief, buyer, track, or artist.\n\n"
         "WORKFLOW (each step gated by the matching capability above):\n"
         "1. Read the config, then the briefs and the catalog.\n"
         "2. catalog_match: for the most promising briefs, match the best-fit "
-        "catalog artists/tracks. Each artist carries a `sound` profile (genres, "
+        "catalog entries. Each track/artist carries a `sound` profile (genres, "
         "moods, tempo, vocals) — that is the ground truth: justify each match by "
         "citing the brief's mood, tempo, genre, medium, and budget against the "
-        "artist's actual `sound` profile, never a guessed style. Rank by "
+        "entry's actual `sound` profile, never a guessed style. Rank by "
         "fit and by budget. If a brief's budget is below the configured "
         "min_fee_floor in settings, note it as below the floor.\n"
         "3. draft_pitch: for the single best match, draft a short, concrete pitch "
@@ -76,7 +78,7 @@ sync_agent = Agent(
         "pitch, and a forecast figure. This is a multi-turn conversation: "
         "remember earlier matches if the user refines the request."
     ),
-    tools=[get_connector_config, get_sync_briefs, get_label_portfolio],
+    tools=[get_connector_config, get_sync_briefs, get_sync_catalog],
 )
 
 # Exported under the ADK root_agent convention plus a descriptive alias.

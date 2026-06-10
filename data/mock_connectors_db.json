@@ -8,6 +8,11 @@
       "description": "The live royalty connector. Lode reads your full catalog, master ownership, and royalty statements over MCP, then flags neighboring-rights gaps and missing payouts.",
       "status": "connected",
       "account": "June Freedom",
+      "personas": {
+        "june": { "status": "connected", "account": "June Freedom" },
+        "label": { "status": "connected", "account": "Lode Records" },
+        "kai": { "status": "connected", "account": "Kai Rivers" }
+      },
       "capabilities": ["Catalog", "Master recordings", "Royalty statements", "Neighboring rights"],
       "capabilities_schema": [
         { "key": "read_catalog", "label": "Read catalog", "description": "Let Lode read your full catalog and master ownership." },
@@ -26,14 +31,17 @@
       "tagline": "AI music creation & stems",
       "description": "Bring finished songs and stems straight into your catalog. Lode keeps new Suno releases in sync with Mogul so every track is tracked, owned, and monetized from day one.",
       "status": "connected",
-      "account": "Lode Records",
+      "account": "Kai Rivers",
+      "personas": {
+        "kai": { "status": "connected", "account": "Kai Rivers" },
+        "label": { "status": "available" }
+      },
       "capabilities": ["AI song generation", "Stems & masters export", "Catalog sync"],
       "capabilities_schema": [
         { "key": "import_releases", "label": "Import releases", "description": "Pull finished Suno songs into your catalog." },
         { "key": "export_stems", "label": "Export stems & masters", "description": "Retrieve stems and masters for downstream use." },
         { "key": "catalog_sync", "label": "Sync to catalog", "description": "Register imported releases in Mogul automatically." }
       ],
-      "agent_action": { "label": "Sync & register my latest releases", "prompt": "Sync my latest Suno releases into the catalog and register them." },
       "tone": "sage",
       "highlight": false
     },
@@ -44,7 +52,11 @@
       "tagline": "Pitch your catalog into live sync briefs — film, TV, ads & brands",
       "description": "The demand side. Lode reads active sync briefs, matches your catalog by mood, tempo and genre, drafts and tracks pitches, and pipes expected placement fees back into your Mogul forecast — turning missing money into new money.",
       "status": "connected",
-      "account": "Lode Records",
+      "account": "Kai Rivers",
+      "personas": {
+        "kai": { "status": "connected", "account": "Kai Rivers" },
+        "label": { "status": "available" }
+      },
       "capabilities": ["Active sync briefs", "Catalog→brief matching", "Pitch drafting & tracking", "Placement royalties → Mogul"],
       "capabilities_schema": [
         { "key": "active_briefs", "label": "Read active briefs", "description": "Pull live sync briefs from film, TV, ad and brand buyers." },
@@ -63,6 +75,10 @@
       "tagline": "Streaming performance & audience data",
       "description": "Stream counts, playlist adds, and listener geography — context Lode uses to prioritize which tracks to pitch and register first.",
       "status": "available",
+      "personas": {
+        "june": { "status": "available" },
+        "kai": { "status": "available" }
+      },
       "capabilities": ["Stream analytics", "Playlist tracking", "Audience geography"],
       "capabilities_schema": [
         { "key": "read_streams", "label": "Read stream analytics", "description": "See plays, saves, and release performance across your catalog." },
@@ -79,6 +95,11 @@
       "tagline": "Distribution & release delivery",
       "description": "Deliver releases to every store and surface release metadata so Lode can reconcile what's live against what's earning.",
       "status": "available",
+      "personas": {
+        "june": { "status": "available" },
+        "label": { "status": "available" },
+        "kai": { "status": "available" }
+      },
       "capabilities": ["Release delivery", "Store coverage", "Split metadata"],
       "capabilities_schema": [
         { "key": "read_releases", "label": "Read releases & stores", "description": "See what's live in which stores, and reconcile against earnings." },
@@ -95,6 +116,10 @@
       "tagline": "Performing-rights registration",
       "description": "Register works and collect performance royalties. Lode drafts and submits registrations on your behalf.",
       "status": "available",
+      "personas": {
+        "june": { "status": "available" },
+        "label": { "status": "available" }
+      },
       "capabilities": ["Work registration", "Performance royalties", "Writer/publisher shares"],
       "capabilities_schema": [
         { "key": "read_works", "label": "Read registered works", "description": "See which works are registered and which are missing." },
@@ -111,6 +136,10 @@
       "tagline": "Digital performance & neighboring rights",
       "description": "Collect digital performance royalties for master owners — the home of the neighboring-rights money Lode surfaces in Today.",
       "status": "available",
+      "personas": {
+        "june": { "status": "available" },
+        "label": { "status": "available" }
+      },
       "capabilities": ["Digital performance", "Neighboring rights", "Master owner payouts"],
       "capabilities_schema": [
         { "key": "read_payouts", "label": "Read payout history", "description": "See digital-performance payouts for your masters." },
@@ -127,6 +156,9 @@
       "tagline": "B2B licensing marketplace",
       "description": "List your catalog on the largest B2B music licensing marketplace as a second sync channel alongside Disco.",
       "status": "available",
+      "personas": {
+        "label": { "status": "available" }
+      },
       "capabilities": ["B2B marketplace", "Enterprise licensing", "Rights reconciliation"],
       "capabilities_schema": [
         { "key": "read_marketplace", "label": "Read marketplace demand", "description": "See active enterprise licensing opportunities." },

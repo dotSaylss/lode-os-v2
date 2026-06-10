@@ -30,16 +30,20 @@ handoff traces, grounding evidence) renders.
 
 ## Who it's for
 
-1. **Independent artists** — *find the money you're owed.* Royalty gaps surfaced and
-   registrations drafted (the $2,400 neighboring-rights moment on Today).
-2. **Labels & catalog teams** — *operate the whole roster.* Catalog-wide audits with
-   bulk recovery delegated agent-to-agent (the visible LabelAgent → ActionAgent
-   handoff on Catalog).
-3. **Rights holders making new money** — *new revenue, on your terms.* Connect the
-   platforms your music lives on, set per-capability permissions, and let the sync
-   dealmaker pitch your catalog under approval (Connectors → Disco).
+The demo ships three self-contained workspaces — switch between them from the
+account button in the rail:
 
-The three journeys, their agent flows, and a demo walkthrough are detailed in
+1. **June Freedom, independent artist** — *find the money you're owed.* Royalty gaps
+   surfaced and registrations drafted (the $2,400 neighboring-rights moment on Today).
+2. **Lode Records, label** — *operate the whole roster.* Catalog-wide audits across 50
+   artists with bulk recovery delegated agent-to-agent (the visible LabelAgent →
+   ActionAgent handoff on Catalog).
+3. **Kai Rivers, AI-native creator** — *new revenue, on your terms.* Creates with
+   Suno, owns in Mogul, monetizes through Disco: the sync dealmaker pitches his
+   tracks under per-capability permissions he controls.
+
+Each workspace scopes its own data, connectors, permissions, and agents. The three
+journeys and a demo walkthrough are detailed in
 [docs/VALUE_PROPS.md](./docs/VALUE_PROPS.md).
 
 ## Architecture

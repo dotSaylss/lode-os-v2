@@ -1,0 +1,26 @@
+{
+  "active": "june",
+  "personas": [
+    {
+      "id": "june",
+      "name": "June Freedom",
+      "role": "Artist",
+      "tagline": "Independent artist \u2014 recover what you're owed",
+      "home": "/"
+    },
+    {
+      "id": "label",
+      "name": "Lode Records",
+      "role": "Label",
+      "tagline": "50-artist roster \u2014 operate the whole catalog",
+      "home": "/label"
+    },
+    {
+      "id": "kai",
+      "name": "Kai Rivers",
+      "role": "Creator",
+      "tagline": "AI-native creator \u2014 make new money from day one",
+      "home": "/"
+    }
+  ]
+}

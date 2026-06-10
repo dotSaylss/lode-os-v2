@@ -88,6 +88,18 @@ The system uses two agent-to-agent coordination patterns, with these intents:
   the built-in `google_search` tool never shares a generate call with function
   tools (a Vertex constraint).
 
+## Demo workspaces (personas)
+
+The demo ships three self-contained workspaces, one per user base, switchable from
+the account button in the rail: **June Freedom** (artist — Today/Services), **Lode
+Records** (label — Catalog), and **Kai Rivers** (AI-native creator — Suno → Mogul →
+Disco). The active workspace is persisted server-side (`GET/POST /api/v1/persona`)
+and scopes *everything*: the nav, the artist context, the connector catalog and its
+configs, and what every agent tool returns — so an artist's workspace never shows
+label data and vice versa. The SyncAgent grounds in the active workspace's catalog
+(`get_sync_catalog`): a creator's tracks or a label's roster, both carrying `sound`
+profiles.
+
 ## Connectors: human-gated agency
 
 Each connector (`/connectors`) is one external platform the agents reason or act
@@ -126,8 +138,9 @@ Every factual claim an agent makes is grounded in a store it can cite:
 
 | Source | Used by | Enforced how |
 |---|---|---|
-| Artist royalty context (Mogul, over **MCP** via `mcp_server.py`) | Orchestrator graph | may only cite returned data |
-| Label portfolio — 50 artists with earnings, gaps, and a `sound` profile (genres, moods, tempo, vocals) | LabelAgent, SyncAgent | matches must cite the artist's actual `sound` profile, never a guessed style |
+| Artist royalty context (Mogul, over **MCP** via `mcp_server.py`; persona-scoped) | Orchestrator graph | may only cite returned data |
+| Label portfolio — 50 artists with earnings, gaps, and a `sound` profile (genres, moods, tempo, vocals) | LabelAgent | bulk plans cite real roster data |
+| Sync catalog (persona-scoped: a creator's tracks or the label roster, with `sound` profiles) | SyncAgent | matches must cite the entry's actual `sound` profile, never a guessed style |
 | Vetted provider marketplace (19 providers) | MatchmakerAgent | recommendations restricted to DB entries, cited with rating/genre/rate evidence |
 | Live sync briefs (film/TV/ad/game/brand) | SyncAgent | may only reference briefs that exist in the store |
 | Public web (Grounding with Google Search) | LiveProviderResearchAgent | built-in `google_search` tool |

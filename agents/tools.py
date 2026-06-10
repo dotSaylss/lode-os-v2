@@ -6,23 +6,37 @@ from pathlib import Path
 # working regardless of the process's current working directory.
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 _DEFAULT_DB = _PROJECT_ROOT / "data" / "mock_mogul_db.json"
+_CREATOR_DB = _PROJECT_ROOT / "data" / "mock_creator_db.json"
 _LABEL_DB = _PROJECT_ROOT / "data" / "mock_label_db.json"
 _PROVIDERS_DB = _PROJECT_ROOT / "data" / "mock_providers_db.json"
 _SYNC_BRIEFS_DB = _PROJECT_ROOT / "data" / "mock_sync_briefs.json"
 
 
-def get_artist_data() -> str:
-    """Read the artist's Mogul royalty context and return it as a JSON string.
+def _active_persona() -> str:
+    """The active demo workspace — scopes what every data tool returns."""
+    try:
+        from services.db_service import DBService
 
-    Returns the full artist profile, connected revenue sources, and neighboring
-    rights registration status (including any estimated missing/uncollected
-    amounts). Agents use this to inspect the database for gaps and missing money.
+        return DBService().get_active_persona()
+    except Exception:
+        return "june"
+
+
+def get_artist_data() -> str:
+    """Read the signed-in user's Mogul royalty context as a JSON string.
+
+    Returns the active workspace owner's profile, connected revenue sources,
+    and neighboring-rights registration status (including any estimated
+    missing/uncollected amounts). Agents use this to inspect the database for
+    gaps and missing money. For the creator workspace this also includes their
+    released tracks with `sound` profiles.
 
     Returns:
-        A JSON string of the artist's context, or "{}" if no data is available.
+        A JSON string of the user's context, or "{}" if no data is available.
     """
-    if _DEFAULT_DB.exists():
-        return _DEFAULT_DB.read_text()
+    db = _CREATOR_DB if _active_persona() == "kai" else _DEFAULT_DB
+    if db.exists():
+        return db.read_text()
     return "{}"
 
 
@@ -220,6 +234,47 @@ def get_connector_config(connector_id: str) -> str:
         return json.dumps(cfg.model_dump())
     except Exception:
         return "{}"
+
+
+def get_sync_catalog() -> str:
+    """Read the active workspace's pitchable catalog as a JSON string.
+
+    This is the SyncAgent's catalog grounding source. For a creator workspace
+    it returns their released tracks; for a label it returns the artist roster.
+    Every entry carries a `sound` profile (genres, moods, tempo, vocals) — the
+    ground truth for matching against sync briefs. Only ever pitch tracks or
+    artists that appear here.
+
+    Returns:
+        A JSON string of {"owner", "kind": "tracks"|"artists", "catalog":
+        [...]}, or an empty catalog if unavailable.
+    """
+    persona = _active_persona()
+    if persona == "label":
+        if _LABEL_DB.exists():
+            data = json.loads(_LABEL_DB.read_text())
+            return json.dumps(
+                {
+                    "owner": data.get("label_profile", {}).get("name", "the label"),
+                    "kind": "artists",
+                    "catalog": [
+                        {"name": a.get("name"), "sound": a.get("sound")}
+                        for a in data.get("artists", [])
+                    ],
+                }
+            )
+        return '{"owner": null, "kind": "artists", "catalog": []}'
+    db = _CREATOR_DB if persona == "kai" else _DEFAULT_DB
+    if db.exists():
+        data = json.loads(db.read_text())
+        return json.dumps(
+            {
+                "owner": data.get("artist_profile", {}).get("name", "the artist"),
+                "kind": "tracks",
+                "catalog": data.get("tracks", []),
+            }
+        )
+    return '{"owner": null, "kind": "tracks", "catalog": []}'
 
 
 def get_sync_briefs() -> str:

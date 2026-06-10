@@ -172,6 +172,36 @@ class ConnectRequest(BaseModel):
     account: str = "Lode Records"
 
 
+class PersonaRequest(BaseModel):
+    """Body for switching the active demo workspace."""
+
+    id: str
+
+
+@app.get("/api/v1/personas")
+def get_personas():
+    """Return the demo workspaces (personas) and which one is active.
+
+    One product, three users: June Freedom (artist — recover what you're
+    owed), Lode Records (label — operate the roster), Kai Rivers (AI-native
+    creator — make new money). The active persona scopes the artist context,
+    connector catalog, configs, and what every agent sees."""
+    return {
+        "active": db_service.get_active_persona(),
+        "personas": db_service.get_personas(),
+    }
+
+
+@app.post("/api/v1/persona")
+def set_persona(req: PersonaRequest):
+    """Switch the active workspace. Persisted so backend + agents agree."""
+    try:
+        active = db_service.set_active_persona(req.id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    return {"active": active}
+
+
 @app.get("/api/v1/artist/context", response_model=ArtistContext)
 def get_artist_context():
     context = db_service.get_artist_context()
@@ -266,9 +296,9 @@ def connect_connector_route(connector_id: str, req: ConnectRequest):
     return db_service.connect_connector(connector_id, req.account)
 
 
-# Maps each connector to the agent selector that runs its headline action. Only
-# connectors with a real agent action are listed; others fall back to the orb.
-_CONNECTOR_AGENT = {"disco": "sync"}
+# Maps each connector to the agent selector that runs its headline action.
+# "rights" resolves to the default royalty orchestrator (the Mogul audit).
+_CONNECTOR_AGENT = {"disco": "sync", "mogul": "rights"}
 
 
 @app.post("/api/v1/connectors/{connector_id}/action", response_model=OrbResponse)
@@ -312,9 +342,10 @@ async def run_connector_action(connector_id: str, req: ChatRequest):
     # Human-readable labels for the SyncAgent's tools, so the trace reads as the
     # config being honored step by step.
     _TOOL_LABELS = {
-        "get_connector_config": "Read your Disco settings",
+        "get_connector_config": f"Read your {connector.name} settings",
         "get_sync_briefs": "Loaded active sync briefs",
-        "get_label_portfolio": "Scanned your catalog",
+        "get_sync_catalog": "Scanned your catalog",
+        "get_artist_data": "Scanned your royalty context",
     }
 
     final_text = ""
