@@ -69,6 +69,10 @@ class ConnectorConfig(BaseModel):
     """Writable, agent-respected runtime config for one connector."""
 
     enabled: bool = True
+    # Whether the human has completed the connect (authorization) flow. None
+    # means "inherit the catalog default" — the seeded demo connectors are
+    # connected out of the box; newly authorized ones persist True here.
+    connected: Optional[bool] = None
     account: Optional[str] = None
     capabilities: Dict[str, CapabilityConfig] = {}
     settings: Dict[str, object] = {}

@@ -80,11 +80,26 @@ class DBService:
             return [Provider(**p) for p in data.get("providers", [])]
 
     def get_connectors(self) -> List[Connector]:
+        """Return the catalog with live connection state merged in.
+
+        A connector the human has authorized through the connect flow persists
+        `connected: true` in the config store; that overrides the catalog's
+        static `status` so new connections survive reloads.
+        """
         if not self.connectors_path.exists():
             return []
+        store = self._read_connector_config_store()
         with open(self.connectors_path, "r") as f:
             data = json.load(f)
-            return [Connector(**c) for c in data.get("connectors", [])]
+        connectors = []
+        for c in data.get("connectors", []):
+            connector = Connector(**c)
+            saved = store.get(connector.id) or {}
+            if saved.get("connected"):
+                connector.status = "connected"
+                connector.account = saved.get("account") or connector.account
+            connectors.append(connector)
+        return connectors
 
     def get_connector(self, connector_id: str) -> Optional[Connector]:
         """Return one connector from the catalog by id, or None."""
@@ -141,6 +156,7 @@ class DBService:
         merged_caps.update(saved.capabilities)
         return ConnectorConfig(
             enabled=saved.enabled,
+            connected=saved.connected,
             account=saved.account or default.account,
             capabilities=merged_caps,
             settings={**default.settings, **saved.settings},
@@ -156,6 +172,36 @@ class DBService:
         with open(self.connector_config_path, "w") as f:
             json.dump(store, f, indent=2)
         return self.get_connector_config(connector_id)
+
+    def connect_connector(self, connector_id: str, account: str) -> ConnectorConfig:
+        """Complete the connect (authorization) flow for a connector.
+
+        Seeds the persisted config with consent-style permission defaults
+        derived from each capability key: reads are allowed outright, actions
+        that submit/register/change things on the platform start at "approval",
+        and anything automatic starts denied — so a newly connected platform is
+        useful immediately but can't be acted on without a human in the loop.
+        """
+        connector = self.get_connector(connector_id)
+        caps: dict[str, CapabilityConfig] = {}
+        if connector:
+            for cap in connector.capabilities_schema:
+                if cap.key.startswith("auto_"):
+                    caps[cap.key] = CapabilityConfig(enabled=False, permission="deny")
+                elif cap.key.startswith(("read_", "track_")):
+                    caps[cap.key] = CapabilityConfig(enabled=True, permission="allow")
+                else:
+                    caps[cap.key] = CapabilityConfig(
+                        enabled=True, permission="approval"
+                    )
+        config = ConnectorConfig(
+            enabled=True,
+            connected=True,
+            account=account,
+            capabilities=caps,
+            settings={"sync_frequency": "daily"},
+        )
+        return self.save_connector_config(connector_id, config)
 
     def get_sync_briefs(self) -> List[dict]:
         """Return the active sync briefs (SyncAgent grounding source)."""

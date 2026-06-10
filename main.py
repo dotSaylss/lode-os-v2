@@ -160,6 +160,16 @@ class OrbResponse(ChatResponse):
 
     route_hint: RouteHint | None = None
     trace: list[TraceEvent] = []
+    # Which compute tier produced the answer: "fast" when the Flash concierge
+    # answered from its own read tools, "reasoning" when it consulted a
+    # Gemini 2.5 Pro domain specialist.
+    tier: str = "fast"
+
+
+class ConnectRequest(BaseModel):
+    """Body for completing a connector's (simulated) authorization flow."""
+
+    account: str = "Lode Records"
 
 
 @app.get("/api/v1/artist/context", response_model=ArtistContext)
@@ -240,6 +250,20 @@ def save_connector_config_route(connector_id: str, config: ConnectorConfig):
     if not db_service.get_connector(connector_id):
         raise HTTPException(status_code=404, detail="Connector not found")
     return db_service.save_connector_config(connector_id, config)
+
+
+@app.post("/api/v1/connectors/{connector_id}/connect", response_model=ConnectorConfig)
+def connect_connector_route(connector_id: str, req: ConnectRequest):
+    """Complete the connect flow for an available connector.
+
+    The demo simulates the OAuth-style authorization (no real credentials are
+    exchanged); in production this is where the platform's OAuth2/API-key
+    handshake lands. On success the connection persists with consent defaults:
+    read capabilities allowed, platform-changing actions at "needs approval",
+    anything automatic denied."""
+    if not db_service.get_connector(connector_id):
+        raise HTTPException(status_code=404, detail="Connector not found")
+    return db_service.connect_connector(connector_id, req.account)
 
 
 # Maps each connector to the agent selector that runs its headline action. Only
@@ -577,6 +601,7 @@ _SPECIALIST_LABELS = {
     "OrchestratorAgent": "Consulted the royalty orchestrator",
     "LabelAgent": "Consulted the catalog strategist",
     "MatchmakerAgent": "Consulted the service matchmaker",
+    "SyncAgent": "Consulted the sync dealmaker",
 }
 
 
@@ -648,4 +673,7 @@ async def ask_lode(req: ChatRequest):
         session_id=session_id,
         route_hint=route_hint,
         trace=trace,
+        # Specialist consulted → the deep-reasoning path served this answer;
+        # otherwise the Flash concierge handled it from its own read tools.
+        tier="reasoning" if trace else "fast",
     )

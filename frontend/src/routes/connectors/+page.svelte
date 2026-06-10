@@ -1,8 +1,12 @@
 <script lang="ts">
+	import { fade, scale } from 'svelte/transition';
+	import { invalidateAll } from '$app/navigation';
+	import { api } from '$lib/api';
 	import Icon from '$lib/components/Icon.svelte';
 
 	let { data } = $props();
 
+	type CapSchema = { key: string; label: string; description: string };
 	type Connector = {
 		id: string;
 		name: string;
@@ -12,20 +16,14 @@
 		status: 'connected' | 'available';
 		account?: string;
 		capabilities: string[];
+		capabilities_schema: CapSchema[];
 		tone: string;
 		highlight: boolean;
 	};
 
-	// Server-loaded catalog. Local "connected" overrides let the demo flip an
-	// available connector to connected optimistically (no real OAuth needed).
-	const loaded = $derived<Connector[]>(data.connectors ?? []);
-	let justConnected = $state<Set<string>>(new Set());
-
-	const connectors = $derived(
-		loaded.map((c) =>
-			justConnected.has(c.id) ? { ...c, status: 'connected' as const } : c
-		)
-	);
+	// Server-loaded catalog; connection state is persisted server-side, so the
+	// list refreshes via invalidateAll() after the connect flow completes.
+	const connectors = $derived<Connector[]>(data.connectors ?? []);
 
 	let activeCategory = $state<string>('all');
 
@@ -61,13 +59,55 @@
 	const available = $derived(visible.filter((c) => c.status === 'available'));
 	const connectedCount = $derived(connectors.filter((c) => c.status === 'connected').length);
 
-	function openOrb(prompt?: string) {
-		window.dispatchEvent(new CustomEvent('lode:open', { detail: { prompt } }));
+	// ── Connect flow (consent-style authorization wizard) ────────────────────
+	// Mirrors connecting a third-party tool to an assistant: review the access
+	// being requested → authorize → land connected with safe permission
+	// defaults (reads allowed, platform-changing actions need approval).
+	type WizardStep = 'consent' | 'connecting' | 'done';
+	let wizard = $state<{
+		connector: Connector;
+		step: WizardStep;
+		account: string;
+		error: string;
+	} | null>(null);
+
+	function openConnect(c: Connector) {
+		wizard = { connector: c, step: 'consent', account: 'Lode Records', error: '' };
 	}
 
-	function connect(c: Connector) {
-		justConnected = new Set(justConnected).add(c.id);
-		openOrb(`I just connected ${c.name}. What can you do for me now that it's linked?`);
+	function closeWizard() {
+		if (wizard?.step === 'connecting') return;
+		wizard = null;
+	}
+
+	// Permission each scope will start at, per the backend's consent defaults.
+	const seededPermission = (key: string) =>
+		key.startsWith('auto_')
+			? 'Denied'
+			: key.startsWith('read_') || key.startsWith('track_')
+				? 'Allowed'
+				: 'Needs approval';
+
+	async function authorize() {
+		if (!wizard) return;
+		wizard.step = 'connecting';
+		wizard.error = '';
+		// Hold the handshake on screen long enough to read, even on localhost.
+		const minDelay = new Promise((r) => setTimeout(r, 1400));
+		try {
+			const res = await fetch(api(`/api/v1/connectors/${wizard.connector.id}/connect`), {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ account: wizard.account || 'Lode Records' })
+			});
+			await minDelay;
+			if (!res.ok) throw new Error('connect failed');
+			wizard.step = 'done';
+			await invalidateAll();
+		} catch {
+			wizard.step = 'consent';
+			wizard.error = 'The connection could not be completed. Is the backend running?';
+		}
 	}
 </script>
 
@@ -84,8 +124,9 @@
 	</header>
 
 	<p class="cx-thesis">
-		Connect the platforms your music already lives on, and let Lode reason and act
-		across them — one agentic control plane for the whole business.
+		For everyone making new money from a catalog — connect the platforms your music
+		already lives on, set what Lode may do on each, and let it reason and act across
+		them. One agentic control plane for the whole business.
 	</p>
 
 	<!-- The closed loop: the story that makes the connectors more than a list. -->
@@ -175,7 +216,7 @@
 								</div>
 								<p class="cx-tagline">{c.tagline}</p>
 							</div>
-							<button class="cx-connect" onclick={() => connect(c)}>
+							<button class="cx-connect" onclick={() => openConnect(c)}>
 								<Icon name="plus" size={14} color="var(--sg-700)" /> Connect
 							</button>
 						</div>
@@ -185,6 +226,94 @@
 		{/if}
 	{/if}
 </div>
+
+{#if wizard}
+	{@const w = wizard}
+	<div
+		class="wiz-backdrop"
+		transition:fade={{ duration: 150 }}
+		onclick={(e) => e.target === e.currentTarget && closeWizard()}
+		onkeydown={(e) => e.key === 'Escape' && closeWizard()}
+		role="presentation"
+	>
+		<div
+			class="wiz"
+			transition:scale={{ duration: 180, start: 0.95 }}
+			role="dialog"
+			aria-modal="true"
+			aria-label="Connect {w.connector.name}"
+		>
+			{#if w.step === 'consent'}
+				<div class="wiz-head">
+					<span class="wiz-logo {avTone(w.connector.tone)}">{initial(w.connector.name)}</span>
+					<div>
+						<h2>Connect {w.connector.name}</h2>
+						<p>Lode is requesting access to your {w.connector.name} account</p>
+					</div>
+				</div>
+
+				<label class="wiz-account">
+					<span>Account</span>
+					<input bind:value={w.account} placeholder="Account name" />
+				</label>
+
+				<div class="wiz-scopes">
+					<span class="eyebrow">Lode will be able to</span>
+					{#each w.connector.capabilities_schema as cap (cap.key)}
+						<div class="wiz-scope">
+							<span class="wiz-scope-ico"><Icon name="check" size={13} color="var(--sg-600)" /></span>
+							<div class="wiz-scope-text">
+								<b>{cap.label}</b>
+								<span>{cap.description}</span>
+							</div>
+							<span class="wiz-scope-perm {seededPermission(cap.key) === 'Allowed' ? 'ok' : ''}">
+								{seededPermission(cap.key)}
+							</span>
+						</div>
+					{/each}
+				</div>
+
+				<p class="wiz-note">
+					You can change what Lode may do — and when it must ask you first — anytime in the
+					connector's settings. Authorization is simulated in this demo; no real credentials
+					are exchanged.
+				</p>
+
+				{#if w.error}
+					<p class="wiz-error">{w.error}</p>
+				{/if}
+
+				<div class="wiz-actions">
+					<button class="wiz-cancel" onclick={closeWizard}>Cancel</button>
+					<button class="wiz-go" onclick={authorize}>
+						<Icon name="plug" size={15} color="#fff" /> Authorize {w.connector.name}
+					</button>
+				</div>
+			{:else if w.step === 'connecting'}
+				<div class="wiz-busy">
+					<span class="wiz-spinner"></span>
+					<b>Connecting to {w.connector.name}…</b>
+					<span>Opening a secure session and exchanging tokens</span>
+				</div>
+			{:else}
+				<div class="wiz-done">
+					<span class="wiz-done-ico"><Icon name="circle-check" size={30} color="var(--sg-600)" /></span>
+					<h2>{w.connector.name} connected</h2>
+					<p>
+						Connected as <b>{w.account || 'Lode Records'}</b>. Reads are allowed; actions that
+						change anything on {w.connector.name} will ask for your approval first.
+					</p>
+					<div class="wiz-actions center">
+						<button class="wiz-cancel" onclick={closeWizard}>Done</button>
+						<a class="wiz-go" href="/connectors/{w.connector.id}" onclick={closeWizard}>
+							Review permissions <Icon name="arrow-right" size={14} color="#fff" />
+						</a>
+					</div>
+				</div>
+			{/if}
+		</div>
+	</div>
+{/if}
 
 <style>
 	.cx-thesis {
@@ -445,5 +574,262 @@
 
 	.v3-stage-wide > * + * {
 		margin-top: 22px;
+	}
+
+	/* ── Connect wizard ──────────────────────────────────────────────────── */
+	.wiz-backdrop {
+		position: fixed;
+		inset: 0;
+		z-index: 80;
+		background: color-mix(in oklab, var(--ink-900) 26%, transparent);
+		backdrop-filter: blur(3px);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 24px;
+	}
+	.wiz {
+		width: 460px;
+		max-width: 100%;
+		max-height: calc(100vh - 48px);
+		overflow-y: auto;
+		background: var(--paper-0);
+		border: 1px solid var(--paper-200);
+		border-radius: var(--r-xl);
+		box-shadow: var(--v3-sh-xl);
+		padding: 26px 26px 22px;
+	}
+
+	.wiz-head {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+	}
+	.wiz-logo {
+		flex: none;
+		width: 46px;
+		height: 46px;
+		border-radius: var(--r-md);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 19px;
+		font-weight: 700;
+	}
+	.wiz-head h2 {
+		margin: 0;
+		font-size: 18px;
+		font-weight: 600;
+		color: var(--ink-900);
+	}
+	.wiz-head p {
+		margin: 3px 0 0;
+		font-size: 12.5px;
+		color: var(--ink-500);
+	}
+
+	.wiz-account {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+		margin-top: 18px;
+	}
+	.wiz-account span {
+		font-size: 11px;
+		font-weight: 600;
+		letter-spacing: 0.03em;
+		text-transform: uppercase;
+		color: var(--ink-muted);
+	}
+	.wiz-account input {
+		font-size: 13.5px;
+		color: var(--ink-900);
+		background: var(--paper-50);
+		border: 1px solid var(--paper-200);
+		border-radius: var(--r-sm);
+		padding: 9px 12px;
+		outline: none;
+		transition: border-color 0.15s;
+	}
+	.wiz-account input:focus {
+		border-color: var(--sg-300);
+	}
+
+	.wiz-scopes {
+		margin-top: 18px;
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+	.wiz-scopes .eyebrow {
+		margin-bottom: 8px;
+	}
+	.wiz-scope {
+		display: flex;
+		align-items: flex-start;
+		gap: 10px;
+		padding: 9px 0;
+		border-top: 1px solid var(--paper-100);
+	}
+	.wiz-scope:first-of-type {
+		border-top: none;
+	}
+	.wiz-scope-ico {
+		flex: none;
+		width: 22px;
+		height: 22px;
+		border-radius: 50%;
+		background: var(--sg-50);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-top: 1px;
+	}
+	.wiz-scope-text {
+		flex: 1;
+		min-width: 0;
+	}
+	.wiz-scope-text b {
+		display: block;
+		font-size: 13px;
+		font-weight: 600;
+		color: var(--ink-900);
+	}
+	.wiz-scope-text span {
+		font-size: 12px;
+		line-height: 1.4;
+		color: var(--ink-500);
+	}
+	.wiz-scope-perm {
+		flex: none;
+		font-size: 10.5px;
+		font-weight: 600;
+		color: var(--amber-600);
+		background: var(--amber-50);
+		border-radius: var(--r-pill);
+		padding: 3px 9px;
+		margin-top: 2px;
+	}
+	.wiz-scope-perm.ok {
+		color: var(--sg-700);
+		background: var(--sg-50);
+	}
+
+	.wiz-note {
+		margin: 16px 0 0;
+		font-size: 11.5px;
+		line-height: 1.5;
+		color: var(--ink-muted);
+	}
+	.wiz-error {
+		margin: 12px 0 0;
+		font-size: 12.5px;
+		color: var(--terra-600);
+	}
+
+	.wiz-actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: 10px;
+		margin-top: 20px;
+	}
+	.wiz-actions.center {
+		justify-content: center;
+	}
+	.wiz-cancel {
+		font-size: 13.5px;
+		font-weight: 600;
+		color: var(--ink-500);
+		background: transparent;
+		border: 1px solid var(--paper-200);
+		padding: 10px 16px;
+		border-radius: var(--r-md);
+		cursor: pointer;
+		transition: all 0.14s;
+	}
+	.wiz-cancel:hover {
+		border-color: var(--sg-200);
+		color: var(--ink-900);
+	}
+	.wiz-go {
+		display: inline-flex;
+		align-items: center;
+		gap: 7px;
+		font-size: 13.5px;
+		font-weight: 600;
+		color: #fff;
+		background: var(--sg-500);
+		border: none;
+		padding: 10px 17px;
+		border-radius: var(--r-md);
+		cursor: pointer;
+		text-decoration: none;
+		transition: background 0.15s;
+	}
+	.wiz-go:hover {
+		background: var(--sg-600);
+	}
+
+	.wiz-busy {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 10px;
+		padding: 34px 8px 30px;
+		text-align: center;
+	}
+	.wiz-busy b {
+		font-size: 15px;
+		font-weight: 600;
+		color: var(--ink-900);
+	}
+	.wiz-busy > span:last-child {
+		font-size: 12.5px;
+		color: var(--ink-muted);
+	}
+	.wiz-spinner {
+		width: 26px;
+		height: 26px;
+		border-radius: 50%;
+		border: 3px solid var(--sg-100);
+		border-top-color: var(--sg-500);
+		animation: wiz-spin 0.8s linear infinite;
+		margin-bottom: 6px;
+	}
+	@keyframes wiz-spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+	.wiz-done {
+		text-align: center;
+		padding: 10px 6px 4px;
+	}
+	.wiz-done-ico {
+		display: inline-flex;
+		width: 54px;
+		height: 54px;
+		border-radius: 50%;
+		background: var(--sg-50);
+		align-items: center;
+		justify-content: center;
+	}
+	.wiz-done h2 {
+		margin: 14px 0 0;
+		font-size: 18px;
+		font-weight: 600;
+		color: var(--ink-900);
+	}
+	.wiz-done p {
+		margin: 8px auto 0;
+		max-width: 38ch;
+		font-size: 13px;
+		line-height: 1.55;
+		color: var(--ink-500);
+	}
+	.wiz-done p b {
+		color: var(--ink-900);
+		font-weight: 600;
 	}
 </style>

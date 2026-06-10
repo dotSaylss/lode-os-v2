@@ -64,6 +64,11 @@
       "description": "Stream counts, playlist adds, and listener geography — context Lode uses to prioritize which tracks to pitch and register first.",
       "status": "available",
       "capabilities": ["Stream analytics", "Playlist tracking", "Audience geography"],
+      "capabilities_schema": [
+        { "key": "read_streams", "label": "Read stream analytics", "description": "See plays, saves, and release performance across your catalog." },
+        { "key": "read_playlists", "label": "Track playlist adds", "description": "Follow playlist placements and removals as they happen." },
+        { "key": "read_audience", "label": "Read audience geography", "description": "Use listener locations to prioritize registrations and pitches." }
+      ],
       "tone": "slate",
       "highlight": false
     },
@@ -75,6 +80,11 @@
       "description": "Deliver releases to every store and surface release metadata so Lode can reconcile what's live against what's earning.",
       "status": "available",
       "capabilities": ["Release delivery", "Store coverage", "Split metadata"],
+      "capabilities_schema": [
+        { "key": "read_releases", "label": "Read releases & stores", "description": "See what's live in which stores, and reconcile against earnings." },
+        { "key": "read_splits", "label": "Read split metadata", "description": "Use collaborator splits when reconciling who is owed what." },
+        { "key": "deliver_releases", "label": "Deliver releases", "description": "Send new releases to stores on your behalf." }
+      ],
       "tone": "slate",
       "highlight": false
     },
@@ -86,6 +96,11 @@
       "description": "Register works and collect performance royalties. Lode drafts and submits registrations on your behalf.",
       "status": "available",
       "capabilities": ["Work registration", "Performance royalties", "Writer/publisher shares"],
+      "capabilities_schema": [
+        { "key": "read_works", "label": "Read registered works", "description": "See which works are registered and which are missing." },
+        { "key": "read_royalties", "label": "Read performance royalties", "description": "Pull statements to reconcile what ASCAP has paid." },
+        { "key": "register_works", "label": "Register works", "description": "Draft and submit work registrations on your behalf." }
+      ],
       "tone": "slate",
       "highlight": false
     },
@@ -97,6 +112,11 @@
       "description": "Collect digital performance royalties for master owners — the home of the neighboring-rights money Lode surfaces in Today.",
       "status": "available",
       "capabilities": ["Digital performance", "Neighboring rights", "Master owner payouts"],
+      "capabilities_schema": [
+        { "key": "read_payouts", "label": "Read payout history", "description": "See digital-performance payouts for your masters." },
+        { "key": "register_masters", "label": "Register masters", "description": "Register sound recordings so they start collecting." },
+        { "key": "claim_neighboring_rights", "label": "Claim neighboring rights", "description": "File claims for the unregistered rights Lode finds." }
+      ],
       "tone": "slate",
       "highlight": false
     },
@@ -108,6 +128,11 @@
       "description": "List your catalog on the largest B2B music licensing marketplace as a second sync channel alongside Disco.",
       "status": "available",
       "capabilities": ["B2B marketplace", "Enterprise licensing", "Rights reconciliation"],
+      "capabilities_schema": [
+        { "key": "read_marketplace", "label": "Read marketplace demand", "description": "See active enterprise licensing opportunities." },
+        { "key": "list_catalog", "label": "List catalog", "description": "Publish tracks to the marketplace on your behalf." },
+        { "key": "manage_listings", "label": "Manage listings", "description": "Update pricing and availability for listed tracks." }
+      ],
       "tone": "terra",
       "highlight": false
     }
