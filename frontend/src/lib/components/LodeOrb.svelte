@@ -15,7 +15,16 @@
 	import Icon from '$lib/components/Icon.svelte';
 
 	type RouteHint = { page: string; label: string; reason?: string };
-	type Msg = { id: number; role: 'user' | 'lode'; text: string; hint?: RouteHint };
+	type Msg = {
+		id: number;
+		role: 'user' | 'lode';
+		text: string;
+		hint?: RouteHint;
+		// Which compute tier served the answer: 'fast' (Flash concierge answered
+		// from its own read tools) or 'reasoning' (a Pro specialist was consulted).
+		tier?: 'fast' | 'reasoning';
+		traceLabel?: string;
+	};
 
 	let open = $state(false);
 	let pinned = $state(false);
@@ -33,7 +42,28 @@
 		}
 	]);
 
-	const chips = ['Where am I losing money?', "What's my biggest catalog opportunity?", 'Who can master my track?'];
+	// The "Lode is listening" hint shows briefly on load, then gets out of the way.
+	let hintArmed = $state(true);
+
+	// Starter prompts rotate through the composer's placeholder; Tab accepts one.
+	const suggestions = [
+		'Where am I losing money?',
+		"What's my biggest catalog opportunity?",
+		"Pitch my catalog into this week's sync briefs",
+		'Who can master my track?'
+	];
+	let suggestionIdx = $state(0);
+
+	// Next-step actions offered under an answer, keyed by the destination the
+	// concierge routed to — so the conversation keeps moving after the first ask.
+	const FOLLOWUPS: Record<string, string[]> = {
+		'/': ['Draft the SoundExchange registration for me', 'How did you find this money?'],
+		'/label': ['Which artists should we register first?', 'Forecast the recovery for the top five'],
+		'/services': ['Set up an intro with the top match', 'What would mastering cost me?'],
+		'/connectors/disco': ['Draft the pitch for the best brief', 'Forecast the placement fees']
+	};
+	const followupsFor = (hint?: RouteHint): string[] =>
+		hint ? (FOLLOWUPS[hint.page] ?? []) : [];
 
 	async function scrollDown() {
 		await tick();
@@ -58,8 +88,25 @@
 			openPanel(detail.prompt);
 		};
 		window.addEventListener('lode:open', handler);
-		return () => window.removeEventListener('lode:open', handler);
+		const hintTimer = setTimeout(() => (hintArmed = false), 4500);
+		const rotate = setInterval(
+			() => (suggestionIdx = (suggestionIdx + 1) % suggestions.length),
+			3800
+		);
+		return () => {
+			window.removeEventListener('lode:open', handler);
+			clearTimeout(hintTimer);
+			clearInterval(rotate);
+		};
 	});
+
+	// Tab accepts the suggested prompt currently showing as the placeholder.
+	function acceptSuggestion(e: KeyboardEvent) {
+		if (e.key === 'Tab' && !input.trim()) {
+			e.preventDefault();
+			input = suggestions[suggestionIdx];
+		}
+	}
 
 	async function send(text: string) {
 		const q = text.trim();
@@ -80,7 +127,14 @@
 			sessionId = data.session_id ?? sessionId;
 			messages = [
 				...messages,
-				{ id: Date.now() + 1, role: 'lode', text: data.response, hint: data.route_hint ?? undefined }
+				{
+					id: Date.now() + 1,
+					role: 'lode',
+					text: data.response,
+					hint: data.route_hint ?? undefined,
+					tier: data.tier ?? undefined,
+					traceLabel: data.trace?.[0]?.label ?? undefined
+				}
 			];
 		} catch {
 			messages = [
@@ -115,7 +169,7 @@
 	}
 </script>
 
-<div class="v3-orb-wrap" class:open class:pinned>
+<div class="v3-orb-wrap" class:open class:pinned class:hint-armed={hintArmed}>
 	{#if open}
 		<div class="v3-orb-panel" transition:scale={{ duration: 200, start: 0.92, opacity: 0 }}>
 			<div class="v3-orb-head">
@@ -141,12 +195,27 @@
 				{#each messages as m (m.id)}
 					<div class="v3-orb-bubble {m.role === 'user' ? 'user' : 'lode'}">
 						<p>{m.text}</p>
+						{#if m.tier}
+							<span class="v3-orb-tier">
+								<Icon name={m.tier === 'fast' ? 'zap' : 'sparkles'} size={11} color="currentColor" />
+								{m.tier === 'fast'
+									? 'Quick lookup · Gemini 2.5 Flash'
+									: `${m.traceLabel ?? 'Deep reasoning'} · Gemini 2.5 Pro`}
+							</span>
+						{/if}
 					</div>
 					{#if m.role === 'lode' && m.hint}
 						<button class="v3-orb-route" type="button" onclick={() => follow(m.hint!)}>
 							See this in {m.hint.label}
 							<Icon name="arrow-right" size={14} color="var(--sg-700)" />
 						</button>
+						{#if followupsFor(m.hint).length}
+							<div class="v3-orb-followups">
+								{#each followupsFor(m.hint) as f}
+									<button class="v3-orb-followup" type="button" onclick={() => send(f)}>{f}</button>
+								{/each}
+							</div>
+						{/if}
 					{/if}
 				{/each}
 				{#if isTyping}
@@ -156,12 +225,6 @@
 				{/if}
 			</div>
 
-			<div class="v3-orb-chips">
-				{#each chips as c}
-					<button class="v3-orb-chip" type="button" onclick={() => send(c)}>{c}</button>
-				{/each}
-			</div>
-
 			<form
 				class="v3-orb-composer"
 				onsubmit={(e) => {
@@ -169,7 +232,15 @@
 					send(input);
 				}}
 			>
-				<input bind:this={inputEl} bind:value={input} placeholder="Ask Lode anything…" />
+				<input
+					bind:this={inputEl}
+					bind:value={input}
+					placeholder={suggestions[suggestionIdx]}
+					onkeydown={acceptSuggestion}
+				/>
+				{#if !input.trim()}
+					<span class="v3-orb-tab" aria-hidden="true">Tab</span>
+				{/if}
 				<button class="v3-orb-send" type="submit" disabled={!input.trim() || isTyping} aria-label="Send">
 					<Icon name="arrow-up" size={16} color="#fff" />
 				</button>

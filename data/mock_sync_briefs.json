@@ -1,0 +1,100 @@
+{
+  "briefs": [
+    {
+      "id": "brief_a24_indie_drama",
+      "title": "A24 indie drama — closing montage",
+      "buyer": "A24 / music supervisor",
+      "medium": "film",
+      "mood": ["bittersweet", "hopeful", "intimate"],
+      "tempo": "slow",
+      "genre": ["indie folk", "singer-songwriter", "ambient"],
+      "budget_usd": 18000,
+      "deadline": "2026-07-15",
+      "brief": "Need an emotional, organic vocal-led track for a 90-second closing montage. Sparse arrangement, real instruments, a sense of quiet resolution. One sync, festival + theatrical."
+    },
+    {
+      "id": "brief_nike_hype",
+      "title": "Nike — global running campaign",
+      "buyer": "Nike / Wieden+Kennedy",
+      "medium": "ad",
+      "mood": ["driving", "confident", "euphoric"],
+      "tempo": "fast",
+      "genre": ["electronic", "hip-hop", "pop"],
+      "budget_usd": 45000,
+      "deadline": "2026-06-30",
+      "brief": "High-energy, anthemic instrumental or hook-driven track for a 60s hero spot plus cutdowns. Big drop, propulsive rhythm. Worldwide, all media, 1 year."
+    },
+    {
+      "id": "brief_netflix_teen",
+      "title": "Netflix teen series — title sequence",
+      "buyer": "Netflix",
+      "medium": "tv",
+      "mood": ["playful", "moody", "youthful"],
+      "tempo": "mid",
+      "genre": ["bedroom pop", "indie pop", "alt"],
+      "budget_usd": 12000,
+      "deadline": "2026-08-01",
+      "brief": "Catchy, slightly melancholy pop with a memorable vocal hook for a recurring title card. Gen-Z feel. Per-episode license across one season."
+    },
+    {
+      "id": "brief_lux_auto_trailer",
+      "title": "Luxury EV — reveal trailer",
+      "buyer": "European auto brand",
+      "medium": "trailer",
+      "mood": ["cinematic", "sleek", "tense"],
+      "tempo": "build",
+      "genre": ["electronic", "orchestral", "ambient"],
+      "budget_usd": 30000,
+      "deadline": "2026-07-05",
+      "brief": "Cinematic build from minimal pulse to a full release at the car reveal. Modern, premium, restrained. Global digital + broadcast, 6 months."
+    },
+    {
+      "id": "brief_indie_game",
+      "title": "Indie game — exploration theme",
+      "buyer": "Indie game studio",
+      "medium": "game",
+      "mood": ["wondrous", "calm", "expansive"],
+      "tempo": "slow",
+      "genre": ["ambient", "post-rock", "electronic"],
+      "budget_usd": 6000,
+      "deadline": "2026-09-10",
+      "brief": "Loopable, evolving ambient bed for open-world exploration. No hard vocal hooks; texture over melody. Buyout for in-game use."
+    },
+    {
+      "id": "brief_beauty_social",
+      "title": "Beauty brand — social campaign",
+      "buyer": "DTC beauty brand",
+      "medium": "ad",
+      "mood": ["warm", "feel-good", "breezy"],
+      "tempo": "mid",
+      "genre": ["pop", "soul", "r&b"],
+      "budget_usd": 9000,
+      "deadline": "2026-06-25",
+      "brief": "Sunny, mid-tempo feel-good track with a warm female vocal for a 6-week social/paid campaign. Relatable, not too polished. Social + paid, 6 months."
+    },
+    {
+      "id": "brief_doc_series",
+      "title": "Documentary series — recurring theme",
+      "buyer": "Streaming documentary",
+      "medium": "tv",
+      "mood": ["reflective", "earnest", "grounded"],
+      "tempo": "slow",
+      "genre": ["folk", "americana", "singer-songwriter"],
+      "budget_usd": 15000,
+      "deadline": "2026-08-20",
+      "brief": "Honest, rootsy vocal track to anchor a 6-part docuseries about working musicians. Authentic, lived-in. Series license, all media."
+    },
+    {
+      "id": "brief_sports_promo",
+      "title": "League playoffs — broadcast promo",
+      "buyer": "Sports broadcaster",
+      "medium": "tv",
+      "mood": ["epic", "triumphant", "intense"],
+      "tempo": "fast",
+      "genre": ["hip-hop", "trap", "electronic"],
+      "budget_usd": 22000,
+      "deadline": "2026-06-28",
+      "brief": "Hard-hitting, chant-ready anthem with attitude for playoff promos. Big drums, quotable hook. Broadcast + digital, playoff window."
+    }
+  ]
+}

@@ -18,6 +18,7 @@ from services.db_service import DBService
 from models.artist import ArtistContext
 from models.label import LabelPortfolio
 from models.service import Provider
+from models.connector import Connector, ConnectorConfig, ConnectorDetail
 from agents.graph import root_agent
 from agents.label_graph import label_agent
 from agents.orb_graph import concierge_agent, ROUTE_BY_AGENT
@@ -32,11 +33,13 @@ from agents.service_graph import (
     build_session_service,
     build_memory_service,
 )
+from agents.sync_graph import sync_agent
 
 APP_NAME = "mogul-agent"
 LABEL_APP_NAME = "mogul-label-agent"
 SERVICES_APP_NAME = "lodeos-matchmaker"
 ORB_APP_NAME = "lode-concierge"
+SYNC_APP_NAME = "lodeos-sync"
 
 app = FastAPI(
     title="Mogul Agent Backend",
@@ -97,6 +100,11 @@ matchmaker_runner = Runner(
 concierge_runner = Runner(
     app_name=ORB_APP_NAME, agent=concierge_agent, session_service=session_service
 )
+# The Disco sync-licensing dealmaker. Drives the connector config page's agent
+# action; reads the live connector config first and obeys it (see sync_graph.py).
+sync_runner = Runner(
+    app_name=SYNC_APP_NAME, agent=sync_agent, session_service=session_service
+)
 
 # Observability is OFF unless ENABLE_OBSERVABILITY=true. When on, this installs
 # an OpenTelemetry tracer so the matchmaker's agent/LLM/tool spans are exported
@@ -152,6 +160,46 @@ class OrbResponse(ChatResponse):
 
     route_hint: RouteHint | None = None
     trace: list[TraceEvent] = []
+    # Which compute tier produced the answer: "fast" when the Flash concierge
+    # answered from its own read tools, "reasoning" when it consulted a
+    # Gemini 2.5 Pro domain specialist.
+    tier: str = "fast"
+
+
+class ConnectRequest(BaseModel):
+    """Body for completing a connector's (simulated) authorization flow."""
+
+    account: str = "Lode Records"
+
+
+class PersonaRequest(BaseModel):
+    """Body for switching the active demo workspace."""
+
+    id: str
+
+
+@app.get("/api/v1/personas")
+def get_personas():
+    """Return the demo workspaces (personas) and which one is active.
+
+    One product, three users: June Freedom (artist — recover what you're
+    owed), Lode Records (label — operate the roster), Kai Rivers (AI-native
+    creator — make new money). The active persona scopes the artist context,
+    connector catalog, configs, and what every agent sees."""
+    return {
+        "active": db_service.get_active_persona(),
+        "personas": db_service.get_personas(),
+    }
+
+
+@app.post("/api/v1/persona")
+def set_persona(req: PersonaRequest):
+    """Switch the active workspace. Persisted so backend + agents agree."""
+    try:
+        active = db_service.set_active_persona(req.id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    return {"active": active}
 
 
 @app.get("/api/v1/artist/context", response_model=ArtistContext)
@@ -188,6 +236,163 @@ def get_label_forecast_route():
 def get_service_providers():
     """Return the vetted service-provider marketplace."""
     return db_service.get_providers()
+
+
+@app.get("/api/v1/connectors", response_model=list[Connector])
+def get_connectors():
+    """Return the connector catalog (Mogul/Suno/Disco + available platforms).
+
+    Backs the Connectors view — LodeOS's agentic control plane for the music
+    business. Each connector is a real-world platform the agents reason/act
+    across; Mogul is the live MCP source of truth (see ``mcp_server.py``)."""
+    return db_service.get_connectors()
+
+
+@app.get("/api/v1/connectors/{connector_id}", response_model=ConnectorDetail)
+def get_connector_detail(connector_id: str):
+    """Return one connector enriched with its live, human-set config.
+
+    Backs the connector config page (`/connectors/[id]`): the catalog entry
+    (capabilities schema, agent action) plus the writable ConnectorConfig the
+    page edits and the agents obey."""
+    connector = db_service.get_connector(connector_id)
+    if not connector:
+        raise HTTPException(status_code=404, detail="Connector not found")
+    config = db_service.get_connector_config(connector_id)
+    return ConnectorDetail(connector=connector, config=config)
+
+
+@app.get("/api/v1/connectors/{connector_id}/config", response_model=ConnectorConfig)
+def get_connector_config_route(connector_id: str):
+    """Return just the live config for a connector."""
+    if not db_service.get_connector(connector_id):
+        raise HTTPException(status_code=404, detail="Connector not found")
+    return db_service.get_connector_config(connector_id)
+
+
+@app.put("/api/v1/connectors/{connector_id}/config", response_model=ConnectorConfig)
+def save_connector_config_route(connector_id: str, config: ConnectorConfig):
+    """Persist a connector's config and return the saved state.
+
+    This is the human half of the human+agent workflow: capability toggles and
+    per-capability permissions (allow / approval / deny) saved here are read by
+    the agents before they act, so the settings genuinely gate agent behavior."""
+    if not db_service.get_connector(connector_id):
+        raise HTTPException(status_code=404, detail="Connector not found")
+    return db_service.save_connector_config(connector_id, config)
+
+
+@app.post("/api/v1/connectors/{connector_id}/connect", response_model=ConnectorConfig)
+def connect_connector_route(connector_id: str, req: ConnectRequest):
+    """Complete the connect flow for an available connector.
+
+    The demo simulates the OAuth-style authorization (no real credentials are
+    exchanged); in production this is where the platform's OAuth2/API-key
+    handshake lands. On success the connection persists with consent defaults:
+    read capabilities allowed, platform-changing actions at "needs approval",
+    anything automatic denied."""
+    if not db_service.get_connector(connector_id):
+        raise HTTPException(status_code=404, detail="Connector not found")
+    return db_service.connect_connector(connector_id, req.account)
+
+
+# Maps each connector to the agent selector that runs its headline action.
+# "rights" resolves to the default royalty orchestrator (the Mogul audit).
+# Untitled's action is deliberately CROSS-connector: it reads the user's
+# Untitled library and matches it against Disco's live briefs via the SyncAgent.
+_CONNECTOR_AGENT = {"disco": "sync", "mogul": "rights", "untitled": "sync"}
+
+
+@app.post("/api/v1/connectors/{connector_id}/action", response_model=OrbResponse)
+async def run_connector_action(connector_id: str, req: ChatRequest):
+    """Run a connector's agent action and return the grounded result + a trace.
+
+    For Disco this drives the SyncAgent, which reads the connector's live config
+    FIRST and obeys it (disabled capability → skipped; "approval" → a draft that
+    asks before submitting; "deny" → never). The trace surfaces which tools the
+    agent used so the human can see the config being honored, not just told."""
+    connector = db_service.get_connector(connector_id)
+    if not connector:
+        raise HTTPException(status_code=404, detail="Connector not found")
+
+    selector = _CONNECTOR_AGENT.get(connector_id)
+    if selector is None:
+        raise HTTPException(
+            status_code=400, detail="This connector has no agent action."
+        )
+
+    active_runner, app_name = _runner_for(selector)
+    user_id = "demo-user"
+    session_id = req.session_id or str(uuid.uuid4())
+
+    session = await session_service.get_session(
+        app_name=app_name, user_id=user_id, session_id=session_id
+    )
+    if session is None:
+        await session_service.create_session(
+            app_name=app_name, user_id=user_id, session_id=session_id
+        )
+
+    # Default the message to the connector's configured agent action prompt.
+    message = req.message
+    if not message:
+        action = connector.agent_action or {}
+        message = action.get("prompt") or f"Run the {connector.name} action."
+
+    new_message = types.Content(role="user", parts=[types.Part.from_text(text=message)])
+
+    # Human-readable labels for the agent's tools, so the trace reads as the
+    # config being honored step by step — naming the connector each tool
+    # actually touched, which makes cross-connector runs (e.g. Untitled
+    # library → Disco briefs) visible rather than implied.
+    persona = db_service.get_active_persona()
+    catalog_label = (
+        "Read your library from Untitled"
+        if persona == "kai"
+        else "Scanned the roster catalog"
+    )
+    _TOOL_LABELS = {
+        # The SyncAgent always gates itself on the Disco permissions, even when
+        # launched from another connector's action.
+        "get_connector_config": "Read your Disco permissions"
+        if selector == "sync"
+        else f"Read your {connector.name} settings",
+        "get_sync_briefs": "Loaded active briefs from Disco",
+        "get_sync_catalog": catalog_label,
+        "get_artist_data": "Scanned your royalty context",
+    }
+
+    final_text = ""
+    trace: list[TraceEvent] = []
+    seen_tools: set[str] = set()
+    try:
+        async for event in active_runner.run_async(
+            user_id=user_id, session_id=session_id, new_message=new_message
+        ):
+            try:
+                for fc in event.get_function_calls() or []:
+                    if fc.name in _TOOL_LABELS and fc.name not in seen_tools:
+                        seen_tools.add(fc.name)
+                        trace.append(
+                            TraceEvent(
+                                kind="tool",
+                                agent=connector.name,
+                                label=_TOOL_LABELS[fc.name],
+                            )
+                        )
+            except Exception:  # noqa: BLE001 — trace is best-effort
+                pass
+            if event.is_final_response() and event.content and event.content.parts:
+                final_text = "".join(
+                    part.text for part in event.content.parts if part.text
+                )
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Agent error: {exc}") from exc
+
+    if not final_text:
+        final_text = "I wasn't able to run that action just now. Please try again."
+
+    return OrbResponse(response=final_text, session_id=session_id, trace=trace)
 
 
 async def _run_chat(active_runner: Runner, app_name: str, req: ChatRequest) -> ChatResponse:
@@ -337,6 +542,8 @@ def _runner_for(agent: str | None) -> tuple[Runner, str]:
             return label_runner, LABEL_APP_NAME
         case "matchmaker":
             return matchmaker_runner, SERVICES_APP_NAME
+        case "sync":
+            return sync_runner, SYNC_APP_NAME
         case _:
             return runner, APP_NAME
 
@@ -439,6 +646,7 @@ _SPECIALIST_LABELS = {
     "OrchestratorAgent": "Consulted the royalty orchestrator",
     "LabelAgent": "Consulted the catalog strategist",
     "MatchmakerAgent": "Consulted the service matchmaker",
+    "SyncAgent": "Consulted the sync dealmaker",
 }
 
 
@@ -510,4 +718,7 @@ async def ask_lode(req: ChatRequest):
         session_id=session_id,
         route_hint=route_hint,
         trace=trace,
+        # Specialist consulted → the deep-reasoning path served this answer;
+        # otherwise the Flash concierge handled it from its own read tools.
+        tier="reasoning" if trace else "fast",
     )

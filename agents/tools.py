@@ -6,22 +6,53 @@ from pathlib import Path
 # working regardless of the process's current working directory.
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 _DEFAULT_DB = _PROJECT_ROOT / "data" / "mock_mogul_db.json"
+_CREATOR_DB = _PROJECT_ROOT / "data" / "mock_creator_db.json"
 _LABEL_DB = _PROJECT_ROOT / "data" / "mock_label_db.json"
 _PROVIDERS_DB = _PROJECT_ROOT / "data" / "mock_providers_db.json"
+_SYNC_BRIEFS_DB = _PROJECT_ROOT / "data" / "mock_sync_briefs.json"
+
+
+def _active_persona() -> str:
+    """The active demo workspace — scopes what every data tool returns."""
+    try:
+        from services.db_service import DBService
+
+        return DBService().get_active_persona()
+    except Exception:
+        return "june"
 
 
 def get_artist_data() -> str:
-    """Read the artist's Mogul royalty context and return it as a JSON string.
+    """Read the signed-in user's Mogul royalty context as a JSON string.
 
-    Returns the full artist profile, connected revenue sources, and neighboring
-    rights registration status (including any estimated missing/uncollected
-    amounts). Agents use this to inspect the database for gaps and missing money.
+    Returns the active workspace owner's profile, connected revenue sources,
+    and neighboring-rights registration status (including any estimated
+    missing/uncollected amounts). Agents use this to inspect the database for
+    gaps and missing money. For the creator workspace this also includes their
+    library (the connected library app and its playlists, e.g. Untitled) and
+    released tracks with `source`, `playlist`, and `sound` fields — use it to
+    answer quick lookups like "what's in my Sync Ready playlist?".
 
     Returns:
-        A JSON string of the artist's context, or "{}" if no data is available.
+        A JSON string of the user's context, or "{}" if no data is available.
     """
-    if _DEFAULT_DB.exists():
-        return _DEFAULT_DB.read_text()
+    persona = _active_persona()
+    if persona == "label":
+        # The label workspace has no single-artist context — steer the agent
+        # to the catalog tools instead of leaking another workspace's data.
+        return json.dumps(
+            {
+                "note": (
+                    "This is the Lode Records label workspace; there is no "
+                    "single-artist context here. For earnings, gaps, or roster "
+                    "questions use the label portfolio (LabelAgent / catalog "
+                    "specialist)."
+                )
+            }
+        )
+    db = _CREATOR_DB if persona == "kai" else _DEFAULT_DB
+    if db.exists():
+        return db.read_text()
     return "{}"
 
 
@@ -32,6 +63,8 @@ def get_label_portfolio() -> str:
     connected revenue sources, and per-artist missing-money gaps (unregistered
     neighboring rights, unclaimed mechanicals, unmatched sync placements, and
     PRO black-box royalties), plus each artist's total uncollected amount.
+    Each artist also carries a `sound` profile (genres, moods, tempo, vocals) —
+    the ground truth for matching the catalog to sync briefs.
 
     The LabelAgent uses this to reason over the WHOLE catalog at once — finding
     the largest aggregate missing-money opportunities and proposing BULK actions
@@ -151,3 +184,134 @@ def get_providers() -> str:
     if _PROVIDERS_DB.exists():
         return _PROVIDERS_DB.read_text()
     return '{"providers": []}'
+
+
+def get_connectors_overview() -> str:
+    """Read the connector catalog with live connection status, as JSON.
+
+    A quick-lookup source: which platforms are connected (and under which
+    account), which are available to connect, and what each one does. Use this
+    to answer fast factual questions like "what's connected?", "what does the
+    Disco connector do?", or "can I connect Spotify?" without engaging a
+    domain specialist.
+
+    Returns:
+        A JSON string of {"connectors": [{id, name, category, tagline,
+        status, account, capabilities}]}, or '{"connectors": []}'.
+    """
+    try:
+        from services.db_service import DBService
+
+        connectors = DBService().get_connectors()
+        return json.dumps(
+            {
+                "connectors": [
+                    {
+                        "id": c.id,
+                        "name": c.name,
+                        "category": c.category,
+                        "tagline": c.tagline,
+                        "status": c.status,
+                        "account": c.account,
+                        "capabilities": c.capabilities,
+                    }
+                    for c in connectors
+                ]
+            }
+        )
+    except Exception:
+        return '{"connectors": []}'
+
+
+def get_connector_config(connector_id: str) -> str:
+    """Read a connector's live, human-set configuration and return it as JSON.
+
+    This is the GATING primitive. Before an agent acts on a connector, it MUST
+    call this to learn what it's permitted to do. The config is set by the human
+    on the connector's config page and the agent must obey it:
+
+      - A capability with "enabled": false  → do NOT perform that step.
+      - "permission": "allow"               → may act autonomously.
+      - "permission": "approval"            → produce a DRAFT and ask the human
+                                              to approve before "submitting".
+      - "permission": "deny"                → never perform that action.
+
+    Args:
+        connector_id: the connector to read (e.g. "disco", "mogul", "suno").
+
+    Returns:
+        A JSON string of {enabled, account, capabilities:{key:{enabled,
+        permission}}, settings}. Returns "{}" if the connector is unknown.
+    """
+    try:
+        from services.db_service import DBService
+
+        cfg = DBService().get_connector_config(connector_id)
+        return json.dumps(cfg.model_dump())
+    except Exception:
+        return "{}"
+
+
+def get_sync_catalog() -> str:
+    """Read the active workspace's pitchable catalog as a JSON string.
+
+    This is the SyncAgent's catalog grounding source. For a creator workspace
+    it returns their released tracks; for a label it returns the artist roster.
+    Every entry carries a `sound` profile (genres, moods, tempo, vocals) — the
+    ground truth for matching against sync briefs. Only ever pitch tracks or
+    artists that appear here.
+
+    Creator tracks also carry connector provenance: `source` (where the track
+    was created, e.g. Suno) and `playlist` (its home in the connected library
+    app named in `library`, e.g. an Untitled playlist). When the user refers to
+    a track or playlist by name ("use Afterburn from my Sync Ready playlist"),
+    resolve it against these fields.
+
+    Returns:
+        A JSON string of {"owner", "kind": "tracks"|"artists", "library",
+        "catalog": [...]}, or an empty catalog if unavailable.
+    """
+    persona = _active_persona()
+    if persona == "label":
+        if _LABEL_DB.exists():
+            data = json.loads(_LABEL_DB.read_text())
+            return json.dumps(
+                {
+                    "owner": data.get("label_profile", {}).get("name", "the label"),
+                    "kind": "artists",
+                    "catalog": [
+                        {"name": a.get("name"), "sound": a.get("sound")}
+                        for a in data.get("artists", [])
+                    ],
+                }
+            )
+        return '{"owner": null, "kind": "artists", "catalog": []}'
+    db = _CREATOR_DB if persona == "kai" else _DEFAULT_DB
+    if db.exists():
+        data = json.loads(db.read_text())
+        return json.dumps(
+            {
+                "owner": data.get("artist_profile", {}).get("name", "the artist"),
+                "kind": "tracks",
+                "library": data.get("library"),
+                "catalog": data.get("tracks", []),
+            }
+        )
+    return '{"owner": null, "kind": "tracks", "library": null, "catalog": []}'
+
+
+def get_sync_briefs() -> str:
+    """Read the active sync-licensing briefs and return them as a JSON string.
+
+    This is the SyncAgent's grounding source (Custom-RAG): the live set of sync
+    briefs from film, TV, ad, game, and brand buyers. Each brief includes its
+    buyer, medium, mood, tempo, genre, budget, deadline, and a free-text brief.
+    The SyncAgent MUST ground every catalog→brief match in this data and only
+    ever reference briefs that appear here.
+
+    Returns:
+        A JSON string of {"briefs": [...]}, or '{"briefs": []}' if unavailable.
+    """
+    if _SYNC_BRIEFS_DB.exists():
+        return _SYNC_BRIEFS_DB.read_text()
+    return '{"briefs": []}'
