@@ -1,6 +1,7 @@
 <script lang="ts">
 	import FinancialOverview from '$lib/components/FinancialOverview.svelte';
 	import ActionItems from '$lib/components/ActionItems.svelte';
+	import LibraryCard from '$lib/components/LibraryCard.svelte';
 
 	let { data } = $props();
 
@@ -32,6 +33,13 @@
 		<ActionItems
 			context={ctx}
 			onRecover={() => openOrb('Recover my unclaimed neighboring rights — draft the SoundExchange registration.')}
+		/>
+		<LibraryCard
+			context={ctx}
+			onPitch={(track: { title: string; playlist: string }) =>
+				openOrb(
+					`Use "${track.title}" from my Untitled "${track.playlist}" playlist and draft a Disco pitch for the best-matching brief.`
+				)}
 		/>
 		<FinancialOverview context={ctx} />
 	</div>

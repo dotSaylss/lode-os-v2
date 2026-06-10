@@ -46,6 +46,49 @@
       "highlight": false
     },
     {
+      "id": "untitled",
+      "name": "Untitled",
+      "category": "collaboration",
+      "tagline": "Your private library — projects, playlists & collaborators",
+      "description": "The home of your working catalog. Lode reads your Untitled library and playlists so every track you've made is visible in your dashboard — and one ask away from a registration or a sync pitch.",
+      "status": "connected",
+      "account": "Kai Rivers",
+      "personas": {
+        "kai": { "status": "connected", "account": "Kai Rivers" },
+        "june": { "status": "available" }
+      },
+      "capabilities": ["Library & playlists", "Versions & stems", "Collaborator sharing"],
+      "capabilities_schema": [
+        { "key": "read_library", "label": "Read your library", "description": "Let Lode see the tracks and versions in your Untitled library." },
+        { "key": "read_playlists", "label": "Read playlists", "description": "Use your playlist organization when matching, pitching, and registering." },
+        { "key": "import_tracks", "label": "Import tracks to catalog", "description": "Register library tracks in Mogul so they're owned and tracked." },
+        { "key": "share_links", "label": "Share listening links", "description": "Create private listening links to attach to pitches." }
+      ],
+      "agent_action": { "label": "Find sync-ready tracks in my library", "prompt": "Look through my Untitled library and tell me which playlists and tracks are the strongest candidates for this week's sync briefs. Cite each track's sound profile." },
+      "tone": "sage",
+      "highlight": false
+    },
+    {
+      "id": "samply",
+      "name": "Samply",
+      "category": "collaboration",
+      "tagline": "Share works-in-progress & collect collaborator feedback",
+      "description": "Fast, private track sharing for works-in-progress. Lode reads listening stats and collaborator feedback to tell you which unreleased tracks are landing — before you spend on a release.",
+      "status": "available",
+      "personas": {
+        "kai": { "status": "available" },
+        "june": { "status": "available" }
+      },
+      "capabilities": ["Private sharing", "Listening analytics", "Collaborator feedback"],
+      "capabilities_schema": [
+        { "key": "read_listens", "label": "Read listening stats", "description": "See plays and drop-off on your shared works-in-progress." },
+        { "key": "read_feedback", "label": "Read collaborator feedback", "description": "Use comments and reactions to prioritize what to finish." },
+        { "key": "share_tracks", "label": "Share tracks", "description": "Create and send private share links on your behalf." }
+      ],
+      "tone": "slate",
+      "highlight": false
+    },
+    {
       "id": "disco",
       "name": "Disco",
       "category": "sync_licensing",

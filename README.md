@@ -39,8 +39,11 @@ account button in the rail:
    artists with bulk recovery delegated agent-to-agent (the visible LabelAgent →
    ActionAgent handoff on Catalog).
 3. **Kai Rivers, AI-native creator** — *new revenue, on your terms.* Creates with
-   Suno, owns in Mogul, monetizes through Disco: the sync dealmaker pitches his
-   tracks under per-capability permissions he controls.
+   Suno, keeps his library in Untitled, owns in Mogul, monetizes through Disco —
+   and the connectors talk to each other: his dashboard shows the Untitled
+   playlists, and one ask ("use Afterburn from my Sync Ready playlist") carries a
+   track from the library into a drafted Disco pitch, under per-capability
+   permissions he controls.
 
 Each workspace scopes its own data, connectors, permissions, and agents. The three
 journeys and a demo walkthrough are detailed in

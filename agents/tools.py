@@ -29,7 +29,9 @@ def get_artist_data() -> str:
     and neighboring-rights registration status (including any estimated
     missing/uncollected amounts). Agents use this to inspect the database for
     gaps and missing money. For the creator workspace this also includes their
-    released tracks with `sound` profiles.
+    library (the connected library app and its playlists, e.g. Untitled) and
+    released tracks with `source`, `playlist`, and `sound` fields — use it to
+    answer quick lookups like "what's in my Sync Ready playlist?".
 
     Returns:
         A JSON string of the user's context, or "{}" if no data is available.
@@ -245,9 +247,15 @@ def get_sync_catalog() -> str:
     ground truth for matching against sync briefs. Only ever pitch tracks or
     artists that appear here.
 
+    Creator tracks also carry connector provenance: `source` (where the track
+    was created, e.g. Suno) and `playlist` (its home in the connected library
+    app named in `library`, e.g. an Untitled playlist). When the user refers to
+    a track or playlist by name ("use Afterburn from my Sync Ready playlist"),
+    resolve it against these fields.
+
     Returns:
-        A JSON string of {"owner", "kind": "tracks"|"artists", "catalog":
-        [...]}, or an empty catalog if unavailable.
+        A JSON string of {"owner", "kind": "tracks"|"artists", "library",
+        "catalog": [...]}, or an empty catalog if unavailable.
     """
     persona = _active_persona()
     if persona == "label":
@@ -271,10 +279,11 @@ def get_sync_catalog() -> str:
             {
                 "owner": data.get("artist_profile", {}).get("name", "the artist"),
                 "kind": "tracks",
+                "library": data.get("library"),
                 "catalog": data.get("tracks", []),
             }
         )
-    return '{"owner": null, "kind": "tracks", "catalog": []}'
+    return '{"owner": null, "kind": "tracks", "library": null, "catalog": []}'
 
 
 def get_sync_briefs() -> str:

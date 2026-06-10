@@ -92,8 +92,10 @@ The system uses two agent-to-agent coordination patterns, with these intents:
 
 The demo ships three self-contained workspaces, one per user base, switchable from
 the account button in the rail: **June Freedom** (artist — Today/Services), **Lode
-Records** (label — Catalog), and **Kai Rivers** (AI-native creator — Suno → Mogul →
-Disco). The active workspace is persisted server-side (`GET/POST /api/v1/persona`)
+Records** (label — Catalog), and **Kai Rivers** (AI-native creator — Suno →
+Untitled → Mogul → Disco; his Today view renders his Untitled library with
+per-track pitch actions). The active workspace is persisted server-side
+(`GET/POST /api/v1/persona`)
 and scopes *everything*: the nav, the artist context, the connector catalog and its
 configs, and what every agent tool returns — so an artist's workspace never shows
 label data and vice versa. The SyncAgent grounds in the active workspace's catalog
@@ -119,10 +121,21 @@ default. Each action returns a tool **trace** so the human can see the config be
 honored step by step.
 
 Connector catalog: **Mogul** (catalog, masters, royalty statements — the source of
-truth), **Suno** (creation: releases/stems into the catalog), **Disco** (demand:
-sync briefs in, pitches out, placement fees back into the forecast), plus
-available-to-connect platforms (Spotify for Artists, DistroKid, ASCAP,
-SoundExchange, Songtradr).
+truth), **Suno** (creation: releases/stems into the catalog), **Untitled** (the
+creator's library: playlists and tracks that populate the dashboard and ground the
+sync catalog), **Disco** (demand: sync briefs in, pitches out, placement fees back
+into the forecast), plus available-to-connect platforms (Samply, Spotify for
+Artists, DistroKid, ASCAP, SoundExchange, Songtradr).
+
+**Connectors talk to each other.** A library track carries its provenance
+(`source`: created in Suno; `playlist`: its home in Untitled), so one ask moves
+work across platforms: "use Afterburn from my Sync Ready playlist and submit it to
+the best Disco pitch" makes the SyncAgent read the Disco permissions, load Disco's
+live briefs, read the Untitled library, resolve the named track, and draft the
+pitch — and the returned trace names each connector touched (*Read your Disco
+permissions → Loaded active briefs from Disco → Read your library from Untitled*).
+Untitled's own agent action is deliberately cross-connector: it matches the
+library against Disco's briefs.
 
 **Connecting a platform** runs through a consent-style authorization flow
 (`POST /api/v1/connectors/{id}/connect`): the user reviews exactly what Lode will
@@ -140,7 +153,7 @@ Every factual claim an agent makes is grounded in a store it can cite:
 |---|---|---|
 | Artist royalty context (Mogul, over **MCP** via `mcp_server.py`; persona-scoped) | Orchestrator graph | may only cite returned data |
 | Label portfolio — 50 artists with earnings, gaps, and a `sound` profile (genres, moods, tempo, vocals) | LabelAgent | bulk plans cite real roster data |
-| Sync catalog (persona-scoped: a creator's tracks or the label roster, with `sound` profiles) | SyncAgent | matches must cite the entry's actual `sound` profile, never a guessed style |
+| Sync catalog (persona-scoped: a creator's Untitled library — playlists + tracks with `source`/`playlist` provenance — or the label roster, with `sound` profiles) | SyncAgent | matches must cite the entry's actual `sound` profile, never a guessed style; named tracks/playlists resolve against the library or the agent says they don't exist |
 | Vetted provider marketplace (19 providers) | MatchmakerAgent | recommendations restricted to DB entries, cited with rating/genre/rate evidence |
 | Live sync briefs (film/TV/ad/game/brand) | SyncAgent | may only reference briefs that exist in the store |
 | Public web (Grounding with Google Search) | LiveProviderResearchAgent | built-in `google_search` tool |

@@ -51,6 +51,18 @@
       },
       "settings": { "sync_frequency": "on_release" }
     },
+    "untitled": {
+      "enabled": true,
+      "connected": true,
+      "account": "Kai Rivers",
+      "capabilities": {
+        "read_library": { "enabled": true, "permission": "allow" },
+        "read_playlists": { "enabled": true, "permission": "allow" },
+        "import_tracks": { "enabled": true, "permission": "approval" },
+        "share_links": { "enabled": true, "permission": "approval" }
+      },
+      "settings": { "sync_frequency": "on_change" }
+    },
     "disco": {
       "enabled": true,
       "connected": true,

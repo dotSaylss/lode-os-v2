@@ -39,10 +39,10 @@ the connector catalog and configs, and what every agent sees.
 |---|---|
 | **User** | Kai Rivers — an AI-native creator producing finished tracks with Suno, with no traditional label, publisher, or sync relationships at all |
 | **Pain** | A new class of creator is producing catalogs at unprecedented speed with **zero royalty infrastructure** behind them. Sync licensing (film/TV/ads/games) is the highest-value revenue stream and the most relationship-gated — and handing an AI the keys to act on your business is terrifying without control |
-| **Workspace** | **Kai Rivers (Creator)** — nav: Today · Services · Connectors. Suno, Mogul, and Disco connected — create → own → monetize, from day one |
-| **In the app** | **Connectors** view — connect a platform through an authorization flow, set per-capability permissions (allow / needs approval / deny), then run the agent action |
-| **The moment** | The Disco SyncAgent reads Kai's settings first, matches his actual tracks ("Afterburn", "Glasslands") to live briefs *citing each track's sound profile*, drafts the best pitch **as a draft awaiting approval**, and forecasts the placement fees flowing back into his royalty forecast. Flip "Draft pitches" off and the same ask gets: *"I can't draft a pitch because that capability is turned off in the Disco settings."* |
-| **Agent flow** | SyncAgent (Gemini 2.5 Pro) → `get_connector_config` (obey the human) → `get_sync_briefs` + `get_sync_catalog` (grounding: the active workspace's tracks) → match, draft, forecast — with a visible tool trace |
+| **Workspace** | **Kai Rivers (Creator)** — nav: Today · Services · Connectors. Suno, Untitled, Mogul, and Disco connected — create → organize → own → monetize, from day one |
+| **In the app** | **Today** shows his whole library — playlists and tracks synced from the **Untitled** connector, each with a one-click **Pitch via Disco** action. **Connectors** is where platforms get authorized and per-capability permissions set (allow / needs approval / deny) |
+| **The moment** | The connectors *talk to each other*: click **Pitch via Disco** on a library track (or ask the orb *"use Afterburn from my Sync Ready playlist and submit it to the best Disco pitch"*) and the SyncAgent reads Kai's Disco permissions, loads Disco's live briefs, reads his **Untitled library**, resolves the named track from the named playlist, and drafts the pitch **as a draft awaiting approval** — citing the track's sound profile. Flip "Draft pitches" off and the same ask gets: *"I can't draft a pitch because that capability is turned off in the Disco settings."* |
+| **Agent flow** | SyncAgent (Gemini 2.5 Pro) → `get_connector_config` (obey the human) → `get_sync_briefs` (Disco) + `get_sync_catalog` (the Untitled library, with playlist/source provenance) → match, draft, forecast — with a visible cross-connector tool trace |
 | **Cloud story** | Custom-RAG grounding, human-in-the-loop gated agency, ADK Sessions (multi-turn refinement), optional Memory Bank |
 
 ---
@@ -75,15 +75,19 @@ draft and the recovery forecast. **Beat: one strategist agent commanding an exec
 agent — catalog ops that used to be a quarter's work.**
 
 **Act 3 — Kai Rivers, AI-native creator (1:50–2:45).** Switch to **Kai Rivers**. His
-whole stack is the new music economy: Suno creates, Mogul owns, Disco monetizes —
-already connected. Open **Disco**, point at the permission rows ("Draft pitches:
-needs approval · Auto-submit: deny"), hit *"Pitch my catalog into this week's
-briefs."* The trace shows the agent reading his settings first; matches cite his
-actual tracks' sound profiles against real briefs ("Afterburn" → Nike, "Glasslands" →
-the EV trailer); the pitch arrives as a **draft asking for approval**. Then the kill
-shot: toggle "Draft pitches" **off**, run it again — the agent declines, citing the
-settings. **Beat: a creator with zero industry relationships gets a sync dealmaker —
-on a leash he controls.**
+whole stack is the new music economy: Suno creates, Untitled holds the library, Mogul
+owns, Disco monetizes — already connected. His **Today** view shows the library
+itself: playlists ("Sync Ready", "New Drops", "Quiet Hours") synced live from
+Untitled, every track one click from a pitch. Click **Pitch via Disco** on
+"Glasslands" — the orb hands it to the sync dealmaker, which matches the track to the
+EV trailer brief citing its actual sound profile and asks for approval. Then open
+**Untitled** and run *"Find sync-ready tracks in my library"*: the trace renders the
+connectors talking to each other — *Read your Disco permissions → Loaded active
+briefs from Disco → Read your library from Untitled* — and the matches name his
+playlists ("Afterburn" from Sync Ready → Nike). The pitch arrives as a **draft asking
+for approval**. Then the kill shot: toggle "Draft pitches" **off** in Disco, run it
+again — the agent declines, citing the settings. **Beat: his platforms don't talk to
+each other; Lode's agents talk to all of them — on a leash he controls.**
 
 **Close (2:45–3:00).** The connectors loop strip (Suno → Mogul → Disco) over the
 line: "Recover what you're owed. Operate at scale. Make new money — on your terms.
@@ -94,8 +98,8 @@ Google ADK · MCP · A2A · Gemini on Vertex AI · Cloud Run.
 
 - Backend + frontend running; `FRONTEND_ORIGINS` set if the port isn't 5173
 - `data/personas.json` → `"active": "june"`; `data/connector_config.json` reset to
-  the seeded entries (june: Mogul · label: Mogul · kai: Mogul/Suno/Disco) so
-  SoundExchange shows **+ Connect** in June's workspace
+  the seeded entries (june: Mogul · label: Mogul · kai: Mogul/Suno/Untitled/Disco)
+  so SoundExchange shows **+ Connect** in June's workspace
 - Kai's Disco config: draft_pitch = *needs approval*, auto_submit = *deny* (defaults)
 - Fresh browser profile or `?intro=1` for the first-run intro
 - Orb closed at start so the "Lode is listening" greeting plays on camera

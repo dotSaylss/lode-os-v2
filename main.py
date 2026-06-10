@@ -298,7 +298,9 @@ def connect_connector_route(connector_id: str, req: ConnectRequest):
 
 # Maps each connector to the agent selector that runs its headline action.
 # "rights" resolves to the default royalty orchestrator (the Mogul audit).
-_CONNECTOR_AGENT = {"disco": "sync", "mogul": "rights"}
+# Untitled's action is deliberately CROSS-connector: it reads the user's
+# Untitled library and matches it against Disco's live briefs via the SyncAgent.
+_CONNECTOR_AGENT = {"disco": "sync", "mogul": "rights", "untitled": "sync"}
 
 
 @app.post("/api/v1/connectors/{connector_id}/action", response_model=OrbResponse)
@@ -339,12 +341,24 @@ async def run_connector_action(connector_id: str, req: ChatRequest):
 
     new_message = types.Content(role="user", parts=[types.Part.from_text(text=message)])
 
-    # Human-readable labels for the SyncAgent's tools, so the trace reads as the
-    # config being honored step by step.
+    # Human-readable labels for the agent's tools, so the trace reads as the
+    # config being honored step by step — naming the connector each tool
+    # actually touched, which makes cross-connector runs (e.g. Untitled
+    # library → Disco briefs) visible rather than implied.
+    persona = db_service.get_active_persona()
+    catalog_label = (
+        "Read your library from Untitled"
+        if persona == "kai"
+        else "Scanned the roster catalog"
+    )
     _TOOL_LABELS = {
-        "get_connector_config": f"Read your {connector.name} settings",
-        "get_sync_briefs": "Loaded active sync briefs",
-        "get_sync_catalog": "Scanned your catalog",
+        # The SyncAgent always gates itself on the Disco permissions, even when
+        # launched from another connector's action.
+        "get_connector_config": "Read your Disco permissions"
+        if selector == "sync"
+        else f"Read your {connector.name} settings",
+        "get_sync_briefs": "Loaded active briefs from Disco",
+        "get_sync_catalog": catalog_label,
         "get_artist_data": "Scanned your royalty context",
     }
 

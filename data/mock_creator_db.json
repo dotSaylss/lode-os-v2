@@ -5,10 +5,32 @@
     "ytd_earnings": 8420.75
   },
   "connected_sources": [
-    { "name": "Suno", "status": "connected" },
-    { "name": "Mogul", "status": "connected" },
-    { "name": "Disco", "status": "connected" }
+    {
+      "name": "Suno",
+      "status": "connected"
+    },
+    {
+      "name": "Untitled",
+      "status": "connected"
+    },
+    {
+      "name": "Mogul",
+      "status": "connected"
+    },
+    {
+      "name": "Disco",
+      "status": "connected"
+    }
   ],
+  "library": {
+    "connector": "untitled",
+    "name": "Untitled",
+    "playlists": [
+      "Sync Ready",
+      "New Drops",
+      "Quiet Hours"
+    ]
+  },
   "neighboring_rights": {
     "registered": false,
     "estimated_missing": 310.0
@@ -17,9 +39,18 @@
     {
       "title": "Afterburn",
       "released": "2026-03-14",
+      "source": "Suno",
+      "playlist": "Sync Ready",
       "sound": {
-        "genres": ["electronic", "hip-hop"],
-        "moods": ["driving", "confident", "euphoric"],
+        "genres": [
+          "electronic",
+          "hip-hop"
+        ],
+        "moods": [
+          "driving",
+          "confident",
+          "euphoric"
+        ],
         "tempo": "fast",
         "vocals": "instrumental"
       }
@@ -27,9 +58,19 @@
     {
       "title": "Glasslands",
       "released": "2026-02-02",
+      "source": "Suno",
+      "playlist": "Sync Ready",
       "sound": {
-        "genres": ["ambient", "electronic", "orchestral"],
-        "moods": ["cinematic", "sleek", "tense"],
+        "genres": [
+          "ambient",
+          "electronic",
+          "orchestral"
+        ],
+        "moods": [
+          "cinematic",
+          "sleek",
+          "tense"
+        ],
         "tempo": "build",
         "vocals": "instrumental"
       }
@@ -37,9 +78,18 @@
     {
       "title": "Sundress Season",
       "released": "2026-04-21",
+      "source": "Suno",
+      "playlist": "New Drops",
       "sound": {
-        "genres": ["bedroom pop", "indie pop"],
-        "moods": ["playful", "moody", "youthful"],
+        "genres": [
+          "bedroom pop",
+          "indie pop"
+        ],
+        "moods": [
+          "playful",
+          "moody",
+          "youthful"
+        ],
         "tempo": "mid",
         "vocals": "female"
       }
@@ -47,9 +97,19 @@
     {
       "title": "Open World",
       "released": "2025-11-09",
+      "source": "Suno",
+      "playlist": "Quiet Hours",
       "sound": {
-        "genres": ["ambient", "post-rock", "electronic"],
-        "moods": ["wondrous", "calm", "expansive"],
+        "genres": [
+          "ambient",
+          "post-rock",
+          "electronic"
+        ],
+        "moods": [
+          "wondrous",
+          "calm",
+          "expansive"
+        ],
         "tempo": "slow",
         "vocals": "instrumental"
       }
@@ -57,9 +117,19 @@
     {
       "title": "Golden Hour Logic",
       "released": "2026-01-17",
+      "source": "Suno",
+      "playlist": "New Drops",
       "sound": {
-        "genres": ["pop", "soul", "r&b"],
-        "moods": ["warm", "feel-good", "breezy"],
+        "genres": [
+          "pop",
+          "soul",
+          "r&b"
+        ],
+        "moods": [
+          "warm",
+          "feel-good",
+          "breezy"
+        ],
         "tempo": "mid",
         "vocals": "female"
       }
@@ -67,9 +137,19 @@
     {
       "title": "Crown Heavy",
       "released": "2026-05-02",
+      "source": "Suno",
+      "playlist": "New Drops",
       "sound": {
-        "genres": ["hip-hop", "trap", "electronic"],
-        "moods": ["epic", "triumphant", "intense"],
+        "genres": [
+          "hip-hop",
+          "trap",
+          "electronic"
+        ],
+        "moods": [
+          "epic",
+          "triumphant",
+          "intense"
+        ],
         "tempo": "fast",
         "vocals": "male"
       }
@@ -77,9 +157,18 @@
     {
       "title": "Last Light on Ludlow",
       "released": "2025-12-05",
+      "source": "Suno",
+      "playlist": "Quiet Hours",
       "sound": {
-        "genres": ["indie folk", "singer-songwriter"],
-        "moods": ["bittersweet", "hopeful", "intimate"],
+        "genres": [
+          "indie folk",
+          "singer-songwriter"
+        ],
+        "moods": [
+          "bittersweet",
+          "hopeful",
+          "intimate"
+        ],
         "tempo": "slow",
         "vocals": "male"
       }
@@ -87,9 +176,18 @@
     {
       "title": "Night Swim",
       "released": "2026-03-30",
+      "source": "Suno",
+      "playlist": "Sync Ready",
       "sound": {
-        "genres": ["electronic", "house"],
-        "moods": ["euphoric", "propulsive", "bright"],
+        "genres": [
+          "electronic",
+          "house"
+        ],
+        "moods": [
+          "euphoric",
+          "propulsive",
+          "bright"
+        ],
         "tempo": "fast",
         "vocals": "mixed"
       }

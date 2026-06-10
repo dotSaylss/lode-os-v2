@@ -29,6 +29,7 @@
 
 	const CATEGORY_LABELS: Record<string, string> = {
 		creation: 'Creation',
+		collaboration: 'Library & Collab',
 		royalties: 'Royalties',
 		sync_licensing: 'Sync Licensing',
 		distribution: 'Distribution',
