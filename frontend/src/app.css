@@ -355,9 +355,10 @@ body {
 .v3-orb-badge { position: absolute; top: -2px; right: -2px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; background: var(--sg-500); color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid var(--paper-50); }
 .v3-orb-hint { position: absolute; right: 72px; top: 50%; transform: translateY(-50%) translateX(6px); white-space: nowrap; background: var(--ink-900); color: var(--paper-50); font-size: 12.5px; font-weight: 500; padding: 7px 12px; border-radius: var(--r-md); box-shadow: var(--v3-sh-md); opacity: 0; pointer-events: none; transition: opacity .18s, transform .18s; }
 .v3-orb-hint::after { content: ""; position: absolute; right: -5px; top: 50%; transform: translateY(-50%) rotate(45deg); width: 9px; height: 9px; background: var(--ink-900); }
-/* The hint tooltip shows only when the panel is closed. */
+/* The hint tooltip greets on load for a few seconds (while .hint-armed is
+   set), then fades out for good so it never lingers over content. */
 .v3-orb-wrap.open .v3-orb-hint { opacity: 0 !important; }
-.v3-orb-wrap:not(.open):not(:hover) .v3-orb .v3-orb-hint { opacity: 1; transform: translateY(-50%); }
+.v3-orb-wrap.hint-armed:not(.open):not(:hover) .v3-orb .v3-orb-hint { opacity: 1; transform: translateY(-50%); }
 .v3-orb-wrap:hover .v3-orb-hint { opacity: 0; }
 /* Panel is conditionally mounted; Svelte's scale transition handles enter/exit. */
 .v3-orb-panel { width: 380px; max-width: calc(100vw - 56px); background: var(--paper-0); border: 1px solid var(--paper-200); border-radius: var(--r-xl); box-shadow: var(--v3-sh-xl); display: flex; flex-direction: column; overflow: hidden; transform-origin: bottom right; }
@@ -380,9 +381,13 @@ body {
 @keyframes blink { 0%,60%,100% { opacity: .25; } 30% { opacity: 1; } }
 .v3-orb-route { margin: 0 16px 12px; display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; background: var(--sg-50); border: 1px solid var(--sg-100); color: var(--sg-700); border-radius: var(--r-md); padding: 9px 13px; font-size: 12.5px; font-weight: 600; text-decoration: none; transition: background .14s; }
 .v3-orb-route:hover { background: var(--sg-100); }
-.v3-orb-chips { display: flex; flex-wrap: wrap; gap: 7px; padding: 0 16px 12px; }
-.v3-orb-chip { font-size: 12px; font-weight: 500; color: var(--sg-700); background: var(--sg-50); border: 1px solid var(--sg-100); border-radius: var(--r-pill); padding: 6px 12px; transition: background .14s; cursor: pointer; }
-.v3-orb-chip:hover { background: var(--sg-100); }
+/* Next-step actions under an answer — quieter, paper-outline cousins of the
+   sage route button so the primary "See this in …" affordance stays dominant. */
+.v3-orb-followups { display: flex; flex-wrap: wrap; gap: 6px; margin: -4px 16px 12px; align-self: flex-start; }
+.v3-orb-followup { font-size: 12px; font-weight: 500; color: var(--ink-500); background: var(--paper-0); border: 1px solid var(--paper-200); border-radius: var(--r-pill); padding: 6px 12px; transition: border-color .14s, color .14s; cursor: pointer; }
+.v3-orb-followup:hover { border-color: var(--sg-200); color: var(--ink-900); }
+/* Keyboard affordance for accepting the placeholder suggestion. */
+.v3-orb-tab { flex: none; font-size: 10.5px; font-weight: 600; letter-spacing: .02em; color: var(--ink-muted); background: var(--paper-0); border: 1px solid var(--paper-200); border-bottom-width: 2px; border-radius: var(--r-xs); padding: 2px 7px; }
 .v3-orb-composer { display: flex; align-items: center; gap: 8px; margin: 0 14px 14px; background: var(--paper-50); border: 1px solid var(--paper-200); border-radius: var(--r-pill); padding: 5px 5px 5px 15px; transition: border-color .15s; }
 .v3-orb-composer:focus-within { border-color: var(--sg-300); }
 .v3-orb-composer input { flex: 1; border: none; outline: none; background: transparent; font-size: 13.5px; color: var(--ink-900); }
