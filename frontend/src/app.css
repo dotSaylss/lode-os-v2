@@ -252,7 +252,14 @@ body {
 .v3-rail-panel { position: absolute; top: 0; left: 0; bottom: 0; width: 76px; background: var(--paper-0);
   border-right: 1px solid var(--paper-200); display: flex; flex-direction: column; padding: 18px 14px;
   overflow: hidden; transition: width .26s cubic-bezier(0.22,1,0.36,1), box-shadow .26s; }
-.v3-rail:hover .v3-rail-panel { width: 236px; box-shadow: var(--v3-sh-lg); }
+/* Hover-expansion is a mouse affordance only: on touch, :hover sticks after a
+   tap and the expanded overlay would cover (and swallow taps on) the content. */
+@media (hover: hover) and (pointer: fine) {
+	.v3-rail:hover .v3-rail-panel { width: 236px; box-shadow: var(--v3-sh-lg); }
+	.v3-rail:hover .v3-rail-word { opacity: 1; }
+	.v3-rail:hover .v3-rail-lock { opacity: 1; }
+	.v3-rail:hover .v3-rail-label { opacity: 1; }
+}
 .appv3.rail-locked .v3-rail-panel { width: 236px; box-shadow: none; }
 /* Keep the rail expanded while the workspace switcher is open, so the popover
    never gets clipped by the collapsed rail's overflow. */
@@ -260,15 +267,15 @@ body {
 .v3-rail-brand { display: flex; align-items: center; gap: 12px; padding: 4px 6px 20px; }
 .v3-rail-word { font-size: 18px; font-weight: 600; letter-spacing: -0.4px; color: var(--ink-900); white-space: nowrap; opacity: 0; transition: opacity .2s; flex: 1; }
 .v3-rail-word i { font-style: normal; color: var(--sg-500); }
-.v3-rail:hover .v3-rail-word,
-.appv3.rail-locked .v3-rail-word { opacity: 1; }
+.appv3.rail-locked .v3-rail-word,
+.v3-rail-panel:has(.v3-switcher-pop) .v3-rail-word { opacity: 1; }
 /* lock toggle — only visible once the panel is open */
 .v3-rail-lock { flex: none; width: 30px; height: 30px; border-radius: var(--r-sm); border: none; background: transparent;
   display: inline-flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0;
   transition: opacity .2s, background .14s; }
 .v3-rail-lock:hover { background: var(--paper-100); }
-.v3-rail:hover .v3-rail-lock,
-.appv3.rail-locked .v3-rail-lock { opacity: 1; }
+.appv3.rail-locked .v3-rail-lock,
+.v3-rail-panel:has(.v3-switcher-pop) .v3-rail-lock { opacity: 1; }
 .v3-rail-nav { display: flex; flex-direction: column; gap: 3px; }
 .v3-rail-sep { height: 1px; background: var(--paper-200); margin: 8px 10px; }
 .v3-rail-foot { margin-top: auto; display: flex; flex-direction: column; gap: 3px; }
@@ -279,8 +286,8 @@ body {
 .v3-rail-item.active .v3-rail-ico { color: var(--sg-600); }
 .v3-rail-ico { width: 24px; display: inline-flex; align-items: center; justify-content: center; flex: none; color: inherit; }
 .v3-rail-label { font-size: 14px; font-weight: 500; white-space: nowrap; opacity: 0; transition: opacity .2s; }
-.v3-rail:hover .v3-rail-label,
-.appv3.rail-locked .v3-rail-label { opacity: 1; }
+.appv3.rail-locked .v3-rail-label,
+.v3-rail-panel:has(.v3-switcher-pop) .v3-rail-label { opacity: 1; }
 .v3-rail-avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--sg-300); color: var(--sg-700); font-size: 10.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 .v3-rail-avatar.sm { width: 26px; height: 26px; flex: none; }
 
