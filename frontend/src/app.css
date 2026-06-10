@@ -386,6 +386,11 @@ body {
 .v3-orb-followups { display: flex; flex-wrap: wrap; gap: 6px; margin: -4px 16px 12px; align-self: flex-start; }
 .v3-orb-followup { font-size: 12px; font-weight: 500; color: var(--ink-500); background: var(--paper-0); border: 1px solid var(--paper-200); border-radius: var(--r-pill); padding: 6px 12px; transition: border-color .14s, color .14s; cursor: pointer; }
 .v3-orb-followup:hover { border-color: var(--sg-200); color: var(--ink-900); }
+/* Value-prop subline under a view's h1 — names the audience the view serves. */
+.v3-vp { margin: 7px 0 0; max-width: 56ch; font-size: 13px; line-height: 1.55; color: var(--ink-500); }
+
+/* Which compute tier served the answer — fast Flash lookup vs Pro specialist. */
+.v3-orb-tier { display: inline-flex; align-items: center; gap: 4px; margin: 5px 2px 0; font-size: 10.5px; font-weight: 600; letter-spacing: .01em; color: var(--ink-muted); }
 /* Keyboard affordance for accepting the placeholder suggestion. */
 .v3-orb-tab { flex: none; font-size: 10.5px; font-weight: 600; letter-spacing: .02em; color: var(--ink-muted); background: var(--paper-0); border: 1px solid var(--paper-200); border-bottom-width: 2px; border-radius: var(--r-xs); padding: 2px 7px; }
 .v3-orb-composer { display: flex; align-items: center; gap: 8px; margin: 0 14px 14px; background: var(--paper-50); border: 1px solid var(--paper-200); border-radius: var(--r-pill); padding: 5px 5px 5px 15px; transition: border-color .15s; }

@@ -156,6 +156,43 @@ def get_providers() -> str:
     return '{"providers": []}'
 
 
+def get_connectors_overview() -> str:
+    """Read the connector catalog with live connection status, as JSON.
+
+    A quick-lookup source: which platforms are connected (and under which
+    account), which are available to connect, and what each one does. Use this
+    to answer fast factual questions like "what's connected?", "what does the
+    Disco connector do?", or "can I connect Spotify?" without engaging a
+    domain specialist.
+
+    Returns:
+        A JSON string of {"connectors": [{id, name, category, tagline,
+        status, account, capabilities}]}, or '{"connectors": []}'.
+    """
+    try:
+        from services.db_service import DBService
+
+        connectors = DBService().get_connectors()
+        return json.dumps(
+            {
+                "connectors": [
+                    {
+                        "id": c.id,
+                        "name": c.name,
+                        "category": c.category,
+                        "tagline": c.tagline,
+                        "status": c.status,
+                        "account": c.account,
+                        "capabilities": c.capabilities,
+                    }
+                    for c in connectors
+                ]
+            }
+        )
+    except Exception:
+        return '{"connectors": []}'
+
+
 def get_connector_config(connector_id: str) -> str:
     """Read a connector's live, human-set configuration and return it as JSON.
 

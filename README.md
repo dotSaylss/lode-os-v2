@@ -22,9 +22,25 @@ agent may do.
   permission (*allow / needs approval / deny*) that agents read first and obey; actions
   return a visible tool trace so you can watch the settings being honored.
 
-One assistant — the floating **Lode orb** — is the single point of contact. It consults
-the right specialist agent and routes you to the view where the full detail (agent
+One assistant — the floating **Lode orb** — is the single point of contact. Quick
+lookups are answered by a fast Gemini 2.5 Flash front line; complex cross-connector
+work is handed to Gemini 2.5 Pro specialists, and each answer is labeled with the
+tier that served it. The orb routes you to the view where the full detail (agent
 handoff traces, grounding evidence) renders.
+
+## Who it's for
+
+1. **Independent artists** — *find the money you're owed.* Royalty gaps surfaced and
+   registrations drafted (the $2,400 neighboring-rights moment on Today).
+2. **Labels & catalog teams** — *operate the whole roster.* Catalog-wide audits with
+   bulk recovery delegated agent-to-agent (the visible LabelAgent → ActionAgent
+   handoff on Catalog).
+3. **Rights holders making new money** — *new revenue, on your terms.* Connect the
+   platforms your music lives on, set per-capability permissions, and let the sync
+   dealmaker pitch your catalog under approval (Connectors → Disco).
+
+The three journeys, their agent flows, and a demo walkthrough are detailed in
+[docs/VALUE_PROPS.md](./docs/VALUE_PROPS.md).
 
 ## Architecture
 

@@ -124,6 +124,7 @@
 		<div>
 			<span class="v3-date">Services</span>
 			<h1>Bring your song to life</h1>
+			<p class="v3-vp">For artists finishing a record — vetted collaborators matched to your song's needs, with the evidence to back every match.</p>
 		</div>
 		<div class="v3-header-recovered">
 			<span>Vetted marketplace</span>

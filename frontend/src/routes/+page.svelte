@@ -20,6 +20,7 @@
 		<div>
 			<span class="v3-date">Overview</span>
 			<h1>Good morning, {ctx?.artist_profile?.name ?? 'there'}</h1>
+			<p class="v3-vp">For artists — Lode watches every royalty source you're connected to, finds the money you're owed, and files what's missing.</p>
 		</div>
 		<div class="v3-header-recovered">
 			<span>Year to date</span>

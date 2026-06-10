@@ -37,9 +37,16 @@ every connected source, find the missing money, and act to recover it — under
 
 ## The agent team
 
+The team is split into two compute tiers. The **fast tier** (Gemini 2.5 Flash) is the
+front line: the concierge answers quick factual lookups directly from its own read
+tools (artist context, connectors overview) in seconds. The **reasoning tier**
+(Gemini 2.5 Pro) handles cross-connector analysis and action — the concierge engages
+exactly one specialist when the question needs it, and `/ask` reports which tier
+served each answer (`tier: "fast" | "reasoning"`) so the UI can label it.
+
 | Agent | Model (default) | Role | Surface |
 |---|---|---|---|
-| **ConciergeAgent** | Gemini 2.5 Pro | Single point of contact; consults a specialist and returns an answer + a route hint to the right view | The floating Lode orb, `POST /api/v1/ask` |
+| **ConciergeAgent** | Gemini 2.5 Flash | Fast front line: quick lookups answered directly; consults a Pro specialist for analysis and returns an answer + route hint | The floating Lode orb, `POST /api/v1/ask` |
 | **OrchestratorAgent** | Gemini 2.5 Pro | Single-artist rights & royalties; finds an artist's missing money | Today, `POST /api/v1/chat` |
 | ↳ RoyaltyAnalysisAgent | Gemini 2.5 Flash | Gap analysis specialist | (sub-agent) |
 | ↳ ActionAgent | Gemini 2.5 Flash | Drafts registrations (ASCAP/BMI/SoundExchange) | (sub-agent) |
@@ -104,6 +111,14 @@ truth), **Suno** (creation: releases/stems into the catalog), **Disco** (demand:
 sync briefs in, pitches out, placement fees back into the forecast), plus
 available-to-connect platforms (Spotify for Artists, DistroKid, ASCAP,
 SoundExchange, Songtradr).
+
+**Connecting a platform** runs through a consent-style authorization flow
+(`POST /api/v1/connectors/{id}/connect`): the user reviews exactly what Lode will
+be able to do, authorizes, and the connection persists with safe defaults — read
+capabilities allowed, platform-changing actions at "needs approval", anything
+automatic denied. The demo simulates the handshake; in production this is where
+each platform's OAuth2/API-key exchange lands, and each connector's data access
+runs behind the same MCP-style seam as Mogul.
 
 ## Grounding
 

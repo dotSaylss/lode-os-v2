@@ -15,7 +15,16 @@
 	import Icon from '$lib/components/Icon.svelte';
 
 	type RouteHint = { page: string; label: string; reason?: string };
-	type Msg = { id: number; role: 'user' | 'lode'; text: string; hint?: RouteHint };
+	type Msg = {
+		id: number;
+		role: 'user' | 'lode';
+		text: string;
+		hint?: RouteHint;
+		// Which compute tier served the answer: 'fast' (Flash concierge answered
+		// from its own read tools) or 'reasoning' (a Pro specialist was consulted).
+		tier?: 'fast' | 'reasoning';
+		traceLabel?: string;
+	};
 
 	let open = $state(false);
 	let pinned = $state(false);
@@ -118,7 +127,14 @@
 			sessionId = data.session_id ?? sessionId;
 			messages = [
 				...messages,
-				{ id: Date.now() + 1, role: 'lode', text: data.response, hint: data.route_hint ?? undefined }
+				{
+					id: Date.now() + 1,
+					role: 'lode',
+					text: data.response,
+					hint: data.route_hint ?? undefined,
+					tier: data.tier ?? undefined,
+					traceLabel: data.trace?.[0]?.label ?? undefined
+				}
 			];
 		} catch {
 			messages = [
@@ -179,6 +195,14 @@
 				{#each messages as m (m.id)}
 					<div class="v3-orb-bubble {m.role === 'user' ? 'user' : 'lode'}">
 						<p>{m.text}</p>
+						{#if m.tier}
+							<span class="v3-orb-tier">
+								<Icon name={m.tier === 'fast' ? 'zap' : 'sparkles'} size={11} color="currentColor" />
+								{m.tier === 'fast'
+									? 'Quick lookup · Gemini 2.5 Flash'
+									: `${m.traceLabel ?? 'Deep reasoning'} · Gemini 2.5 Pro`}
+							</span>
+						{/if}
 					</div>
 					{#if m.role === 'lode' && m.hint}
 						<button class="v3-orb-route" type="button" onclick={() => follow(m.hint!)}>
