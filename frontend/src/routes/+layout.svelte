@@ -40,7 +40,8 @@
 	const nav = [
 		{ href: '/', label: 'Today', icon: 'sun', match: (p: string) => p === '/' },
 		{ href: '/label', label: 'Catalog', icon: 'audio-lines', match: (p: string) => p.startsWith('/label') },
-		{ href: '/services', label: 'Services', icon: 'handshake', match: (p: string) => p.startsWith('/services') }
+		{ href: '/services', label: 'Services', icon: 'handshake', match: (p: string) => p.startsWith('/services') },
+		{ href: '/connectors', label: 'Connectors', icon: 'plug', match: (p: string) => p.startsWith('/connectors') }
 	];
 </script>
 

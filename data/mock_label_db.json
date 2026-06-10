@@ -48,7 +48,20 @@
         }
       ],
       "total_uncollected": 6398.17,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "electronic",
+          "pop"
+        ],
+        "moods": [
+          "energetic",
+          "confident",
+          "anthemic"
+        ],
+        "tempo": "fast",
+        "vocals": "mixed"
+      }
     },
     {
       "id": "artist_002",
@@ -89,7 +102,20 @@
         }
       ],
       "total_uncollected": 17485.14,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "hip-hop",
+          "electronic"
+        ],
+        "moods": [
+          "driving",
+          "confident",
+          "euphoric"
+        ],
+        "tempo": "fast",
+        "vocals": "male"
+      }
     },
     {
       "id": "artist_003",
@@ -119,7 +145,20 @@
       ],
       "gaps": [],
       "total_uncollected": 0,
-      "status": "all_clear"
+      "status": "all_clear",
+      "sound": {
+        "genres": [
+          "pop",
+          "r&b"
+        ],
+        "moods": [
+          "warm",
+          "feel-good",
+          "polished"
+        ],
+        "tempo": "mid",
+        "vocals": "female"
+      }
     },
     {
       "id": "artist_004",
@@ -161,7 +200,20 @@
         }
       ],
       "total_uncollected": 1291.22,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "bedroom pop",
+          "indie pop"
+        ],
+        "moods": [
+          "playful",
+          "moody",
+          "youthful"
+        ],
+        "tempo": "mid",
+        "vocals": "female"
+      }
     },
     {
       "id": "artist_005",
@@ -195,7 +247,20 @@
         }
       ],
       "total_uncollected": 2401.87,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "indie folk",
+          "singer-songwriter"
+        ],
+        "moods": [
+          "bittersweet",
+          "hopeful",
+          "intimate"
+        ],
+        "tempo": "slow",
+        "vocals": "female"
+      }
     },
     {
       "id": "artist_006",
@@ -229,7 +294,20 @@
         }
       ],
       "total_uncollected": 12387.9,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "folk",
+          "americana"
+        ],
+        "moods": [
+          "reflective",
+          "earnest",
+          "grounded"
+        ],
+        "tempo": "slow",
+        "vocals": "male"
+      }
     },
     {
       "id": "artist_007",
@@ -266,7 +344,20 @@
         }
       ],
       "total_uncollected": 15365.95,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "hip-hop",
+          "trap"
+        ],
+        "moods": [
+          "epic",
+          "intense",
+          "swaggering"
+        ],
+        "tempo": "fast",
+        "vocals": "male"
+      }
     },
     {
       "id": "artist_008",
@@ -307,7 +398,20 @@
         }
       ],
       "total_uncollected": 20585.77,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "soul",
+          "r&b"
+        ],
+        "moods": [
+          "warm",
+          "feel-good",
+          "breezy"
+        ],
+        "tempo": "mid",
+        "vocals": "female"
+      }
     },
     {
       "id": "artist_009",
@@ -341,7 +445,20 @@
         }
       ],
       "total_uncollected": 12458.5,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "ambient",
+          "post-rock"
+        ],
+        "moods": [
+          "wondrous",
+          "calm",
+          "expansive"
+        ],
+        "tempo": "slow",
+        "vocals": "instrumental"
+      }
     },
     {
       "id": "artist_010",
@@ -393,7 +510,20 @@
         }
       ],
       "total_uncollected": 23236.58,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "indie rock",
+          "alt"
+        ],
+        "moods": [
+          "restless",
+          "raw",
+          "anthemic"
+        ],
+        "tempo": "mid",
+        "vocals": "male"
+      }
     },
     {
       "id": "artist_011",
@@ -419,7 +549,20 @@
       ],
       "gaps": [],
       "total_uncollected": 0,
-      "status": "all_clear"
+      "status": "all_clear",
+      "sound": {
+        "genres": [
+          "electronic",
+          "house"
+        ],
+        "moods": [
+          "euphoric",
+          "propulsive",
+          "bright"
+        ],
+        "tempo": "fast",
+        "vocals": "mixed"
+      }
     },
     {
       "id": "artist_012",
@@ -464,7 +607,20 @@
         }
       ],
       "total_uncollected": 11758.65,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "singer-songwriter",
+          "indie folk"
+        ],
+        "moods": [
+          "intimate",
+          "honest",
+          "warm"
+        ],
+        "tempo": "slow",
+        "vocals": "female"
+      }
     },
     {
       "id": "artist_013",
@@ -490,7 +646,20 @@
       ],
       "gaps": [],
       "total_uncollected": 0,
-      "status": "all_clear"
+      "status": "all_clear",
+      "sound": {
+        "genres": [
+          "orchestral",
+          "cinematic"
+        ],
+        "moods": [
+          "tense",
+          "sweeping",
+          "premium"
+        ],
+        "tempo": "build",
+        "vocals": "instrumental"
+      }
     },
     {
       "id": "artist_014",
@@ -546,7 +715,20 @@
         }
       ],
       "total_uncollected": 11934.3,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "pop",
+          "dance-pop"
+        ],
+        "moods": [
+          "sunny",
+          "catchy",
+          "confident"
+        ],
+        "tempo": "fast",
+        "vocals": "female"
+      }
     },
     {
       "id": "artist_015",
@@ -591,7 +773,20 @@
         }
       ],
       "total_uncollected": 9153.97,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "jazz",
+          "neo-soul"
+        ],
+        "moods": [
+          "late-night",
+          "smooth",
+          "elegant"
+        ],
+        "tempo": "mid",
+        "vocals": "mixed"
+      }
     },
     {
       "id": "artist_016",
@@ -621,7 +816,20 @@
         }
       ],
       "total_uncollected": 2328.52,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "lo-fi",
+          "chillhop"
+        ],
+        "moods": [
+          "mellow",
+          "nostalgic",
+          "hazy"
+        ],
+        "tempo": "slow",
+        "vocals": "instrumental"
+      }
     },
     {
       "id": "artist_017",
@@ -663,7 +871,20 @@
         }
       ],
       "total_uncollected": 12492.32,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "bedroom pop",
+          "indie pop"
+        ],
+        "moods": [
+          "playful",
+          "moody",
+          "youthful"
+        ],
+        "tempo": "mid",
+        "vocals": "female"
+      }
     },
     {
       "id": "artist_018",
@@ -705,7 +926,20 @@
         }
       ],
       "total_uncollected": 6858.94,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "folk",
+          "americana"
+        ],
+        "moods": [
+          "reflective",
+          "earnest",
+          "grounded"
+        ],
+        "tempo": "slow",
+        "vocals": "male"
+      }
     },
     {
       "id": "artist_019",
@@ -754,7 +988,20 @@
         }
       ],
       "total_uncollected": 8036.1,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "hip-hop",
+          "trap"
+        ],
+        "moods": [
+          "epic",
+          "intense",
+          "swaggering"
+        ],
+        "tempo": "fast",
+        "vocals": "male"
+      }
     },
     {
       "id": "artist_020",
@@ -784,7 +1031,20 @@
         }
       ],
       "total_uncollected": 1811.14,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "soul",
+          "r&b"
+        ],
+        "moods": [
+          "warm",
+          "feel-good",
+          "breezy"
+        ],
+        "tempo": "mid",
+        "vocals": "female"
+      }
     },
     {
       "id": "artist_021",
@@ -826,7 +1086,20 @@
         }
       ],
       "total_uncollected": 6034.91,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "ambient",
+          "post-rock"
+        ],
+        "moods": [
+          "wondrous",
+          "calm",
+          "expansive"
+        ],
+        "tempo": "slow",
+        "vocals": "instrumental"
+      }
     },
     {
       "id": "artist_022",
@@ -870,7 +1143,20 @@
         }
       ],
       "total_uncollected": 7762.49,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "indie rock",
+          "alt"
+        ],
+        "moods": [
+          "restless",
+          "raw",
+          "anthemic"
+        ],
+        "tempo": "mid",
+        "vocals": "male"
+      }
     },
     {
       "id": "artist_023",
@@ -907,7 +1193,20 @@
         }
       ],
       "total_uncollected": 7179.66,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "electronic",
+          "house"
+        ],
+        "moods": [
+          "euphoric",
+          "propulsive",
+          "bright"
+        ],
+        "tempo": "fast",
+        "vocals": "mixed"
+      }
     },
     {
       "id": "artist_024",
@@ -941,7 +1240,20 @@
         }
       ],
       "total_uncollected": 4300.39,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "singer-songwriter",
+          "indie folk"
+        ],
+        "moods": [
+          "intimate",
+          "honest",
+          "warm"
+        ],
+        "tempo": "slow",
+        "vocals": "female"
+      }
     },
     {
       "id": "artist_025",
@@ -986,7 +1298,20 @@
         }
       ],
       "total_uncollected": 12918.29,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "orchestral",
+          "cinematic"
+        ],
+        "moods": [
+          "tense",
+          "sweeping",
+          "premium"
+        ],
+        "tempo": "build",
+        "vocals": "instrumental"
+      }
     },
     {
       "id": "artist_026",
@@ -1023,7 +1348,20 @@
         }
       ],
       "total_uncollected": 10127.42,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "pop",
+          "dance-pop"
+        ],
+        "moods": [
+          "sunny",
+          "catchy",
+          "confident"
+        ],
+        "tempo": "fast",
+        "vocals": "female"
+      }
     },
     {
       "id": "artist_027",
@@ -1057,7 +1395,20 @@
         }
       ],
       "total_uncollected": 11692.01,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "jazz",
+          "neo-soul"
+        ],
+        "moods": [
+          "late-night",
+          "smooth",
+          "elegant"
+        ],
+        "tempo": "mid",
+        "vocals": "mixed"
+      }
     },
     {
       "id": "artist_028",
@@ -1087,7 +1438,21 @@
         }
       ],
       "total_uncollected": 10537.48,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "ambient",
+          "electronic",
+          "orchestral"
+        ],
+        "moods": [
+          "cinematic",
+          "sleek",
+          "expansive"
+        ],
+        "tempo": "build",
+        "vocals": "instrumental"
+      }
     },
     {
       "id": "artist_029",
@@ -1128,7 +1493,20 @@
         }
       ],
       "total_uncollected": 14846.08,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "lo-fi",
+          "chillhop"
+        ],
+        "moods": [
+          "mellow",
+          "nostalgic",
+          "hazy"
+        ],
+        "tempo": "slow",
+        "vocals": "instrumental"
+      }
     },
     {
       "id": "artist_030",
@@ -1173,7 +1551,20 @@
         }
       ],
       "total_uncollected": 15102.62,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "bedroom pop",
+          "indie pop"
+        ],
+        "moods": [
+          "playful",
+          "moody",
+          "youthful"
+        ],
+        "tempo": "mid",
+        "vocals": "female"
+      }
     },
     {
       "id": "artist_031",
@@ -1207,7 +1598,20 @@
       ],
       "gaps": [],
       "total_uncollected": 0,
-      "status": "all_clear"
+      "status": "all_clear",
+      "sound": {
+        "genres": [
+          "folk",
+          "americana"
+        ],
+        "moods": [
+          "reflective",
+          "earnest",
+          "grounded"
+        ],
+        "tempo": "slow",
+        "vocals": "male"
+      }
     },
     {
       "id": "artist_032",
@@ -1249,7 +1653,20 @@
         }
       ],
       "total_uncollected": 11861.89,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "hip-hop",
+          "trap"
+        ],
+        "moods": [
+          "epic",
+          "intense",
+          "swaggering"
+        ],
+        "tempo": "fast",
+        "vocals": "male"
+      }
     },
     {
       "id": "artist_033",
@@ -1279,7 +1696,20 @@
         }
       ],
       "total_uncollected": 8005.84,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "soul",
+          "r&b"
+        ],
+        "moods": [
+          "warm",
+          "feel-good",
+          "breezy"
+        ],
+        "tempo": "mid",
+        "vocals": "female"
+      }
     },
     {
       "id": "artist_034",
@@ -1313,7 +1743,20 @@
         }
       ],
       "total_uncollected": 1994.78,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "ambient",
+          "post-rock"
+        ],
+        "moods": [
+          "wondrous",
+          "calm",
+          "expansive"
+        ],
+        "tempo": "slow",
+        "vocals": "instrumental"
+      }
     },
     {
       "id": "artist_035",
@@ -1369,7 +1812,20 @@
         }
       ],
       "total_uncollected": 20833.27,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "indie rock",
+          "alt"
+        ],
+        "moods": [
+          "restless",
+          "raw",
+          "anthemic"
+        ],
+        "tempo": "mid",
+        "vocals": "male"
+      }
     },
     {
       "id": "artist_036",
@@ -1410,7 +1866,20 @@
         }
       ],
       "total_uncollected": 13530.31,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "electronic",
+          "house"
+        ],
+        "moods": [
+          "euphoric",
+          "propulsive",
+          "bright"
+        ],
+        "tempo": "fast",
+        "vocals": "mixed"
+      }
     },
     {
       "id": "artist_037",
@@ -1444,7 +1913,20 @@
       ],
       "gaps": [],
       "total_uncollected": 0,
-      "status": "all_clear"
+      "status": "all_clear",
+      "sound": {
+        "genres": [
+          "singer-songwriter",
+          "indie folk"
+        ],
+        "moods": [
+          "intimate",
+          "honest",
+          "warm"
+        ],
+        "tempo": "slow",
+        "vocals": "female"
+      }
     },
     {
       "id": "artist_038",
@@ -1493,7 +1975,20 @@
         }
       ],
       "total_uncollected": 7375.63,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "orchestral",
+          "cinematic"
+        ],
+        "moods": [
+          "tense",
+          "sweeping",
+          "premium"
+        ],
+        "tempo": "build",
+        "vocals": "instrumental"
+      }
     },
     {
       "id": "artist_039",
@@ -1527,7 +2022,20 @@
       ],
       "gaps": [],
       "total_uncollected": 0,
-      "status": "all_clear"
+      "status": "all_clear",
+      "sound": {
+        "genres": [
+          "pop",
+          "dance-pop"
+        ],
+        "moods": [
+          "sunny",
+          "catchy",
+          "confident"
+        ],
+        "tempo": "fast",
+        "vocals": "female"
+      }
     },
     {
       "id": "artist_040",
@@ -1549,7 +2057,20 @@
       ],
       "gaps": [],
       "total_uncollected": 0,
-      "status": "all_clear"
+      "status": "all_clear",
+      "sound": {
+        "genres": [
+          "jazz",
+          "neo-soul"
+        ],
+        "moods": [
+          "late-night",
+          "smooth",
+          "elegant"
+        ],
+        "tempo": "mid",
+        "vocals": "mixed"
+      }
     },
     {
       "id": "artist_041",
@@ -1605,7 +2126,20 @@
         }
       ],
       "total_uncollected": 18273.18,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "lo-fi",
+          "chillhop"
+        ],
+        "moods": [
+          "mellow",
+          "nostalgic",
+          "hazy"
+        ],
+        "tempo": "slow",
+        "vocals": "instrumental"
+      }
     },
     {
       "id": "artist_042",
@@ -1635,7 +2169,20 @@
         }
       ],
       "total_uncollected": 2877.19,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "bedroom pop",
+          "indie pop"
+        ],
+        "moods": [
+          "playful",
+          "moody",
+          "youthful"
+        ],
+        "tempo": "mid",
+        "vocals": "female"
+      }
     },
     {
       "id": "artist_043",
@@ -1691,7 +2238,20 @@
         }
       ],
       "total_uncollected": 14393.22,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "folk",
+          "americana"
+        ],
+        "moods": [
+          "reflective",
+          "earnest",
+          "grounded"
+        ],
+        "tempo": "slow",
+        "vocals": "male"
+      }
     },
     {
       "id": "artist_044",
@@ -1732,7 +2292,20 @@
         }
       ],
       "total_uncollected": 15776.61,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "hip-hop",
+          "trap"
+        ],
+        "moods": [
+          "epic",
+          "intense",
+          "swaggering"
+        ],
+        "tempo": "fast",
+        "vocals": "male"
+      }
     },
     {
       "id": "artist_045",
@@ -1773,7 +2346,20 @@
         }
       ],
       "total_uncollected": 15868.47,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "soul",
+          "r&b"
+        ],
+        "moods": [
+          "warm",
+          "feel-good",
+          "breezy"
+        ],
+        "tempo": "mid",
+        "vocals": "female"
+      }
     },
     {
       "id": "artist_046",
@@ -1811,7 +2397,20 @@
         }
       ],
       "total_uncollected": 5765.11,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "ambient",
+          "post-rock"
+        ],
+        "moods": [
+          "wondrous",
+          "calm",
+          "expansive"
+        ],
+        "tempo": "slow",
+        "vocals": "instrumental"
+      }
     },
     {
       "id": "artist_047",
@@ -1849,7 +2448,20 @@
         }
       ],
       "total_uncollected": 8759.89,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "indie rock",
+          "alt"
+        ],
+        "moods": [
+          "restless",
+          "raw",
+          "anthemic"
+        ],
+        "tempo": "mid",
+        "vocals": "male"
+      }
     },
     {
       "id": "artist_048",
@@ -1894,7 +2506,20 @@
         }
       ],
       "total_uncollected": 12678.1,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "electronic",
+          "house"
+        ],
+        "moods": [
+          "euphoric",
+          "propulsive",
+          "bright"
+        ],
+        "tempo": "fast",
+        "vocals": "mixed"
+      }
     },
     {
       "id": "artist_049",
@@ -1939,7 +2564,20 @@
         }
       ],
       "total_uncollected": 7833.15,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "singer-songwriter",
+          "indie folk"
+        ],
+        "moods": [
+          "intimate",
+          "honest",
+          "warm"
+        ],
+        "tempo": "slow",
+        "vocals": "female"
+      }
     },
     {
       "id": "artist_050",
@@ -1969,7 +2607,20 @@
         }
       ],
       "total_uncollected": 4403.37,
-      "status": "action_required"
+      "status": "action_required",
+      "sound": {
+        "genres": [
+          "orchestral",
+          "cinematic"
+        ],
+        "moods": [
+          "tense",
+          "sweeping",
+          "premium"
+        ],
+        "tempo": "build",
+        "vocals": "instrumental"
+      }
     }
   ]
 }

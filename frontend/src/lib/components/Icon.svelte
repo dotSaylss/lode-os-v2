@@ -38,6 +38,9 @@
 	import Handshake from '@lucide/svelte/icons/handshake';
 	import PanelLeftOpen from '@lucide/svelte/icons/panel-left-open';
 	import PanelLeftClose from '@lucide/svelte/icons/panel-left-close';
+	import Plug from '@lucide/svelte/icons/plug-zap';
+	import CircleCheck from '@lucide/svelte/icons/circle-check-big';
+	import Gem from '@lucide/svelte/icons/gem';
 
 	const icons: Record<string, any> = {
 		sun: Sun,
@@ -73,7 +76,10 @@
 		activity: Activity,
 		handshake: Handshake,
 		'panel-left-open': PanelLeftOpen,
-		'panel-left-close': PanelLeftClose
+		'panel-left-close': PanelLeftClose,
+		plug: Plug,
+		'circle-check': CircleCheck,
+		gem: Gem
 	};
 
 	let {

@@ -8,6 +8,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 _DEFAULT_DB = _PROJECT_ROOT / "data" / "mock_mogul_db.json"
 _LABEL_DB = _PROJECT_ROOT / "data" / "mock_label_db.json"
 _PROVIDERS_DB = _PROJECT_ROOT / "data" / "mock_providers_db.json"
+_SYNC_BRIEFS_DB = _PROJECT_ROOT / "data" / "mock_sync_briefs.json"
 
 
 def get_artist_data() -> str:
@@ -32,6 +33,8 @@ def get_label_portfolio() -> str:
     connected revenue sources, and per-artist missing-money gaps (unregistered
     neighboring rights, unclaimed mechanicals, unmatched sync placements, and
     PRO black-box royalties), plus each artist's total uncollected amount.
+    Each artist also carries a `sound` profile (genres, moods, tempo, vocals) —
+    the ground truth for matching the catalog to sync briefs.
 
     The LabelAgent uses this to reason over the WHOLE catalog at once — finding
     the largest aggregate missing-money opportunities and proposing BULK actions
@@ -151,3 +154,49 @@ def get_providers() -> str:
     if _PROVIDERS_DB.exists():
         return _PROVIDERS_DB.read_text()
     return '{"providers": []}'
+
+
+def get_connector_config(connector_id: str) -> str:
+    """Read a connector's live, human-set configuration and return it as JSON.
+
+    This is the GATING primitive. Before an agent acts on a connector, it MUST
+    call this to learn what it's permitted to do. The config is set by the human
+    on the connector's config page and the agent must obey it:
+
+      - A capability with "enabled": false  → do NOT perform that step.
+      - "permission": "allow"               → may act autonomously.
+      - "permission": "approval"            → produce a DRAFT and ask the human
+                                              to approve before "submitting".
+      - "permission": "deny"                → never perform that action.
+
+    Args:
+        connector_id: the connector to read (e.g. "disco", "mogul", "suno").
+
+    Returns:
+        A JSON string of {enabled, account, capabilities:{key:{enabled,
+        permission}}, settings}. Returns "{}" if the connector is unknown.
+    """
+    try:
+        from services.db_service import DBService
+
+        cfg = DBService().get_connector_config(connector_id)
+        return json.dumps(cfg.model_dump())
+    except Exception:
+        return "{}"
+
+
+def get_sync_briefs() -> str:
+    """Read the active sync-licensing briefs and return them as a JSON string.
+
+    This is the SyncAgent's grounding source (Custom-RAG): the live set of sync
+    briefs from film, TV, ad, game, and brand buyers. Each brief includes its
+    buyer, medium, mood, tempo, genre, budget, deadline, and a free-text brief.
+    The SyncAgent MUST ground every catalog→brief match in this data and only
+    ever reference briefs that appear here.
+
+    Returns:
+        A JSON string of {"briefs": [...]}, or '{"briefs": []}' if unavailable.
+    """
+    if _SYNC_BRIEFS_DB.exists():
+        return _SYNC_BRIEFS_DB.read_text()
+    return '{"briefs": []}'

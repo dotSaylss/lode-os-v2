@@ -32,6 +32,7 @@ from google.adk.tools.agent_tool import AgentTool
 from agents.graph import orchestrator
 from agents.label_graph import label_agent
 from agents.service_graph import matchmaker_agent
+from agents.sync_graph import sync_agent
 
 CONCIERGE_MODEL = os.getenv("ORB_CONCIERGE_MODEL", "gemini-2.5-pro")
 
@@ -40,6 +41,7 @@ CONCIERGE_MODEL = os.getenv("ORB_CONCIERGE_MODEL", "gemini-2.5-pro")
 rights_tool = AgentTool(agent=orchestrator)
 catalog_tool = AgentTool(agent=label_agent)
 services_tool = AgentTool(agent=matchmaker_agent)
+sync_tool = AgentTool(agent=sync_agent)
 
 # Map the specialist tool/agent names → the workspace page the orb should offer.
 # We match on agent name (AgentTool derives its tool name from the wrapped agent).
@@ -47,6 +49,7 @@ ROUTE_BY_AGENT = {
     orchestrator.name: {"page": "/", "label": "Today", "reason": "your royalties & rights"},
     label_agent.name: {"page": "/label", "label": "Catalog", "reason": "your catalog & bulk actions"},
     matchmaker_agent.name: {"page": "/services", "label": "Services", "reason": "the service marketplace"},
+    sync_agent.name: {"page": "/connectors/disco", "label": "Disco", "reason": "your sync-licensing pitches"},
 }
 
 concierge_agent = Agent(
@@ -69,14 +72,18 @@ concierge_agent = Agent(
         "  - LabelAgent / catalog: a record label's whole roster, catalog-wide "
         "uncollected money, bulk registrations, portfolio forecasts.\n"
         "  - MatchmakerAgent / services: finding and matching vetted service "
-        "providers (mixing, mastering, cover art, etc.) to bring a song to life.\n\n"
+        "providers (mixing, mastering, cover art, etc.) to bring a song to life.\n"
+        "  - SyncAgent / sync: pitching the catalog into live sync-licensing "
+        "briefs (film, TV, ads, games, brands) — matching tracks to briefs, "
+        "drafting pitches, and forecasting placement fees. Use this for anything "
+        "about sync, licensing, placements, briefs, or the Disco connector.\n\n"
         "Keep your spoken answer concise and warm — one or two short paragraphs. "
         "If the detail is rich (a bulk action, a drafted registration, a full set "
         "of provider matches), give the headline here and let the user know they "
         "can open the relevant page to see it in full. Do not invent data; rely "
         "on the specialist tools."
     ),
-    tools=[rights_tool, catalog_tool, services_tool],
+    tools=[rights_tool, catalog_tool, services_tool, sync_tool],
 )
 
 root_agent = concierge_agent

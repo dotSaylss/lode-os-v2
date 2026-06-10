@@ -1,0 +1,74 @@
+{
+  "mogul": {
+    "enabled": true,
+    "account": "June Freedom",
+    "capabilities": {
+      "read_catalog": {
+        "enabled": true,
+        "permission": "allow"
+      },
+      "read_royalties": {
+        "enabled": true,
+        "permission": "allow"
+      },
+      "flag_gaps": {
+        "enabled": true,
+        "permission": "allow"
+      },
+      "draft_registrations": {
+        "enabled": true,
+        "permission": "approval"
+      }
+    },
+    "settings": {
+      "sync_frequency": "daily"
+    }
+  },
+  "suno": {
+    "enabled": true,
+    "account": "Lode Records",
+    "capabilities": {
+      "import_releases": {
+        "enabled": true,
+        "permission": "allow"
+      },
+      "export_stems": {
+        "enabled": true,
+        "permission": "allow"
+      },
+      "catalog_sync": {
+        "enabled": true,
+        "permission": "approval"
+      }
+    },
+    "settings": {
+      "sync_frequency": "on_release"
+    }
+  },
+  "disco": {
+    "enabled": true,
+    "account": "Lode Records",
+    "capabilities": {
+      "active_briefs": {
+        "enabled": true,
+        "permission": "allow"
+      },
+      "catalog_match": {
+        "enabled": true,
+        "permission": "allow"
+      },
+      "draft_pitch": {
+        "enabled": true,
+        "permission": "approval"
+      },
+      "auto_submit": {
+        "enabled": false,
+        "permission": "deny"
+      }
+    },
+    "settings": {
+      "sync_frequency": "daily",
+      "min_fee_floor": 1500
+    }
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "connectors": [
+    {
+      "id": "mogul",
+      "name": "Mogul",
+      "category": "royalties",
+      "tagline": "Catalog, master recordings & royalty source of truth",
+      "description": "The live royalty connector. Lode reads your full catalog, master ownership, and royalty statements over MCP, then flags neighboring-rights gaps and missing payouts.",
+      "status": "connected",
+      "account": "June Freedom",
+      "capabilities": ["Catalog", "Master recordings", "Royalty statements", "Neighboring rights"],
+      "capabilities_schema": [
+        { "key": "read_catalog", "label": "Read catalog", "description": "Let Lode read your full catalog and master ownership." },
+        { "key": "read_royalties", "label": "Read royalty statements", "description": "Pull statements across connected sources to reconcile earnings." },
+        { "key": "flag_gaps", "label": "Flag missing money", "description": "Surface unregistered rights and uncollected payouts." },
+        { "key": "draft_registrations", "label": "Draft registrations", "description": "Prepare ASCAP/BMI/SoundExchange registrations for missing rights." }
+      ],
+      "agent_action": { "label": "Audit my catalog for missing money", "prompt": "Audit my Mogul catalog for missing money and unregistered neighboring rights." },
+      "tone": "amber",
+      "highlight": false
+    },
+    {
+      "id": "suno",
+      "name": "Suno",
+      "category": "creation",
+      "tagline": "AI music creation & stems",
+      "description": "Bring finished songs and stems straight into your catalog. Lode keeps new Suno releases in sync with Mogul so every track is tracked, owned, and monetized from day one.",
+      "status": "connected",
+      "account": "Lode Records",
+      "capabilities": ["AI song generation", "Stems & masters export", "Catalog sync"],
+      "capabilities_schema": [
+        { "key": "import_releases", "label": "Import releases", "description": "Pull finished Suno songs into your catalog." },
+        { "key": "export_stems", "label": "Export stems & masters", "description": "Retrieve stems and masters for downstream use." },
+        { "key": "catalog_sync", "label": "Sync to catalog", "description": "Register imported releases in Mogul automatically." }
+      ],
+      "agent_action": { "label": "Sync & register my latest releases", "prompt": "Sync my latest Suno releases into the catalog and register them." },
+      "tone": "sage",
+      "highlight": false
+    },
+    {
+      "id": "disco",
+      "name": "Disco",
+      "category": "sync_licensing",
+      "tagline": "Pitch your catalog into live sync briefs — film, TV, ads & brands",
+      "description": "The demand side. Lode reads active sync briefs, matches your catalog by mood, tempo and genre, drafts and tracks pitches, and pipes expected placement fees back into your Mogul forecast — turning missing money into new money.",
+      "status": "connected",
+      "account": "Lode Records",
+      "capabilities": ["Active sync briefs", "Catalog→brief matching", "Pitch drafting & tracking", "Placement royalties → Mogul"],
+      "capabilities_schema": [
+        { "key": "active_briefs", "label": "Read active briefs", "description": "Pull live sync briefs from film, TV, ad and brand buyers." },
+        { "key": "catalog_match", "label": "Match catalog to briefs", "description": "Match your tracks to briefs by mood, tempo and genre." },
+        { "key": "draft_pitch", "label": "Draft pitches", "description": "Write a pitch for the best-matched brief on your behalf." },
+        { "key": "auto_submit", "label": "Auto-submit pitches", "description": "Submit pitches to buyers without a human approval step." }
+      ],
+      "agent_action": { "label": "Pitch my catalog into this week's briefs", "prompt": "Pitch my catalog into this week's active sync briefs and forecast the placement royalties." },
+      "tone": "terra",
+      "highlight": true
+    },
+    {
+      "id": "spotify-for-artists",
+      "name": "Spotify for Artists",
+      "category": "distribution",
+      "tagline": "Streaming performance & audience data",
+      "description": "Stream counts, playlist adds, and listener geography — context Lode uses to prioritize which tracks to pitch and register first.",
+      "status": "available",
+      "capabilities": ["Stream analytics", "Playlist tracking", "Audience geography"],
+      "tone": "slate",
+      "highlight": false
+    },
+    {
+      "id": "distrokid",
+      "name": "DistroKid",
+      "category": "distribution",
+      "tagline": "Distribution & release delivery",
+      "description": "Deliver releases to every store and surface release metadata so Lode can reconcile what's live against what's earning.",
+      "status": "available",
+      "capabilities": ["Release delivery", "Store coverage", "Split metadata"],
+      "tone": "slate",
+      "highlight": false
+    },
+    {
+      "id": "ascap",
+      "name": "ASCAP",
+      "category": "rights_org",
+      "tagline": "Performing-rights registration",
+      "description": "Register works and collect performance royalties. Lode drafts and submits registrations on your behalf.",
+      "status": "available",
+      "capabilities": ["Work registration", "Performance royalties", "Writer/publisher shares"],
+      "tone": "slate",
+      "highlight": false
+    },
+    {
+      "id": "soundexchange",
+      "name": "SoundExchange",
+      "category": "rights_org",
+      "tagline": "Digital performance & neighboring rights",
+      "description": "Collect digital performance royalties for master owners — the home of the neighboring-rights money Lode surfaces in Today.",
+      "status": "available",
+      "capabilities": ["Digital performance", "Neighboring rights", "Master owner payouts"],
+      "tone": "slate",
+      "highlight": false
+    },
+    {
+      "id": "songtradr",
+      "name": "Songtradr",
+      "category": "sync_licensing",
+      "tagline": "B2B licensing marketplace",
+      "description": "List your catalog on the largest B2B music licensing marketplace as a second sync channel alongside Disco.",
+      "status": "available",
+      "capabilities": ["B2B marketplace", "Enterprise licensing", "Rights reconciliation"],
+      "tone": "terra",
+      "highlight": false
+    }
+  ]
+}
