@@ -36,7 +36,7 @@
 	const PERSONA_UI: Record<string, { first: string; vp: string; suggestions: string[] }> = {
 		june: {
 			first: 'June',
-			vp: "I watch every royalty source you're connected to, find the money you're owed, and file what's missing.",
+			vp: "I'm the reasoning layer between everything you've connected: where your music is made, where it earns, and where it goes next. Ask, and I'll connect the dots.",
 			suggestions: [
 				'Where am I losing money?',
 				'Draft my SoundExchange registration',
@@ -46,7 +46,7 @@
 		},
 		label: {
 			first: 'Lode Records',
-			vp: 'Ask across the whole roster: catalog audits, bulk registrations, recovery forecasts, sync pitches.',
+			vp: 'One reasoning layer over the whole roster: audits, bulk registrations, forecasts, sync pitches. Ask once, act everywhere.',
 			suggestions: [
 				"What's our biggest catalog opportunity?",
 				'Which artists should we register first?',

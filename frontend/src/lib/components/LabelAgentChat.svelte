@@ -4,7 +4,7 @@
 	import Icon from '$lib/components/Icon.svelte';
 
 	let {
-		greeting = "I'm your LabelAgent. I can scan your entire catalog for missing money and register artists in bulk. Ask me “what's the biggest opportunity across my roster?”"
+		greeting = "I'm your LabelAgent. I reason across the entire roster at once: audits, bulk registrations, forecasts. Try asking for the biggest opportunity across the roster."
 	}: { greeting?: string } = $props();
 
 	type TraceEvent = {

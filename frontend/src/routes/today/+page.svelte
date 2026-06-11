@@ -21,7 +21,7 @@
 		<div>
 			<span class="v3-date">Overview</span>
 			<h1>Good morning, {ctx?.artist_profile?.name ?? 'there'}</h1>
-			<p class="v3-vp">Lode watches every royalty source you're connected to, finds the money you're owed, and files what's missing.</p>
+			<p class="v3-vp">Lode reasons across everything you've connected, surfaces what deserves your attention, and files what's missing when you say go.</p>
 		</div>
 		<div class="v3-header-recovered">
 			<span>Year to date</span>
