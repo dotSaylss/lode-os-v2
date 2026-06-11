@@ -37,7 +37,7 @@
 			id: 1,
 			role: 'agent',
 			content:
-				"I'm the LodeOS Matchmaker. Describe your song and what it needs — mixing, mastering, cover art, vocals, sync, video, promo — and I'll assemble the right team of vetted providers, explain why each fits, and propose how splits and rights get routed."
+				"I'm the LodeOS Matchmaker. Describe your song and what it needs: mixing, mastering, cover art, vocals, sync, video, promo. I'll assemble the right team of vetted providers, explain why each fits, and propose how splits and rights get routed."
 		}
 	]);
 

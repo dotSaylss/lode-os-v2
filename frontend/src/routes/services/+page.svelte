@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { tick } from 'svelte';
-	import { slide } from 'svelte/transition';
+	import { fade, slide } from 'svelte/transition';
 	import MatchmakerChat from '$lib/components/MatchmakerChat.svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import { pendingAsk, clearPending } from '$lib/lodeStore';
@@ -27,6 +27,24 @@
 	let chat = $state<MatchmakerChat | null>(null);
 	let brief = $state('');
 	let activeCategory = $state<string>('all');
+
+	// Category filter behind a single funnel button, matching the Connectors
+	// page: one quiet control instead of a chip row.
+	let filterOpen = $state(false);
+	let filterAnchor: HTMLDivElement | undefined = $state();
+	let filterTrigger: HTMLButtonElement | undefined = $state();
+
+	function onWindowClick(e: MouseEvent) {
+		if (filterOpen && filterAnchor && !filterAnchor.contains(e.target as Node)) {
+			filterOpen = false;
+		}
+	}
+	function onWindowKey(e: KeyboardEvent) {
+		if (e.key === 'Escape' && filterOpen) {
+			filterOpen = false;
+			filterTrigger?.focus();
+		}
+	}
 
 	// The matchmaker panel (with its grounding-evidence panel) stays hidden until
 	// a brief is submitted or the orb hands off — then it reveals full-width in
@@ -112,14 +130,26 @@
 		brief = '';
 	}
 
+	// Card-level entry into the same grounded matchmaker: one tap turns a
+	// listing into a real agent consultation with cited evidence.
+	async function askAbout(p: Provider) {
+		await revealPanel();
+		if (!chat) await tick();
+		chat?.send(
+			`Tell me about ${p.name} for ${label(p.category).toLowerCase()}: are they the right fit for my project, and what would it cost?`
+		);
+	}
+
 </script>
+
+<svelte:window onclick={onWindowClick} onkeydown={onWindowKey} />
 
 <div class="v3-stage-wide">
 	<header class="v3-header">
 		<div>
 			<span class="v3-date">Services</span>
 			<h1>Bring your song to life</h1>
-			<p class="v3-vp">For artists finishing a record — vetted collaborators matched to your song's needs, with the evidence to back every match.</p>
+			<p class="v3-vp">Vetted collaborators matched to your song's needs, with the evidence behind every match.</p>
 		</div>
 		<div class="v3-header-recovered">
 			<span>Vetted marketplace</span>
@@ -161,18 +191,56 @@
 		<section class="svc-card">
 				<div class="svc-card-head">
 					<span class="eyebrow">Vetted marketplace</span>
-					<span class="svc-pill">{providers.length} providers</span>
-				</div>
-
-				<div class="svc-filters">
-					{#each categories as cat}
-						<button
-							class="svc-filter {activeCategory === cat ? 'active' : ''}"
-							onclick={() => (activeCategory = cat)}
+					<div class="svc-toolbar">
+						<span class="svc-count"
+							>{visibleProviders.length} {visibleProviders.length === 1 ? 'provider' : 'providers'}</span
 						>
-							{cat === 'all' ? 'All' : label(cat)}
-						</button>
-					{/each}
+						{#if activeCategory !== 'all'}
+							<button
+								class="svc-active-filter"
+								type="button"
+								title="Clear filter"
+								onclick={() => (activeCategory = 'all')}
+							>
+								{label(activeCategory)} <Icon name="x" size={12} />
+							</button>
+						{/if}
+						<div class="svc-filter-anchor" bind:this={filterAnchor}>
+							<button
+								class="svc-filter-btn {activeCategory !== 'all' ? 'filtered' : ''}"
+								type="button"
+								bind:this={filterTrigger}
+								aria-haspopup="menu"
+								aria-expanded={filterOpen}
+								aria-label="Filter by category"
+								title="Filter by category"
+								onclick={() => (filterOpen = !filterOpen)}
+							>
+								<Icon name="list-filter" size={17} />
+							</button>
+							{#if filterOpen}
+								<div class="svc-filter-pop" role="menu" transition:fade={{ duration: 120 }}>
+									{#each categories as cat}
+										<button
+											class="svc-filter-row {activeCategory === cat ? 'active' : ''}"
+											type="button"
+											role="menuitemradio"
+											aria-checked={activeCategory === cat}
+											onclick={() => {
+												activeCategory = cat;
+												filterOpen = false;
+											}}
+										>
+											<span>{cat === 'all' ? 'All categories' : label(cat)}</span>
+											{#if activeCategory === cat}
+												<Icon name="check" size={14} color="var(--sg-600)" />
+											{/if}
+										</button>
+									{/each}
+								</div>
+							{/if}
+						</div>
+					</div>
 				</div>
 
 				{#if visibleProviders.length === 0}
@@ -209,6 +277,15 @@
 								<div class="svc-prov-foot">
 									<span class="mono svc-rate">{p.rate}</span>
 									<span class="svc-turnaround">{p.turnaround}</span>
+									<button
+										class="svc-ask"
+										type="button"
+										title="Ask Lode about {p.name}"
+										aria-label="Ask Lode about {p.name}"
+										onclick={() => askAbout(p)}
+									>
+										<Icon name="message-circle" size={16} />
+									</button>
 								</div>
 							</div>
 						{/each}
@@ -270,40 +347,101 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 10px;
 		margin-bottom: 16px;
 	}
-	.svc-pill {
-		font-size: 11px;
-		font-weight: 500;
-		color: var(--ink-500);
-		background: var(--paper-100);
-		border-radius: var(--r-pill);
-		padding: 5px 12px;
-	}
-	.svc-filters {
+	.svc-toolbar {
 		display: flex;
-		flex-wrap: wrap;
-		gap: 7px;
-		margin-bottom: 18px;
+		align-items: center;
+		gap: 10px;
 	}
-	.svc-filter {
+	.svc-count {
+		font-family: var(--font-mono);
+		font-size: 12px;
+		color: var(--ink-muted);
+	}
+	.svc-active-filter {
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
 		font-size: 12px;
 		font-weight: 600;
-		padding: 6px 13px;
+		padding: 5px 11px;
 		border-radius: var(--r-pill);
+		border: 1px solid var(--sg-200);
+		background: var(--sg-50);
+		color: var(--sg-700);
+		cursor: pointer;
+		transition: all 0.14s;
+	}
+	.svc-active-filter:hover {
+		border-color: var(--sg-300);
+		background: var(--sg-100);
+	}
+	.svc-filter-anchor {
+		position: relative;
+	}
+	.svc-filter-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 36px;
+		height: 36px;
+		border-radius: var(--r-md);
 		border: 1px solid var(--paper-200);
 		background: var(--paper-0);
 		color: var(--ink-500);
+		cursor: pointer;
 		transition: all 0.14s;
 	}
-	.svc-filter:hover {
+	.svc-filter-btn:hover {
 		border-color: var(--sg-200);
 		color: var(--ink-900);
 	}
-	.svc-filter.active {
-		background: var(--sg-500);
-		border-color: var(--sg-500);
-		color: #fff;
+	.svc-filter-btn.filtered {
+		border-color: var(--sg-300);
+		background: var(--sg-50);
+		color: var(--sg-600);
+	}
+	.svc-filter-pop {
+		position: absolute;
+		right: 0;
+		top: calc(100% + 6px);
+		width: 210px;
+		max-width: calc(100vw - 36px);
+		background: var(--paper-0);
+		border: 1px solid var(--paper-200);
+		border-radius: var(--r-lg);
+		box-shadow: var(--v3-sh-lg);
+		padding: 6px;
+		z-index: 50;
+	}
+	.svc-filter-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		width: 100%;
+		min-height: 40px;
+		padding: 8px 11px;
+		border-radius: var(--r-sm);
+		border: none;
+		background: transparent;
+		font-size: 13px;
+		font-weight: 500;
+		color: var(--ink-700);
+		text-align: left;
+		cursor: pointer;
+		transition: background 0.13s;
+	}
+	.svc-filter-row:hover {
+		background: var(--paper-100);
+	}
+	.svc-filter-row.active {
+		background: var(--sg-50);
+		color: var(--sg-700);
+		font-weight: 600;
 	}
 	.svc-empty {
 		padding: 24px;
@@ -459,7 +597,7 @@
 	.svc-prov-foot {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
+		gap: 10px;
 		margin-top: 14px;
 		padding-top: 12px;
 		border-top: 1px solid var(--paper-200);
@@ -471,5 +609,27 @@
 	.svc-turnaround {
 		font-size: 12px;
 		color: var(--ink-muted);
+		margin-right: auto;
+	}
+	/* Icon-only: the card is the context; the label lives in the tooltip. */
+	.svc-ask {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 32px;
+		height: 32px;
+		flex: none;
+		border-radius: 50%;
+		border: 1px solid var(--paper-200);
+		background: transparent;
+		color: var(--ink-500);
+		cursor: pointer;
+		transition: all 0.15s;
+	}
+	.svc-prov:hover .svc-ask,
+	.svc-ask:hover {
+		color: var(--sg-600);
+		border-color: var(--sg-300);
+		background: var(--sg-50);
 	}
 </style>
