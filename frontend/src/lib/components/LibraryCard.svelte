@@ -28,9 +28,9 @@
 	<div class="lib-card">
 		<div class="lib-head">
 			<span class="eyebrow">Your library</span>
-			<a class="lib-source" href={`/connectors/${lib.connector}`}>
+			<a class="lib-source" href={`/connectors/${lib.connector}`} title={`Synced from ${lib.name} — open connector`}>
 				<Icon name="library" size={14} />
-				Synced from {lib.name}
+				{lib.name}
 				<span class="lib-dot"></span>
 			</a>
 		</div>
@@ -54,9 +54,9 @@
 								class="lib-pitch"
 								onclick={() => onPitch?.(track)}
 								title={`Ask Lode to pitch "${track.title}" into Disco's live briefs`}
+								aria-label={`Pitch "${track.title}" via Disco`}
 							>
-								<Icon name="send" size={13} />
-								Pitch via Disco
+								<Icon name="send" size={15} />
 							</button>
 						</li>
 					{/each}
@@ -172,19 +172,20 @@
 		color: var(--ink-muted);
 		white-space: nowrap;
 	}
+	/* Icon-only: the row context ("Your library" + Disco hover tint) carries the
+	   meaning; the label lives in the tooltip/aria-label. */
 	.lib-pitch {
 		display: inline-flex;
 		align-items: center;
-		gap: 6px;
-		font-size: 12px;
-		font-weight: 600;
+		justify-content: center;
+		width: 34px;
+		height: 34px;
+		flex: none;
 		color: var(--ink-500);
 		background: transparent;
 		border: 1px solid var(--paper-200);
-		border-radius: var(--r-pill);
-		padding: 6px 12px;
+		border-radius: 50%;
 		cursor: pointer;
-		white-space: nowrap;
 		transition:
 			color 0.15s ease,
 			border-color 0.15s ease,
@@ -195,5 +196,13 @@
 		color: var(--sg-600);
 		border-color: var(--sg-300);
 		background: var(--sg-50);
+	}
+	@media (max-width: 520px) {
+		.lib-card {
+			padding: 20px 18px;
+		}
+		.lib-released {
+			display: none;
+		}
 	}
 </style>

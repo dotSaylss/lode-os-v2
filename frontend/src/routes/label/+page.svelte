@@ -347,6 +347,12 @@
 	.lab-card {
 		padding: 26px 28px;
 		margin-bottom: 22px;
+		min-width: 0;
+	}
+	@media (max-width: 520px) {
+		.lab-card {
+			padding: 20px 18px;
+		}
 	}
 	.lab-card-head {
 		display: flex;
@@ -468,9 +474,10 @@
 		border-color: var(--paper-200);
 	}
 
-	/* roster table */
+	/* roster table — pans horizontally on narrow screens instead of pushing
+	   the whole page wide. */
 	.lab-table-scroll {
-		overflow-y: auto;
+		overflow: auto;
 		max-height: 540px;
 	}
 	.lab-table {

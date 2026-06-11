@@ -112,11 +112,6 @@
 		brief = '';
 	}
 
-	const examples = [
-		'I need my track mixed, mastered, and cover art for a lo-fi hip-hop single.',
-		'Assemble a team for a pop single: vocals, mix, master, and a music video.',
-		'Find me a mastering engineer, and check the live web for current going rates in 2026.'
-	];
 </script>
 
 <div class="v3-stage-wide">
@@ -148,13 +143,6 @@
 					placeholder="e.g. I need my track mixed, mastered, and cover art for a lo-fi hip-hop single."
 				></textarea>
 				<div class="svc-brief-foot">
-					<div class="svc-examples">
-						{#each examples as ex}
-							<button type="button" class="v3-orb-chip" onclick={() => (brief = ex)}>
-								{ex.length > 40 ? ex.slice(0, 40) + '…' : ex}
-							</button>
-						{/each}
-					</div>
 					<button type="submit" class="v3-act" disabled={!brief.trim()}>
 						Find my team <Icon name="arrow-right" size={16} color="#fff" />
 					</button>
@@ -246,6 +234,11 @@
 		box-shadow: var(--v3-sh-sm);
 		padding: 26px 28px;
 	}
+	@media (max-width: 520px) {
+		.svc-card {
+			padding: 20px 18px;
+		}
+	}
 	.svc-brief textarea {
 		width: 100%;
 		margin-top: 12px;
@@ -270,16 +263,8 @@
 	.svc-brief-foot {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
-		gap: 16px;
+		justify-content: flex-end;
 		margin-top: 14px;
-		flex-wrap: wrap;
-	}
-	.svc-examples {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 7px;
-		flex: 1;
 	}
 	.svc-card-head {
 		display: flex;
@@ -328,22 +313,25 @@
 		font-size: 14px;
 		color: var(--ink-muted);
 	}
+	/* minmax(0, …) lets cards shrink below their min-content width on narrow
+	   screens instead of overflowing the viewport. */
 	.svc-providers {
 		display: grid;
-		grid-template-columns: 1fr;
+		grid-template-columns: minmax(0, 1fr);
 		gap: 14px;
 	}
 	@media (min-width: 640px) {
 		.svc-providers {
-			grid-template-columns: 1fr 1fr;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 	}
 	@media (min-width: 1024px) {
 		.svc-providers {
-			grid-template-columns: 1fr 1fr 1fr;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
 		}
 	}
 	.svc-prov {
+		min-width: 0;
 		display: flex;
 		flex-direction: column;
 		padding: 18px;

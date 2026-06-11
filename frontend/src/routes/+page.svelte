@@ -221,12 +221,6 @@
 				</button>
 			</form>
 
-			<div class="v3-chat-chips">
-				{#each ui.suggestions as s}
-					<button class="v3-chat-chip" type="button" onclick={() => send(s)}>{s}</button>
-				{/each}
-			</div>
-
 			{#if recents.length}
 				<div class="v3-chat-recents">
 					<span class="v3-chat-recents-head">Recent</span>
@@ -239,7 +233,6 @@
 				</div>
 			{/if}
 
-			<p class="v3-chat-stack">Gemini 2.5 Flash + Pro &middot; ADK multi-agent &middot; MCP connectors</p>
 		</div>
 	{:else}
 		<!-- Active conversation. -->
@@ -263,12 +256,6 @@
 									</div>
 								{/if}
 								<p class="v3-chat-text">{m.text}</p>
-								{#if m.tier}
-									<span class="v3-chat-tier">
-										<Icon name={m.tier === 'fast' ? 'zap' : 'sparkles'} size={11} color="currentColor" />
-										{m.tier === 'fast' ? 'Gemini 2.5 Flash · fast tier' : 'Gemini 2.5 Pro · reasoning tier'}
-									</span>
-								{/if}
 								{#if m.hint}
 									<button class="v3-chat-route" type="button" onclick={() => follow(m.hint!)}>
 										<span class="v3-chat-route-text">
