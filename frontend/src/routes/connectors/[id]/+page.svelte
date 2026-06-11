@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { tick } from 'svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import { api } from '$lib/api';
+	import { pendingAsk, clearPending } from '$lib/lodeStore';
 
 	let { data } = $props();
 
@@ -102,8 +104,12 @@
 	let running = $state(false);
 	let result = $state<string>('');
 	let trace = $state<{ label: string }[]>([]);
+	// When the chat hands off here, the question being replayed is shown above
+	// the result so the draft has its context.
+	let replayedAsk = $state<string>('');
+	let actionCard: HTMLElement | undefined = $state();
 
-	async function runAction() {
+	async function runAction(message = '') {
 		if (running) return;
 		running = true;
 		result = '';
@@ -112,7 +118,7 @@
 			const res = await fetch(api(`/api/v1/connectors/${connector.id}/action`), {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ message: '' })
+				body: JSON.stringify({ message })
 			});
 			if (res.ok) {
 				const data = await res.json();
@@ -127,6 +133,21 @@
 			running = false;
 		}
 	}
+
+	// Chat → page handoff: when "See this in {connector}" is clicked, the ask is
+	// replayed through the connector's agent so the full work product (the
+	// drafted pitch, the matched brief, the trace) renders here at full width.
+	$effect(() => {
+		const pending = $pendingAsk;
+		if (pending && pending.page === `/connectors/${connector.id}`) {
+			clearPending();
+			replayedAsk = pending.prompt;
+			void runAction(pending.prompt);
+			tick().then(() =>
+				actionCard?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+			);
+		}
+	});
 
 	// Minimal, safe markdown → HTML for the agent result (bold, bullets, rules,
 	// paragraphs). Escapes HTML first so agent text can never inject markup.
@@ -258,14 +279,18 @@
 
 	<!-- Agent actions -->
 	{#if hasAgentAction}
-		<section class="cfg-card">
+		<section class="cfg-card" bind:this={actionCard}>
 			<div class="cfg-card-head">
 				<span class="eyebrow">Agent action</span>
 				<span class="cfg-hint">Lode acts here and respects the permissions above</span>
 			</div>
 
+			{#if replayedAsk}
+				<p class="cfg-replay"><Icon name="message-circle" size={13} /> {replayedAsk}</p>
+			{/if}
+
 			<div class="cfg-action-row">
-				<button class="cfg-run" onclick={runAction} disabled={running}>
+				<button class="cfg-run" onclick={() => runAction()} disabled={running}>
 					{#if running}
 						<span class="cfg-spinner"></span> Working…
 					{:else}
@@ -604,6 +629,21 @@
 	}
 	@keyframes cfg-spin {
 		to { transform: rotate(360deg); }
+	}
+
+	.cfg-replay {
+		display: flex;
+		align-items: center;
+		gap: 7px;
+		margin: 0 0 14px;
+		font-size: 13px;
+		font-weight: 500;
+		color: var(--ink-700);
+		background: var(--paper-50);
+		border: 1px solid var(--paper-200);
+		border-radius: var(--r-md);
+		padding: 9px 13px;
+		max-width: 70ch;
 	}
 
 	.cfg-trace {
