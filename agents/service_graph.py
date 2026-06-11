@@ -69,6 +69,7 @@ live_research_agent = Agent(
         "be cited with a human-readable label. Always note that these are live "
         "web results, not vetted marketplace partners, so they require "
         "independent diligence."
+        " Never use an em-dash in anything you write to the user; use a comma, colon, or period instead."
     ),
     tools=[google_search],
 )
@@ -124,6 +125,7 @@ matchmaker_agent = Agent(
         "rates. This is a multi-turn conversation: remember earlier choices when "
         "the artist refines the brief (adds a need, sets a budget, asks for the "
         "total, or asks to adjust the splits)."
+        " Never use an em-dash in anything you write to the user; use a comma, colon, or period instead."
     ),
     tools=[get_providers, live_research_tool],
 )

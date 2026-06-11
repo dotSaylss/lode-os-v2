@@ -56,6 +56,9 @@ def _mogul_data_tools():
                     cwd=str(_PROJECT_ROOT),
                 ),
             ),
+            # The Lode MCP server exposes the whole connector control plane;
+            # this graph only needs the Mogul rights/royalty slice of it.
+            tool_filter=["get_artist_data"],
         )
         return [mogul_mcp]
     except Exception as exc:  # noqa: BLE001 — resilience over purity for the demo
@@ -84,6 +87,7 @@ analysis_agent = Agent(
         "`estimated_missing` amounts. "
         "Report findings concisely with concrete dollar figures and name the "
         "specific source/PRO involved. Be direct and specific."
+        " Never use an em-dash in anything you write to the user; use a comma, colon, or period instead."
     ),
     tools=_data_tools,
 )
@@ -105,6 +109,7 @@ action_agent = Agent(
         "artist can claim their uncollected royalties. "
         "Include a clear subject line and the artist's relevant details. Output "
         "the full email draft."
+        " Never use an em-dash in anything you write to the user; use a comma, colon, or period instead."
     ),
     tools=_data_tools,
 )
@@ -126,6 +131,7 @@ orchestrator = Agent(
         "('draft the email', 'register me', 'yes do it') to ActionAgent. "
         "For general questions, answer directly and proactively offer to analyze "
         "the artist's royalties. Keep responses conversational and concise."
+        " Never use an em-dash in anything you write to the user; use a comma, colon, or period instead."
     ),
     sub_agents=[analysis_agent, action_agent],
 )

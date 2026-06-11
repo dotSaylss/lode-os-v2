@@ -21,7 +21,6 @@
 	import BadgeCheck from '@lucide/svelte/icons/badge-check';
 	import Star from '@lucide/svelte/icons/star';
 	import Link from '@lucide/svelte/icons/link';
-	import Sparkles from '@lucide/svelte/icons/sparkles';
 	import Plus from '@lucide/svelte/icons/plus';
 	import Coins from '@lucide/svelte/icons/coins';
 	import TrendingUp from '@lucide/svelte/icons/trending-up';
@@ -42,6 +41,13 @@
 	import CircleCheck from '@lucide/svelte/icons/circle-check-big';
 	import Gem from '@lucide/svelte/icons/gem';
 	import Zap from '@lucide/svelte/icons/zap';
+	import MessageCircle from '@lucide/svelte/icons/message-circle';
+	import ListFilter from '@lucide/svelte/icons/list-filter';
+	import Play from '@lucide/svelte/icons/play';
+	import Trash2 from '@lucide/svelte/icons/trash-2';
+	import RotateCcw from '@lucide/svelte/icons/rotate-ccw';
+	import X from '@lucide/svelte/icons/x';
+	import PencilLine from '@lucide/svelte/icons/pencil-line';
 
 	const icons: Record<string, any> = {
 		sun: Sun,
@@ -61,7 +67,6 @@
 		'badge-check': BadgeCheck,
 		star: Star,
 		link: Link,
-		sparkles: Sparkles,
 		plus: Plus,
 		coins: Coins,
 		'trending-up': TrendingUp,
@@ -81,7 +86,14 @@
 		plug: Plug,
 		'circle-check': CircleCheck,
 		gem: Gem,
-		zap: Zap
+		zap: Zap,
+		'message-circle': MessageCircle,
+		'list-filter': ListFilter,
+		play: Play,
+		'trash-2': Trash2,
+		'rotate-ccw': RotateCcw,
+		x: X,
+		'pencil-line': PencilLine
 	};
 
 	let {

@@ -22,11 +22,16 @@ agent may do.
   permission (*allow / needs approval / deny*) that agents read first and obey; actions
   return a visible tool trace so you can watch the settings being honored.
 
-One assistant — the floating **Lode orb** — is the single point of contact. Quick
-lookups are answered by a fast Gemini 2.5 Flash front line; complex cross-connector
-work is handed to Gemini 2.5 Pro specialists, and each answer is labeled with the
-tier that served it. The orb routes you to the view where the full detail (agent
-handoff traces, grounding evidence) renders.
+**The conversation is the product.** The home view is a chat with **Lode** — you
+state intent in plain language ("recover my unclaimed neighboring rights") and the
+agent team plans and executes it. Quick lookups are answered by a fast Gemini 2.5
+Flash front line; complex cross-connector work is handed to Gemini 2.5 Pro
+specialists. Every answer shows its work inline: which context was read (MCP
+connector tools), which specialist was consulted (A2A hand-off), and which compute
+tier served it. When the full detail deserves a full page — the label's A2A trace,
+the matchmaker's grounding evidence, a connector's permission gates — the chat
+offers a route card into the deeper workspace views (Today, Catalog, Services,
+Connectors), where the floating Lode orb keeps the conversation within reach.
 
 ## Who it's for
 
@@ -56,7 +61,7 @@ journeys and a demo walkthrough are detailed in
 | Agents | Google ADK 2.x — 5 specialist graphs, agent-to-agent delegation |
 | Models | Gemini 2.5 Pro + Flash via Vertex AI (per-seat Model Garden overrides) |
 | Grounding | Custom RAG over catalog/providers/briefs + Grounding with Google Search |
-| Data access | Model Context Protocol (MCP) — Mogul connector |
+| Data access | Model Context Protocol (MCP) — Lode connector control plane (8 tools) |
 | State | ADK Sessions (in-memory) → Vertex Agent Engine Sessions + Memory Bank (gated) |
 | Backend | Python · FastAPI |
 | Frontend | SvelteKit · Tailwind CSS |
@@ -64,6 +69,16 @@ journeys and a demo walkthrough are detailed in
 
 The agent team, A2A intents, connector permission model, grounding sources, env gates,
 and deployment mapping are documented in **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)**.
+
+### Track 1 — Build (Net-New Agents): how LodeOS covers it
+
+| Track 1 ask | Where it lives in LodeOS |
+|-------------|--------------------------|
+| **Net-new autonomous agent on ADK** | Five ADK graphs built from scratch: the LodeConcierge front line plus four Gemini 2.5 Pro specialists (royalty orchestrator, catalog strategist, service matchmaker, sync dealmaker) — `agents/*.py` |
+| **From static code to declarative intent** | The chat-first home: the user states intent ("pitch my Sync Ready playlist into this week's briefs") and the concierge plans — gathers context with read tools, selects exactly one specialist, and answers from its result. No hard-coded flows. |
+| **MCP to securely connect to external tools** | `mcp_server.py` — the Lode connector control plane exposes every platform (Mogul rights, Untitled library, Disco briefs, provider marketplace, connector registry) as MCP tools; agents consume it via ADK `MCPToolset` (`USE_MCP=true`). "Securely" is real: `get_connector_config` returns human-set *allow / needs-approval / deny* gates that agents must read before acting. |
+| **Gather context** | Trace events surface every context-gathering step in the chat ("Read your royalty & library data", "Checked your connected platforms") — observable, not implied. |
+| **Execute tasks autonomously** | Agents draft SoundExchange registrations, plan bulk catalog remediation, and submit sync pitches end-to-end within a turn — gated by the per-capability permissions on the Connectors page, with the A2A hand-off (LabelAgent → ActionAgent) visible in the trace. |
 
 Every managed-service integration is env-gated with an in-process fallback, so the
 product keeps working even if any single cloud dependency is unavailable.

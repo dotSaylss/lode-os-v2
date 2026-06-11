@@ -116,7 +116,7 @@
 		<div>
 			<span class="v3-date">Catalog</span>
 			<h1>{p.label_profile?.name ?? 'Label'} catalog</h1>
-			<p class="v3-vp">For labels &amp; managers — Lode audits the whole roster at once, then hands bulk recovery to an execution agent you approve.</p>
+			<p class="v3-vp">Lode reasons across the whole roster at once, then hands the execution to agents you approve.</p>
 		</div>
 		<div class="v3-header-recovered">
 			<span>{p.total_artists} artists managed</span>
@@ -347,6 +347,12 @@
 	.lab-card {
 		padding: 26px 28px;
 		margin-bottom: 22px;
+		min-width: 0;
+	}
+	@media (max-width: 520px) {
+		.lab-card {
+			padding: 20px 18px;
+		}
 	}
 	.lab-card-head {
 		display: flex;
@@ -468,9 +474,10 @@
 		border-color: var(--paper-200);
 	}
 
-	/* roster table */
+	/* roster table — pans horizontally on narrow screens instead of pushing
+	   the whole page wide. */
 	.lab-table-scroll {
-		overflow-y: auto;
+		overflow: auto;
 		max-height: 540px;
 	}
 	.lab-table {

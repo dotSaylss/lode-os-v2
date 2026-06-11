@@ -1,39 +1,56 @@
 """
-Mogul MCP Server — exposes an artist's royalty data over the Model Context
+Lode MCP Server — the connector control plane, exposed over the Model Context
 Protocol (MCP).
 
-This is the "Mogul connector": just as Claude connects to Google Drive or Slack
-over MCP to take action on data, the LodeOS agents connect to Mogul over MCP to
-take action on music rights. The ADK agents consume the tools defined here via
-an MCPToolset (see agents/graph.py), so the reasoning layer is cleanly decoupled
-from the data source — swap this server for a live Mogul API and nothing else
-changes.
+Every platform LodeOS connects to (Mogul for rights/royalties, Untitled for the
+creator's library, Disco for sync briefs, the vetted provider marketplace, and
+the connector registry itself) is surfaced here as an MCP tool. Just as Claude
+connects to Google Drive or Slack over MCP to act on documents, the LodeOS ADK
+agents connect to this server to act on music rights: the reasoning layer is
+cleanly decoupled from the data sources, so any mock database here can be
+swapped for a live platform API and nothing in the agent graphs changes.
+
+The tools are the *same functions* the agents use in-process (agents/tools.py)
+— registering them here means the in-process default and the MCP transport
+(USE_MCP=true, see agents/graph.py) can never drift apart.
 
 Run standalone (stdio transport):
     python mcp_server.py
 """
 
-from pathlib import Path
-
 from mcp.server.fastmcp import FastMCP
 
-_PROJECT_ROOT = Path(__file__).resolve().parent
-_DB = _PROJECT_ROOT / "data" / "mock_mogul_db.json"
+from agents.tools import (
+    get_artist_data,
+    get_connector_config,
+    get_connectors_overview,
+    get_label_forecast,
+    get_label_portfolio,
+    get_providers,
+    get_sync_briefs,
+    get_sync_catalog,
+)
 
-mcp = FastMCP("mogul")
+mcp = FastMCP("lode")
 
+# Mogul — rights & royalties (the original connector).
+mcp.tool()(get_artist_data)
 
-@mcp.tool()
-def get_artist_data() -> str:
-    """Read the artist's Mogul royalty context and return it as a JSON string.
+# Label catalog — roster-wide gaps and the recovery forecast.
+mcp.tool()(get_label_portfolio)
+mcp.tool()(get_label_forecast)
 
-    Returns the full artist profile, connected revenue sources, and neighboring
-    rights registration status (including any estimated missing/uncollected
-    amounts). Use this to inspect the database for gaps and missing money.
-    """
-    if _DB.exists():
-        return _DB.read_text()
-    return "{}"
+# Services marketplace — vetted providers (the matchmaker's grounding corpus).
+mcp.tool()(get_providers)
+
+# Disco — live sync-licensing briefs and the pitchable catalog.
+mcp.tool()(get_sync_briefs)
+mcp.tool()(get_sync_catalog)
+
+# Connector registry — what's connected, and the human-set permission gates
+# every agent must read before acting.
+mcp.tool()(get_connectors_overview)
+mcp.tool()(get_connector_config)
 
 
 if __name__ == "__main__":

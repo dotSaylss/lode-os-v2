@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { tick } from 'svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import { api } from '$lib/api';
+	import { pendingAsk, clearPending } from '$lib/lodeStore';
 
 	let { data } = $props();
 
@@ -102,8 +104,12 @@
 	let running = $state(false);
 	let result = $state<string>('');
 	let trace = $state<{ label: string }[]>([]);
+	// When the chat hands off here, the question being replayed is shown above
+	// the result so the draft has its context.
+	let replayedAsk = $state<string>('');
+	let actionCard: HTMLElement | undefined = $state();
 
-	async function runAction() {
+	async function runAction(message = '') {
 		if (running) return;
 		running = true;
 		result = '';
@@ -112,7 +118,7 @@
 			const res = await fetch(api(`/api/v1/connectors/${connector.id}/action`), {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ message: '' })
+				body: JSON.stringify({ message })
 			});
 			if (res.ok) {
 				const data = await res.json();
@@ -127,6 +133,21 @@
 			running = false;
 		}
 	}
+
+	// Chat → page handoff: when "See this in {connector}" is clicked, the ask is
+	// replayed through the connector's agent so the full work product (the
+	// drafted pitch, the matched brief, the trace) renders here at full width.
+	$effect(() => {
+		const pending = $pendingAsk;
+		if (pending && pending.page === `/connectors/${connector.id}`) {
+			clearPending();
+			replayedAsk = pending.prompt;
+			void runAction(pending.prompt);
+			tick().then(() =>
+				actionCard?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+			);
+		}
+	});
 
 	// Minimal, safe markdown → HTML for the agent result (bold, bullets, rules,
 	// paragraphs). Escapes HTML first so agent text can never inject markup.
@@ -190,38 +211,31 @@
 				</span>
 			</div>
 			<p>{connector.tagline}</p>
+			<div class="cfg-head-meta">
+				<span class="cfg-head-meta-item">
+					<Icon name="users" size={13} color="var(--ink-muted)" />
+					{config.account ?? connector.account ?? 'No account'}
+				</span>
+				<span class="cfg-head-meta-item">
+					<Icon name="clock" size={13} color="var(--ink-muted)" />
+					Sync: {(config.settings?.sync_frequency as string) ?? 'manual'}
+				</span>
+			</div>
 		</div>
 		<div class="cfg-save" class:show={saveState !== 'idle'}>
 			{#if saveState === 'saving'}Saving…{:else if saveState === 'saved'}<Icon name="check" size={14} color="var(--sg-600)" /> Saved{/if}
 		</div>
 	</header>
 
-	<!-- Overview -->
-	<section class="cfg-card">
-		<span class="eyebrow">Overview</span>
-		<div class="cfg-overview">
-			<div class="cfg-meta">
-				<span class="cfg-meta-k">Account</span>
-				<span class="cfg-meta-v">{config.account ?? connector.account ?? '—'}</span>
-			</div>
-			<div class="cfg-meta">
-				<span class="cfg-meta-k">Status</span>
-				<span class="cfg-meta-v"><span class="cfg-dot"></span> Active</span>
-			</div>
-			<div class="cfg-meta">
-				<span class="cfg-meta-k">Sync</span>
-				<span class="cfg-meta-v">{(config.settings?.sync_frequency as string) ?? 'manual'}</span>
-			</div>
-		</div>
-		<p class="cfg-desc">{connector.description}</p>
-	</section>
+	<!-- What this connection does: the lead, not a buried card row. -->
+	<p class="cfg-lead">{connector.description}</p>
 
 	<!-- Capabilities + Permissions -->
 	{#if connector.capabilities_schema.length}
 		<section class="cfg-card">
 			<div class="cfg-card-head">
 				<span class="eyebrow">Capabilities &amp; permissions</span>
-				<span class="cfg-hint">What Lode may do — and when it must ask you first</span>
+				<span class="cfg-hint">What Lode may do, and when it must ask you first</span>
 			</div>
 
 			<div class="cfg-caps">
@@ -265,18 +279,22 @@
 
 	<!-- Agent actions -->
 	{#if hasAgentAction}
-		<section class="cfg-card">
+		<section class="cfg-card" bind:this={actionCard}>
 			<div class="cfg-card-head">
 				<span class="eyebrow">Agent action</span>
-				<span class="cfg-hint">Lode acts here — and respects the permissions above</span>
+				<span class="cfg-hint">Lode acts here and respects the permissions above</span>
 			</div>
 
+			{#if replayedAsk}
+				<p class="cfg-replay"><Icon name="message-circle" size={13} /> {replayedAsk}</p>
+			{/if}
+
 			<div class="cfg-action-row">
-				<button class="cfg-run" onclick={runAction} disabled={running}>
+				<button class="cfg-run" onclick={() => runAction()} disabled={running}>
 					{#if running}
 						<span class="cfg-spinner"></span> Working…
 					{:else}
-						<Icon name="sparkles" size={15} color="#fff" /> {connector.agent_action?.label}
+						<Icon name="play" size={15} color="#fff" /> {connector.agent_action?.label}
 					{/if}
 				</button>
 				<button class="cfg-ask" onclick={askLode}>Ask Lode about this connector</button>
@@ -410,38 +428,33 @@
 		color: var(--ink-muted);
 	}
 
-	.cfg-overview {
+	.cfg-head-meta {
 		display: flex;
+		align-items: center;
 		flex-wrap: wrap;
-		gap: 28px;
-		margin: 14px 0 4px;
+		gap: 4px 16px;
+		margin-top: 8px;
 	}
-	.cfg-meta {
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-	}
-	.cfg-meta-k {
-		font-size: 11px;
-		font-weight: 600;
-		letter-spacing: 0.03em;
-		text-transform: uppercase;
-		color: var(--ink-muted);
-	}
-	.cfg-meta-v {
+	.cfg-head-meta-item {
 		display: inline-flex;
 		align-items: center;
 		gap: 6px;
-		font-size: 14px;
-		font-weight: 600;
-		color: var(--ink-900);
+		font-family: var(--font-mono);
+		font-size: 12px;
+		color: var(--ink-muted);
+		white-space: nowrap;
 	}
-	.cfg-desc {
-		margin: 16px 0 0;
-		font-size: 13.5px;
+
+	/* The connector's story leads the page in the editorial voice; the cards
+	   below it are the controls. */
+	.cfg-lead {
+		margin: 4px 0 0;
+		font-family: var(--font-serif);
+		font-size: 18px;
 		line-height: 1.6;
+		letter-spacing: -0.005em;
 		color: var(--ink-700);
-		max-width: 70ch;
+		max-width: 64ch;
 	}
 
 	/* Capabilities */
@@ -618,6 +631,21 @@
 		to { transform: rotate(360deg); }
 	}
 
+	.cfg-replay {
+		display: flex;
+		align-items: center;
+		gap: 7px;
+		margin: 0 0 14px;
+		font-size: 13px;
+		font-weight: 500;
+		color: var(--ink-700);
+		background: var(--paper-50);
+		border: 1px solid var(--paper-200);
+		border-radius: var(--r-md);
+		padding: 9px 13px;
+		max-width: 70ch;
+	}
+
 	.cfg-trace {
 		display: flex;
 		flex-wrap: wrap;
@@ -676,5 +704,31 @@
 
 	.cfg > * + * {
 		margin-top: 18px;
+	}
+
+	@media (max-width: 520px) {
+		.cfg-head {
+			flex-wrap: wrap;
+			gap: 12px;
+		}
+		.cfg-name-row {
+			flex-wrap: wrap;
+			gap: 8px;
+		}
+		.cfg-head h1 {
+			font-size: 22px;
+		}
+		.cfg-id {
+			flex: 1 1 200px;
+		}
+		.cfg-head-meta {
+			gap: 4px 12px;
+		}
+		.cfg-lead {
+			font-size: 16.5px;
+		}
+		.cfg-card {
+			padding: 20px 18px;
+		}
 	}
 </style>

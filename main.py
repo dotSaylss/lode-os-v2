@@ -296,6 +296,80 @@ def connect_connector_route(connector_id: str, req: ConnectRequest):
     return db_service.connect_connector(connector_id, req.account)
 
 
+class OnboardingScanRequest(BaseModel):
+    connector_ids: list[str] = []
+
+
+class OnboardingScanResponse(BaseModel):
+    message: str
+    headline: str | None = None
+    persona: str
+
+
+@app.post("/api/v1/onboarding/scan", response_model=OnboardingScanResponse)
+def onboarding_scan(req: OnboardingScanRequest):
+    """First-run scan across the connectors chosen during onboarding.
+
+    Reads the same persona-scoped data the agents reason over (artist context,
+    label roster, live sync briefs) and composes the findings line shown on the
+    final onboarding slide. Deterministic by design: the first impression must
+    land inside the onboarding's scan animation, every time."""
+    persona = db_service.get_active_persona()
+    try:
+        n = len(req.connector_ids) or sum(
+            1 for c in db_service.get_connectors() if c.status == "connected"
+        )
+        sources = f"{n} source" if n == 1 else f"{n} sources"
+        if persona == "label":
+            portfolio = db_service.get_label_portfolio()
+            total = f"${portfolio.total_uncollected:,.0f}"
+            nr = f"${portfolio.neighboring_rights_uncollected:,.0f}"
+            return OnboardingScanResponse(
+                message=(
+                    f"Across your {portfolio.total_artists} artists I can already see "
+                    f"{total} in uncollected royalties, including {nr} of neighboring "
+                    "rights ready for bulk registration. The recovery queue is ordered "
+                    "by value."
+                ),
+                headline=total,
+                persona=persona,
+            )
+        context = db_service.get_artist_context()
+        missing = f"${context.neighboring_rights.estimated_missing:,.0f}"
+        if persona == "kai":
+            sync_ready = sum(1 for t in context.tracks if t.playlist == "Sync Ready")
+            briefs = len(db_service.get_sync_briefs())
+            return OnboardingScanResponse(
+                message=(
+                    "Your library and your licensing are talking to each other now. "
+                    f"I found {sync_ready} sync-ready tracks that fit the {briefs} live "
+                    f"briefs on Disco, and {missing} in digital royalties you have not "
+                    "claimed yet."
+                ),
+                headline=missing,
+                persona=persona,
+            )
+        return OnboardingScanResponse(
+            message=(
+                f"I read {sources} and can already see {missing} in unclaimed "
+                "neighboring rights waiting at SoundExchange, plus a few smaller "
+                "things worth your time. The most valuable one is teed up for you."
+            ),
+            headline=missing,
+            persona=persona,
+        )
+    except Exception:
+        return OnboardingScanResponse(
+            message=(
+                "I read your sources and the picture is coming together. Your money, "
+                "catalog, and opportunities now sit in one place, and I will surface "
+                "the most valuable next step the moment it appears."
+            ),
+            headline=None,
+            persona=persona,
+        )
+
+
 # Maps each connector to the agent selector that runs its headline action.
 # "rights" resolves to the default royalty orchestrator (the Mogul audit).
 # Untitled's action is deliberately CROSS-connector: it reads the user's
@@ -649,6 +723,13 @@ _SPECIALIST_LABELS = {
     "SyncAgent": "Consulted the sync dealmaker",
 }
 
+# The concierge's own read tools → friendly labels, so the chat surface can show
+# the context-gathering step ("declarative intent in, grounded context out").
+_READ_TOOL_LABELS = {
+    "get_artist_data": "Read your royalty & library data",
+    "get_connectors_overview": "Checked your connected platforms",
+}
+
 
 @app.post("/api/v1/ask", response_model=OrbResponse)
 async def ask_lode(req: ChatRequest):
@@ -695,6 +776,14 @@ async def ask_lode(req: ChatRequest):
                                 label=_SPECIALIST_LABELS[specialist],
                             )
                         )
+                    elif specialist in _READ_TOOL_LABELS:
+                        trace.append(
+                            TraceEvent(
+                                kind="tool",
+                                agent="LodeConcierge",
+                                label=_READ_TOOL_LABELS[specialist],
+                            )
+                        )
                     if route_hint is None and specialist in ROUTE_BY_AGENT:
                         r = ROUTE_BY_AGENT[specialist]
                         route_hint = RouteHint(
@@ -720,5 +809,5 @@ async def ask_lode(req: ChatRequest):
         trace=trace,
         # Specialist consulted → the deep-reasoning path served this answer;
         # otherwise the Flash concierge handled it from its own read tools.
-        tier="reasoning" if trace else "fast",
+        tier="reasoning" if any(t.kind == "handoff" for t in trace) else "fast",
     )

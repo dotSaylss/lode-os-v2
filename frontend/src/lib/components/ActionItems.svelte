@@ -19,7 +19,7 @@
 
 		<p class="v3-focus-line">
 			I found <em>{fmt(missingAmount)}</em> in unclaimed neighboring rights on your catalog. I've
-			drafted the SoundExchange registration — want me to file it?
+			drafted the SoundExchange registration. Want me to file it?
 		</p>
 
 		<div class="v3-focus-foot">
@@ -38,7 +38,7 @@
 	<section class="v3-focus done">
 		<div class="v3-focus-checkmark"><Icon name="check" size={26} color="var(--sg-600)" /></div>
 		<p class="v3-focus-empty">
-			Nothing needs you right now.<br /><span>I'll keep listening — you'll know the moment
+			Nothing needs you right now.<br /><span>I'll keep listening; you'll know the moment
 				something moves.</span>
 		</p>
 	</section>

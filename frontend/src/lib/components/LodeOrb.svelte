@@ -38,7 +38,7 @@
 		{
 			id: 1,
 			role: 'lode',
-			text: "I'm watching your royalties, catalog, and the services around your music. Ask me anything — I'll look into it and take you to the right place."
+			text: "I sit between everything you've connected: where your work is made, where it earns, and where it goes next. Ask me anything and I'll look into it and take you to the right place."
 		}
 	]);
 
@@ -57,7 +57,7 @@
 	// Next-step actions offered under an answer, keyed by the destination the
 	// concierge routed to — so the conversation keeps moving after the first ask.
 	const FOLLOWUPS: Record<string, string[]> = {
-		'/': ['Draft the SoundExchange registration for me', 'How did you find this money?'],
+		'/today': ['Draft the SoundExchange registration for me', 'How did you find this money?'],
 		'/label': ['Which artists should we register first?', 'Forecast the recovery for the top five'],
 		'/services': ['Set up an intro with the top match', 'What would mastering cost me?'],
 		'/connectors/disco': ['Draft the pitch for the best brief', 'Forecast the placement fees']
@@ -195,14 +195,6 @@
 				{#each messages as m (m.id)}
 					<div class="v3-orb-bubble {m.role === 'user' ? 'user' : 'lode'}">
 						<p>{m.text}</p>
-						{#if m.tier}
-							<span class="v3-orb-tier">
-								<Icon name={m.tier === 'fast' ? 'zap' : 'sparkles'} size={11} color="currentColor" />
-								{m.tier === 'fast'
-									? 'Quick lookup · Gemini 2.5 Flash'
-									: `${m.traceLabel ?? 'Deep reasoning'} · Gemini 2.5 Pro`}
-							</span>
-						{/if}
 					</div>
 					{#if m.role === 'lode' && m.hint}
 						<button class="v3-orb-route" type="button" onclick={() => follow(m.hint!)}>

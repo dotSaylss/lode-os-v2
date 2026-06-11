@@ -27,6 +27,24 @@
 
 	let activeCategory = $state<string>('all');
 
+	// Category filter lives behind a single funnel button; the menu is a small
+	// radio popover (familiar pattern, keeps the toolbar to one quiet control).
+	let filterOpen = $state(false);
+	let filterAnchor: HTMLDivElement | undefined = $state();
+	let filterTrigger: HTMLButtonElement | undefined = $state();
+
+	function onWindowClick(e: MouseEvent) {
+		if (filterOpen && filterAnchor && !filterAnchor.contains(e.target as Node)) {
+			filterOpen = false;
+		}
+	}
+	function onWindowKey(e: KeyboardEvent) {
+		if (e.key === 'Escape' && filterOpen) {
+			filterOpen = false;
+			filterTrigger?.focus();
+		}
+	}
+
 	const CATEGORY_LABELS: Record<string, string> = {
 		creation: 'Creation',
 		collaboration: 'Library & Collab',
@@ -112,11 +130,13 @@
 	}
 </script>
 
+<svelte:window onclick={onWindowClick} onkeydown={onWindowKey} />
+
 <div class="v3-stage-wide">
 	<header class="v3-header">
 		<div>
 			<span class="v3-date">Connectors</span>
-			<h1>Your music runs on connections</h1>
+			<h1>Everything you make, connected</h1>
 		</div>
 		<div class="v3-header-recovered">
 			<span>Linked platforms</span>
@@ -125,48 +145,59 @@
 	</header>
 
 	<p class="cx-thesis">
-		For everyone making new money from a catalog — connect the platforms your music
-		already lives on, set what Lode may do on each, and let it reason and act across
-		them. One agentic control plane for the whole business.
+		Connect the platforms where your work is created, managed, and paid. Decide what
+		Lode may do on each one. Then let it reason and act across all of them from one
+		place.
 	</p>
 
-	<!-- The closed loop: the story that makes the connectors more than a list. -->
-	<section class="cx-loop">
-		<div class="cx-loop-node">
-			<span class="cx-loop-ico av-sage">S</span>
-			<div>
-				<b>Suno</b>
-				<span>creates the music</span>
-			</div>
-		</div>
-		<span class="cx-loop-arrow"><Icon name="arrow-right" size={18} color="var(--ink-muted)" /></span>
-		<div class="cx-loop-node">
-			<span class="cx-loop-ico av-amber">M</span>
-			<div>
-				<b>Mogul</b>
-				<span>holds the catalog &amp; money</span>
-			</div>
-		</div>
-		<span class="cx-loop-arrow"><Icon name="arrow-right" size={18} color="var(--ink-muted)" /></span>
-		<div class="cx-loop-node">
-			<span class="cx-loop-ico av-terra">D</span>
-			<div>
-				<b>Disco</b>
-				<span>places it for new revenue</span>
-			</div>
-		</div>
-	</section>
-
-	<!-- Filter bar -->
-	<div class="cx-filters">
-		{#each categories as cat}
+	<!-- Toolbar: result count + a single funnel filter (categories live in the popover). -->
+	<div class="cx-toolbar">
+		<span class="cx-count">{visible.length} {visible.length === 1 ? 'platform' : 'platforms'}</span>
+		{#if activeCategory !== 'all'}
 			<button
-				class="cx-filter {activeCategory === cat ? 'active' : ''}"
-				onclick={() => (activeCategory = cat)}
+				class="cx-active-filter"
+				type="button"
+				title="Clear filter"
+				onclick={() => (activeCategory = 'all')}
 			>
-				{cat === 'all' ? 'All' : label(cat)}
+				{label(activeCategory)} <Icon name="x" size={12} />
 			</button>
-		{/each}
+		{/if}
+		<div class="cx-filter-anchor" bind:this={filterAnchor}>
+			<button
+				class="cx-filter-btn {activeCategory !== 'all' ? 'filtered' : ''}"
+				type="button"
+				bind:this={filterTrigger}
+				aria-haspopup="menu"
+				aria-expanded={filterOpen}
+				aria-label="Filter by category"
+				title="Filter by category"
+				onclick={() => (filterOpen = !filterOpen)}
+			>
+				<Icon name="list-filter" size={18} />
+			</button>
+			{#if filterOpen}
+				<div class="cx-filter-pop" role="menu" transition:fade={{ duration: 120 }}>
+					{#each categories as cat}
+						<button
+							class="cx-filter-row {activeCategory === cat ? 'active' : ''}"
+							type="button"
+							role="menuitemradio"
+							aria-checked={activeCategory === cat}
+							onclick={() => {
+								activeCategory = cat;
+								filterOpen = false;
+							}}
+						>
+							<span>{cat === 'all' ? 'All categories' : label(cat)}</span>
+							{#if activeCategory === cat}
+								<Icon name="check" size={14} color="var(--sg-600)" />
+							{/if}
+						</button>
+					{/each}
+				</div>
+			{/if}
+		</div>
 	</div>
 
 	{#if connectors.length === 0}
@@ -275,7 +306,7 @@
 				</div>
 
 				<p class="wiz-note">
-					You can change what Lode may do — and when it must ask you first — anytime in the
+					You can change what Lode may do, and when it must ask you first, anytime in the
 					connector's settings. Authorization is simulated in this demo; no real credentials
 					are exchanged.
 				</p>
@@ -325,81 +356,99 @@
 		color: var(--ink-500);
 	}
 
-	/* Closed-loop strip */
-	.cx-loop {
+	/* Toolbar: count on the left, funnel filter on the right */
+	.cx-toolbar {
 		display: flex;
 		align-items: center;
 		gap: 10px;
-		flex-wrap: wrap;
-		padding: 16px 18px;
-		background: var(--paper-0);
-		border: 1px solid var(--paper-200);
-		border-radius: var(--r-xl);
-		box-shadow: var(--v3-sh-sm);
 	}
-	.cx-loop-node {
-		display: flex;
-		align-items: center;
-		gap: 11px;
-		flex: 1;
-		min-width: 180px;
-	}
-	.cx-loop-ico {
-		flex: none;
-		width: 38px;
-		height: 38px;
-		border-radius: 50%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 15px;
-		font-weight: 700;
-	}
-	.cx-loop-node b {
-		display: block;
-		font-size: 14px;
-		font-weight: 600;
-		color: var(--ink-900);
-	}
-	.cx-loop-node span {
+	.cx-count {
+		font-family: var(--font-mono);
 		font-size: 12px;
 		color: var(--ink-muted);
+		margin-right: auto;
 	}
-	.cx-loop-arrow {
-		display: flex;
+	.cx-active-filter {
+		display: inline-flex;
 		align-items: center;
-	}
-	@media (max-width: 720px) {
-		.cx-loop-arrow {
-			transform: rotate(90deg);
-			margin: 0 auto;
-		}
-	}
-
-	/* Filters */
-	.cx-filters {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 7px;
-	}
-	.cx-filter {
+		gap: 5px;
 		font-size: 12px;
 		font-weight: 600;
-		padding: 6px 13px;
+		padding: 5px 11px;
 		border-radius: var(--r-pill);
+		border: 1px solid var(--sg-200);
+		background: var(--sg-50);
+		color: var(--sg-700);
+		cursor: pointer;
+		transition: all 0.14s;
+	}
+	.cx-active-filter:hover {
+		border-color: var(--sg-300);
+		background: var(--sg-100);
+	}
+	.cx-filter-anchor {
+		position: relative;
+	}
+	.cx-filter-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 38px;
+		height: 38px;
+		border-radius: var(--r-md);
 		border: 1px solid var(--paper-200);
 		background: var(--paper-0);
 		color: var(--ink-500);
+		cursor: pointer;
 		transition: all 0.14s;
 	}
-	.cx-filter:hover {
+	.cx-filter-btn:hover {
 		border-color: var(--sg-200);
 		color: var(--ink-900);
 	}
-	.cx-filter.active {
-		background: var(--sg-500);
-		border-color: var(--sg-500);
-		color: #fff;
+	.cx-filter-btn.filtered {
+		border-color: var(--sg-300);
+		background: var(--sg-50);
+		color: var(--sg-600);
+	}
+	.cx-filter-pop {
+		position: absolute;
+		right: 0;
+		top: calc(100% + 6px);
+		width: 210px;
+		max-width: calc(100vw - 36px);
+		background: var(--paper-0);
+		border: 1px solid var(--paper-200);
+		border-radius: var(--r-lg);
+		box-shadow: var(--v3-sh-lg);
+		padding: 6px;
+		z-index: 50;
+	}
+	.cx-filter-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		width: 100%;
+		min-height: 40px;
+		padding: 8px 11px;
+		border-radius: var(--r-sm);
+		border: none;
+		background: transparent;
+		font-size: 13px;
+		font-weight: 500;
+		color: var(--ink-700);
+		text-align: left;
+		cursor: pointer;
+		transition: background 0.13s;
+	}
+	.cx-filter-row:hover {
+		background: var(--paper-100);
+	}
+	.cx-filter-row.active {
+		background: var(--sg-50);
+		color: var(--sg-700);
+		font-weight: 600;
 	}
 
 	.cx-group-head {
