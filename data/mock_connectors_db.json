@@ -49,8 +49,8 @@
       "id": "untitled",
       "name": "Untitled",
       "category": "collaboration",
-      "tagline": "Your private library — projects, playlists & collaborators",
-      "description": "The home of your working catalog. Lode reads your Untitled library and playlists so every track you've made is visible in your dashboard — and one ask away from a registration or a sync pitch.",
+      "tagline": "Your private library: projects, playlists & collaborators",
+      "description": "The home of your working catalog. Lode reads your Untitled library and playlists so every track you've made is visible in your dashboard, one ask away from a registration or a sync pitch.",
       "status": "connected",
       "account": "Kai Rivers",
       "personas": {
@@ -73,7 +73,7 @@
       "name": "Samply",
       "category": "collaboration",
       "tagline": "Share works-in-progress & collect collaborator feedback",
-      "description": "Fast, private track sharing for works-in-progress. Lode reads listening stats and collaborator feedback to tell you which unreleased tracks are landing — before you spend on a release.",
+      "description": "Fast, private track sharing for works-in-progress. Lode reads listening stats and collaborator feedback to tell you which unreleased tracks are landing before you spend on a release.",
       "status": "available",
       "personas": {
         "kai": { "status": "available" },
@@ -92,8 +92,8 @@
       "id": "disco",
       "name": "Disco",
       "category": "sync_licensing",
-      "tagline": "Pitch your catalog into live sync briefs — film, TV, ads & brands",
-      "description": "The demand side. Lode reads active sync briefs, matches your catalog by mood, tempo and genre, drafts and tracks pitches, and pipes expected placement fees back into your Mogul forecast — turning missing money into new money.",
+      "tagline": "Pitch your catalog into live sync briefs: film, TV, ads & brands",
+      "description": "The demand side. Lode reads active sync briefs, matches your catalog by mood, tempo and genre, drafts and tracks pitches, and pipes expected placement fees back into your Mogul forecast, turning missing money into new money.",
       "status": "connected",
       "account": "Kai Rivers",
       "personas": {
@@ -116,7 +116,7 @@
       "name": "Spotify for Artists",
       "category": "distribution",
       "tagline": "Streaming performance & audience data",
-      "description": "Stream counts, playlist adds, and listener geography — context Lode uses to prioritize which tracks to pitch and register first.",
+      "description": "Stream counts, playlist adds, and listener geography: context Lode uses to prioritize which tracks to pitch and register first.",
       "status": "available",
       "personas": {
         "june": { "status": "available" },
@@ -177,7 +177,7 @@
       "name": "SoundExchange",
       "category": "rights_org",
       "tagline": "Digital performance & neighboring rights",
-      "description": "Collect digital performance royalties for master owners — the home of the neighboring-rights money Lode surfaces in Today.",
+      "description": "Collect digital performance royalties for master owners. This is the home of the neighboring-rights money Lode surfaces in Today.",
       "status": "available",
       "personas": {
         "june": { "status": "available" },

@@ -71,6 +71,7 @@ bulk_action_agent = Agent(
         "neighboring rights) that lists the artists being registered and the "
         "total amount being recovered. Include a clear subject line. Output the "
         "full draft."
+        " Never use an em-dash in anything you write to the user; use a comma, colon, or period instead."
     ),
     tools=[get_label_portfolio, get_artist_data],
 )
@@ -109,6 +110,7 @@ label_agent = Agent(
         "you pass the bulk task to an execution agent that produces the concrete "
         "registration draft. Be concrete, use real dollar figures, and keep "
         "responses crisp and executive-friendly."
+        " Never use an em-dash in anything you write to the user; use a comma, colon, or period instead."
     ),
     tools=[get_label_portfolio, get_label_forecast],
     # A2A: the catalog strategist coordinates with the execution specialist.

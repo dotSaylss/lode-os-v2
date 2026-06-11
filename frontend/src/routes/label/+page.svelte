@@ -116,7 +116,7 @@
 		<div>
 			<span class="v3-date">Catalog</span>
 			<h1>{p.label_profile?.name ?? 'Label'} catalog</h1>
-			<p class="v3-vp">For labels &amp; managers — Lode audits the whole roster at once, then hands bulk recovery to an execution agent you approve.</p>
+			<p class="v3-vp">Lode audits the whole roster at once, then hands bulk recovery to an execution agent you approve.</p>
 		</div>
 		<div class="v3-header-recovered">
 			<span>{p.total_artists} artists managed</span>

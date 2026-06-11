@@ -38,7 +38,7 @@
 		{
 			id: 1,
 			role: 'lode',
-			text: "I'm watching your royalties, catalog, and the services around your music. Ask me anything — I'll look into it and take you to the right place."
+			text: "I'm watching your royalties, catalog, and the services around your music. Ask me anything and I'll look into it and take you to the right place."
 		}
 	]);
 

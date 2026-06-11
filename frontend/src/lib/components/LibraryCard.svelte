@@ -21,14 +21,14 @@
 		new Date(iso + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
 
 	const soundLine = (t: any) =>
-		t.sound ? `${t.sound.genres.join(' · ')} — ${t.sound.tempo}, ${t.sound.vocals}` : '';
+		t.sound ? `${t.sound.genres.join(' · ')} · ${t.sound.tempo}, ${t.sound.vocals}` : '';
 </script>
 
 {#if lib && groups.length}
 	<div class="lib-card">
 		<div class="lib-head">
 			<span class="eyebrow">Your library</span>
-			<a class="lib-source" href={`/connectors/${lib.connector}`} title={`Synced from ${lib.name} — open connector`}>
+			<a class="lib-source" href={`/connectors/${lib.connector}`} title={`Synced from ${lib.name}. Open connector`}>
 				<Icon name="library" size={14} />
 				{lib.name}
 				<span class="lib-dot"></span>

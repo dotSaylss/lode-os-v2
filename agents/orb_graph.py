@@ -112,6 +112,7 @@ concierge_agent = Agent(
         "of provider matches), give the headline here and let the user know they "
         "can open the relevant page to see it in full. Do not invent data; rely "
         "on the specialist tools."
+        " Never use an em-dash in anything you write to the user; use a comma, colon, or period instead."
     ),
     tools=[get_artist_data, get_connectors_overview, rights_tool, catalog_tool, services_tool, sync_tool],
 )

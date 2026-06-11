@@ -86,6 +86,7 @@ sync_agent = Agent(
         "Be specific and concise — a short ranked list of matches, one drafted "
         "pitch, and a forecast figure. This is a multi-turn conversation: "
         "remember earlier matches if the user refines the request."
+        " Never use an em-dash in anything you write to the user; use a comma, colon, or period instead."
     ),
     tools=[get_connector_config, get_sync_briefs, get_sync_catalog],
 )

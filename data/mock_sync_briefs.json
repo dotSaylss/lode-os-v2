@@ -2,7 +2,7 @@
   "briefs": [
     {
       "id": "brief_a24_indie_drama",
-      "title": "A24 indie drama — closing montage",
+      "title": "A24 indie drama: closing montage",
       "buyer": "A24 / music supervisor",
       "medium": "film",
       "mood": ["bittersweet", "hopeful", "intimate"],
@@ -14,7 +14,7 @@
     },
     {
       "id": "brief_nike_hype",
-      "title": "Nike — global running campaign",
+      "title": "Nike: global running campaign",
       "buyer": "Nike / Wieden+Kennedy",
       "medium": "ad",
       "mood": ["driving", "confident", "euphoric"],
@@ -26,7 +26,7 @@
     },
     {
       "id": "brief_netflix_teen",
-      "title": "Netflix teen series — title sequence",
+      "title": "Netflix teen series: title sequence",
       "buyer": "Netflix",
       "medium": "tv",
       "mood": ["playful", "moody", "youthful"],
@@ -38,7 +38,7 @@
     },
     {
       "id": "brief_lux_auto_trailer",
-      "title": "Luxury EV — reveal trailer",
+      "title": "Luxury EV: reveal trailer",
       "buyer": "European auto brand",
       "medium": "trailer",
       "mood": ["cinematic", "sleek", "tense"],
@@ -50,7 +50,7 @@
     },
     {
       "id": "brief_indie_game",
-      "title": "Indie game — exploration theme",
+      "title": "Indie game: exploration theme",
       "buyer": "Indie game studio",
       "medium": "game",
       "mood": ["wondrous", "calm", "expansive"],
@@ -62,7 +62,7 @@
     },
     {
       "id": "brief_beauty_social",
-      "title": "Beauty brand — social campaign",
+      "title": "Beauty brand: social campaign",
       "buyer": "DTC beauty brand",
       "medium": "ad",
       "mood": ["warm", "feel-good", "breezy"],
@@ -74,7 +74,7 @@
     },
     {
       "id": "brief_doc_series",
-      "title": "Documentary series — recurring theme",
+      "title": "Documentary series: recurring theme",
       "buyer": "Streaming documentary",
       "medium": "tv",
       "mood": ["reflective", "earnest", "grounded"],
@@ -86,7 +86,7 @@
     },
     {
       "id": "brief_sports_promo",
-      "title": "League playoffs — broadcast promo",
+      "title": "League playoffs: broadcast promo",
       "buyer": "Sports broadcaster",
       "medium": "tv",
       "mood": ["epic", "triumphant", "intense"],
