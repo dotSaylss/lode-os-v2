@@ -46,7 +46,7 @@
 		},
 		label: {
 			first: 'Lode Records',
-			vp: 'Ask across the whole roster — catalog audits, bulk registrations, recovery forecasts, sync pitches.',
+			vp: 'Ask across the whole roster: catalog audits, bulk registrations, recovery forecasts, sync pitches.',
 			suggestions: [
 				"What's our biggest catalog opportunity?",
 				'Which artists should we register first?',
@@ -56,7 +56,7 @@
 		},
 		kai: {
 			first: 'Kai',
-			vp: 'Your library, rights, and licensing talk to each other here — ask me to move a track from playlist to paycheck.',
+			vp: 'Your library, rights, and licensing talk to each other here. Ask me to move a track from playlist to paycheck.',
 			suggestions: [
 				"Pitch my Sync Ready playlist into this week's briefs",
 				'Which of my tracks fits a film brief?',
@@ -101,6 +101,15 @@
 		composerEl?.focus();
 		const rotate = setInterval(() => (suggestionIdx = (suggestionIdx + 1) % ui.suggestions.length), 3800);
 		return () => clearInterval(rotate);
+	});
+
+	// "New chat" (rail) clears the active thread while this page stays mounted;
+	// reset the composer so the hero comes back clean and ready to type.
+	$effect(() => {
+		if ($activeThreadId === null) {
+			input = '';
+			composerEl?.focus();
+		}
 	});
 
 	async function scrollDown() {
@@ -260,7 +269,7 @@
 									<button class="v3-chat-route" type="button" onclick={() => follow(m.hint!)}>
 										<span class="v3-chat-route-text">
 											<b>Open {m.hint.label}</b>
-											{#if m.hint.reason}<span>The full detail — {m.hint.reason} — renders there.</span>{/if}
+											{#if m.hint.reason}<span>See {m.hint.reason} in full there.</span>{/if}
 										</span>
 										<Icon name="arrow-right" size={16} color="var(--sg-700)" />
 									</button>

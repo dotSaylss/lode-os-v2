@@ -49,6 +49,13 @@ export function initChats() {
 }
 
 export function createThread(persona: string): ChatThread {
+	// Reuse an existing empty thread for this workspace instead of stacking
+	// blank ones every time New chat is pressed.
+	const existing = get(threads).find((t) => t.persona === persona && t.messages.length === 0);
+	if (existing) {
+		activeThreadId.set(existing.id);
+		return existing;
+	}
 	const t: ChatThread = {
 		id: `t${Date.now()}`,
 		persona,
@@ -89,6 +96,15 @@ export function recentFor(all: ChatThread[], persona: string, limit = 4): ChatTh
 		.filter((t) => t.persona === persona && t.messages.length > 0)
 		.sort((a, b) => b.updatedAt - a.updatedAt)
 		.slice(0, limit);
+}
+
+/** Wipe every thread on this device (Settings → Clear chat history). */
+export function clearAllThreads() {
+	threads.set([]);
+	activeThreadId.set(null);
+	try {
+		localStorage.removeItem(KEY);
+	} catch {}
 }
 
 export function threadById(id: string | null): ChatThread | undefined {

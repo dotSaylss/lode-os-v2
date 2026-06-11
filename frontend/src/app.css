@@ -291,6 +291,19 @@ body {
 .v3-rail-avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--sg-300); color: var(--sg-700); font-size: 10.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 .v3-rail-avatar.sm { width: 26px; height: 26px; flex: none; }
 
+/* Recent conversations — only meaningful at full width, so the whole block is
+   hidden in the collapsed strip (no orphan icons) and appears with expansion. */
+.v3-rail-recents { display: none; flex-direction: column; gap: 2px; margin-top: 6px; }
+.appv3.rail-locked .v3-rail-recents,
+.v3-rail-panel:has(.v3-switcher-pop) .v3-rail-recents { display: flex; }
+@media (hover: hover) and (pointer: fine) {
+	.v3-rail:hover .v3-rail-recents { display: flex; }
+}
+.v3-rail-recents-head { font-size: 10.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-muted); padding: 2px 10px 4px; white-space: nowrap; }
+.v3-rail-recent { padding: 7px 10px; cursor: pointer; }
+.v3-rail-recent .v3-rail-label { font-size: 12.5px; color: var(--ink-500); overflow: hidden; text-overflow: ellipsis; max-width: 170px; }
+.v3-rail-recent:hover .v3-rail-label { color: var(--ink-900); }
+
 /* Workspace switcher — one product, three demo users (artist/label/creator). */
 .v3-switcher { position: relative; }
 .v3-switcher-pop { position: absolute; left: 6px; bottom: calc(100% + 8px); width: 216px; background: var(--paper-0); border: 1px solid var(--paper-200); border-radius: var(--r-lg); box-shadow: var(--v3-sh-lg); padding: 8px; z-index: 70; }
@@ -517,7 +530,7 @@ body {
 .v3-onb-cta:hover { background: var(--sg-600); }
 .v3-onb-cta:active { transform: scale(0.98); }
 .v3-onb-cta:disabled { background: var(--paper-200); color: var(--ink-muted); box-shadow: none; cursor: not-allowed; }
-.v3-onb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-bottom: 30px; }
+.v3-onb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-bottom: 30px; max-height: min(46vh, 380px); overflow-y: auto; padding: 2px; }
 .v3-onb-source { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: var(--r-lg); border: 1px solid var(--paper-200); background: var(--paper-0); text-align: left; transition: all .15s; cursor: pointer; }
 .v3-onb-source:hover { border-color: var(--sg-200); box-shadow: var(--v3-sh-sm); }
 .v3-onb-source.on { border-color: var(--sg-300); background: var(--sg-50); }

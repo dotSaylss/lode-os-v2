@@ -22,3 +22,24 @@ export function handoffTo(page: string, prompt: string) {
 export function clearPending() {
 	pendingAsk.set(null);
 }
+
+// Sidebar preference. Owned here (not in the layout) so the Settings page can
+// drive it and the rail reacts live.
+const RAIL_KEY = 'lode_rail_locked';
+
+export const railLocked = writable<boolean>(false);
+
+/** Read the persisted preference once on the client; safe to call repeatedly. */
+export function initRailLock() {
+	if (typeof localStorage === 'undefined') return;
+	try {
+		railLocked.set(localStorage.getItem(RAIL_KEY) === '1');
+	} catch {}
+}
+
+export function setRailLocked(v: boolean) {
+	railLocked.set(v);
+	try {
+		localStorage.setItem(RAIL_KEY, v ? '1' : '0');
+	} catch {}
+}
