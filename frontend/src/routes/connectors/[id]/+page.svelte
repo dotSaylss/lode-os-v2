@@ -190,38 +190,31 @@
 				</span>
 			</div>
 			<p>{connector.tagline}</p>
+			<div class="cfg-head-meta">
+				<span class="cfg-head-meta-item">
+					<Icon name="users" size={13} color="var(--ink-muted)" />
+					{config.account ?? connector.account ?? 'No account'}
+				</span>
+				<span class="cfg-head-meta-item">
+					<Icon name="clock" size={13} color="var(--ink-muted)" />
+					Sync: {(config.settings?.sync_frequency as string) ?? 'manual'}
+				</span>
+			</div>
 		</div>
 		<div class="cfg-save" class:show={saveState !== 'idle'}>
 			{#if saveState === 'saving'}Saving…{:else if saveState === 'saved'}<Icon name="check" size={14} color="var(--sg-600)" /> Saved{/if}
 		</div>
 	</header>
 
-	<!-- Overview -->
-	<section class="cfg-card">
-		<span class="eyebrow">Overview</span>
-		<div class="cfg-overview">
-			<div class="cfg-meta">
-				<span class="cfg-meta-k">Account</span>
-				<span class="cfg-meta-v">{config.account ?? connector.account ?? '—'}</span>
-			</div>
-			<div class="cfg-meta">
-				<span class="cfg-meta-k">Status</span>
-				<span class="cfg-meta-v"><span class="cfg-dot"></span> Active</span>
-			</div>
-			<div class="cfg-meta">
-				<span class="cfg-meta-k">Sync</span>
-				<span class="cfg-meta-v">{(config.settings?.sync_frequency as string) ?? 'manual'}</span>
-			</div>
-		</div>
-		<p class="cfg-desc">{connector.description}</p>
-	</section>
+	<!-- What this connection does: the lead, not a buried card row. -->
+	<p class="cfg-lead">{connector.description}</p>
 
 	<!-- Capabilities + Permissions -->
 	{#if connector.capabilities_schema.length}
 		<section class="cfg-card">
 			<div class="cfg-card-head">
 				<span class="eyebrow">Capabilities &amp; permissions</span>
-				<span class="cfg-hint">What Lode may do — and when it must ask you first</span>
+				<span class="cfg-hint">What Lode may do, and when it must ask you first</span>
 			</div>
 
 			<div class="cfg-caps">
@@ -268,7 +261,7 @@
 		<section class="cfg-card">
 			<div class="cfg-card-head">
 				<span class="eyebrow">Agent action</span>
-				<span class="cfg-hint">Lode acts here — and respects the permissions above</span>
+				<span class="cfg-hint">Lode acts here and respects the permissions above</span>
 			</div>
 
 			<div class="cfg-action-row">
@@ -276,7 +269,7 @@
 					{#if running}
 						<span class="cfg-spinner"></span> Working…
 					{:else}
-						<Icon name="sparkles" size={15} color="#fff" /> {connector.agent_action?.label}
+						<Icon name="play" size={15} color="#fff" /> {connector.agent_action?.label}
 					{/if}
 				</button>
 				<button class="cfg-ask" onclick={askLode}>Ask Lode about this connector</button>
@@ -410,38 +403,33 @@
 		color: var(--ink-muted);
 	}
 
-	.cfg-overview {
+	.cfg-head-meta {
 		display: flex;
+		align-items: center;
 		flex-wrap: wrap;
-		gap: 28px;
-		margin: 14px 0 4px;
+		gap: 4px 16px;
+		margin-top: 8px;
 	}
-	.cfg-meta {
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-	}
-	.cfg-meta-k {
-		font-size: 11px;
-		font-weight: 600;
-		letter-spacing: 0.03em;
-		text-transform: uppercase;
-		color: var(--ink-muted);
-	}
-	.cfg-meta-v {
+	.cfg-head-meta-item {
 		display: inline-flex;
 		align-items: center;
 		gap: 6px;
-		font-size: 14px;
-		font-weight: 600;
-		color: var(--ink-900);
+		font-family: var(--font-mono);
+		font-size: 12px;
+		color: var(--ink-muted);
+		white-space: nowrap;
 	}
-	.cfg-desc {
-		margin: 16px 0 0;
-		font-size: 13.5px;
+
+	/* The connector's story leads the page in the editorial voice; the cards
+	   below it are the controls. */
+	.cfg-lead {
+		margin: 4px 0 0;
+		font-family: var(--font-serif);
+		font-size: 18px;
 		line-height: 1.6;
+		letter-spacing: -0.005em;
 		color: var(--ink-700);
-		max-width: 70ch;
+		max-width: 64ch;
 	}
 
 	/* Capabilities */
@@ -676,5 +664,31 @@
 
 	.cfg > * + * {
 		margin-top: 18px;
+	}
+
+	@media (max-width: 520px) {
+		.cfg-head {
+			flex-wrap: wrap;
+			gap: 12px;
+		}
+		.cfg-name-row {
+			flex-wrap: wrap;
+			gap: 8px;
+		}
+		.cfg-head h1 {
+			font-size: 22px;
+		}
+		.cfg-id {
+			flex: 1 1 200px;
+		}
+		.cfg-head-meta {
+			gap: 4px 12px;
+		}
+		.cfg-lead {
+			font-size: 16.5px;
+		}
+		.cfg-card {
+			padding: 20px 18px;
+		}
 	}
 </style>
