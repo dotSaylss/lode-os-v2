@@ -706,7 +706,7 @@
 		margin-top: 18px;
 	}
 
-	@media (max-width: 520px) {
+	@media (max-width: 640px) {
 		.cfg-head {
 			flex-wrap: wrap;
 			gap: 12px;
@@ -729,6 +729,24 @@
 		}
 		.cfg-card {
 			padding: 20px 18px;
+		}
+		/* The capability row stacks; the segmented permission control spans the
+		   full width instead of overflowing at its ~300px intrinsic size. */
+		.cfg-cap-main {
+			min-width: 0;
+			width: 100%;
+		}
+		.cfg-perm {
+			width: 100%;
+			justify-content: space-between;
+		}
+		.cfg-perm-btn {
+			flex: 1 1 0;
+			justify-content: center;
+			padding: 7px 6px;
+		}
+		.cfg-result {
+			overflow-wrap: anywhere;
 		}
 	}
 </style>

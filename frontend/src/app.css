@@ -316,6 +316,39 @@ body {
 .v3-switcher-text b { display: block; font-size: 12.5px; font-weight: 600; color: var(--ink-900); }
 .v3-switcher-text span { font-size: 11px; color: var(--ink-muted); }
 
+/* Mobile: the vertical icon rail becomes a fixed bottom tab bar so content
+   gets the full viewport width instead of being squeezed beside a 76px sliver.
+   Brand, lock toggle, recents and text labels are hidden; the nav + foot
+   collapse into one horizontal row of evenly-spaced icon targets. */
+@media (max-width: 640px) {
+	.appv3 { flex-direction: column; }
+	.v3-rail,
+	.appv3.rail-locked .v3-rail { width: auto; position: fixed; left: 0; right: 0; bottom: 0; top: auto; height: auto; z-index: 60; }
+	.v3-rail-panel,
+	.appv3.rail-locked .v3-rail-panel,
+	.v3-rail-panel:has(.v3-switcher-pop) { position: static; width: 100%; height: auto; flex-direction: row; align-items: center; gap: 2px;
+		padding: 6px max(10px, env(safe-area-inset-left)) calc(6px + env(safe-area-inset-bottom)); box-shadow: 0 -1px 0 var(--paper-200), var(--v3-sh-lg); }
+	.v3-rail-brand,
+	.v3-rail-lock,
+	.v3-rail-sep,
+	.v3-rail-recents,
+	.v3-rail-hide-mobile { display: none; }
+	.v3-rail-nav { flex-direction: row; flex: 1; gap: 2px; justify-content: space-around; }
+	.v3-rail-foot { flex-direction: row; margin-top: 0; gap: 2px; }
+	.v3-rail-item { flex-direction: column; gap: 4px; padding: 6px 4px; min-width: 0; flex: 1; justify-content: center; }
+	.v3-rail-label,
+	.appv3.rail-locked .v3-rail-label { opacity: 1; font-size: 10px; line-height: 1; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; text-align: center; }
+	/* The account button shows just the avatar on the bar (its full name truncates ugly). */
+	.v3-switcher .v3-rail-item .v3-rail-label { display: none; }
+	.v3-switcher-pop { left: auto; right: 6px; bottom: calc(100% + 10px); }
+	/* Content clears the bottom bar (~62px tall + safe area). */
+	.v3-stage, .v3-stage-wide { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
+	/* The chat home fills v3-main; pad its base so the composer dock clears the bar. */
+	.v3-chat { padding-bottom: calc(62px + env(safe-area-inset-bottom)); box-sizing: border-box; }
+	/* Float the orb above the bottom bar. */
+	.v3-orb-wrap { bottom: calc(78px + env(safe-area-inset-bottom)) !important; }
+}
+
 /* STAGE / HEADER */
 .v3-main { flex: 1; overflow-y: auto; min-width: 0; }
 .v3-stage { max-width: 760px; margin: 0 auto; padding: 44px 40px 140px; }
@@ -469,11 +502,11 @@ body {
 .v3-chat-thread { flex: 1; overflow-y: auto; min-height: 0; }
 .v3-chat-scroll { max-width: 740px; margin: 0 auto; padding: 40px 36px 24px; display: flex; flex-direction: column; gap: 26px; }
 .v3-chat-msg.user { align-self: flex-end; max-width: 76%; background: var(--slate-500); border-radius: 16px 16px 4px 16px; padding: 11px 16px; }
-.v3-chat-msg.user p { margin: 0; font-size: 14.5px; line-height: 1.5; color: #fff; white-space: pre-wrap; }
+.v3-chat-msg.user p { margin: 0; font-size: 14.5px; line-height: 1.5; color: #fff; white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; }
 .v3-chat-msg.lode { display: flex; gap: 14px; align-items: flex-start; animation: rise .4s cubic-bezier(0.22,1,0.36,1) both; }
 .v3-chat-avatar { flex: none; margin-top: 3px; }
 .v3-chat-body { flex: 1; min-width: 0; }
-.v3-chat-text { margin: 0; font-family: var(--font-serif); font-size: 17px; line-height: 1.62; color: var(--ink-900); white-space: pre-wrap; }
+.v3-chat-text { margin: 0; font-family: var(--font-serif); font-size: 17px; line-height: 1.62; color: var(--ink-900); white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; }
 
 /* Which Gemini tier served the answer — the fast Flash front line vs. a Pro
    specialist. Quiet by default; the reasoning tier earns the brand accent. */
@@ -499,8 +532,11 @@ body {
 
 /* MOBILE — breathing room on small screens. The rail stays a slim icon strip
    (touch fix above); content gutters and display type scale down with it. */
-@media (max-width: 520px) {
-	.v3-stage, .v3-stage-wide { padding: 26px 18px 120px; }
+/* Shares the 640px breakpoint with the bottom-bar block above, so the
+   521–640px band reflows together (no bar-over-content overlap). The stage
+   bottom padding keeps the bottom-bar clearance set in that block. */
+@media (max-width: 640px) {
+	.v3-stage, .v3-stage-wide { padding: 26px 18px calc(96px + env(safe-area-inset-bottom)); }
 	.v3-header { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: 24px; }
 	.v3-header h1 { font-size: 28px; }
 	.v3-header-recovered { text-align: left; padding-left: 0; }
@@ -508,7 +544,7 @@ body {
 	.v3-chat-scroll { padding: 26px 18px 16px; gap: 22px; }
 	.v3-chat-dock { padding: 8px 14px 18px; }
 	.v3-chat-msg.lode { gap: 10px; }
-	.v3-orb-wrap { right: 16px; bottom: 16px; }
+	.v3-orb-wrap { right: 16px; }
 	.v3-focus { padding: 22px 20px; }
 	.v3-focus-head { flex-direction: column; align-items: flex-start; gap: 6px; margin-bottom: 14px; }
 	.v3-focus-line { font-size: 19px; }
