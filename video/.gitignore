@@ -1,0 +1,4 @@
+# Remotion render scratch + bundle cache (the final video lives in docs/)
+out/
+.remotion/
+node_modules/
