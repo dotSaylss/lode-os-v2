@@ -25,6 +25,15 @@
 	// list refreshes via invalidateAll() after the connect flow completes.
 	const connectors = $derived<Connector[]>(data.connectors ?? []);
 
+	// The active workspace name (from the layout) seeds the connect flow's
+	// account field, so authorization reads as the persona actually signed in —
+	// not a hardcoded default.
+	type Persona = { id: string; name: string };
+	const activeAccount = $derived<string>(
+		(data.personas as Persona[] | undefined)?.find((p) => p.id === data.activePersona)?.name ??
+			'Lode Records'
+	);
+
 	let activeCategory = $state<string>('all');
 
 	// Category filter lives behind a single funnel button; the menu is a small
@@ -91,7 +100,7 @@
 	} | null>(null);
 
 	function openConnect(c: Connector) {
-		wizard = { connector: c, step: 'consent', account: 'Lode Records', error: '' };
+		wizard = { connector: c, step: 'consent', account: activeAccount, error: '' };
 	}
 
 	function closeWizard() {
@@ -117,7 +126,7 @@
 			const res = await fetch(api(`/api/v1/connectors/${wizard.connector.id}/connect`), {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ account: wizard.account || 'Lode Records' })
+				body: JSON.stringify({ account: wizard.account || activeAccount })
 			});
 			await minDelay;
 			if (!res.ok) throw new Error('connect failed');
@@ -332,7 +341,7 @@
 					<span class="wiz-done-ico"><Icon name="circle-check" size={30} color="var(--sg-600)" /></span>
 					<h2>{w.connector.name} connected</h2>
 					<p>
-						Connected as <b>{w.account || 'Lode Records'}</b>. Reads are allowed; actions that
+						Connected as <b>{w.account || activeAccount}</b>. Reads are allowed; actions that
 						change anything on {w.connector.name} will ask for your approval first.
 					</p>
 					<div class="wiz-actions center">

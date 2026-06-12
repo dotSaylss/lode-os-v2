@@ -265,6 +265,18 @@
 									</div>
 								{/if}
 								<p class="v3-chat-text">{m.text}</p>
+								{#if m.tier}
+									<span class="v3-chat-tier" class:reasoning={m.tier === 'reasoning'}>
+										<Icon
+											name={m.tier === 'reasoning' ? 'gem' : 'zap'}
+											size={11}
+											color="currentColor"
+										/>
+										{m.tier === 'reasoning'
+											? 'Reasoning · Gemini 2.5 Pro'
+											: 'Quick lookup · Gemini 2.5 Flash'}
+									</span>
+								{/if}
 								{#if m.hint}
 									<button class="v3-chat-route" type="button" onclick={() => follow(m.hint!)}>
 										<span class="v3-chat-route-text">

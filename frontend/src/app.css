@@ -475,6 +475,11 @@ body {
 .v3-chat-body { flex: 1; min-width: 0; }
 .v3-chat-text { margin: 0; font-family: var(--font-serif); font-size: 17px; line-height: 1.62; color: var(--ink-900); white-space: pre-wrap; }
 
+/* Which Gemini tier served the answer — the fast Flash front line vs. a Pro
+   specialist. Quiet by default; the reasoning tier earns the brand accent. */
+.v3-chat-tier { display: inline-flex; align-items: center; gap: 5px; margin-top: 9px; font-size: 11px; font-weight: 600; letter-spacing: .01em; color: var(--ink-400); }
+.v3-chat-tier.reasoning { color: var(--sg-600); }
+
 /* Inline agent observability: what was read (MCP tools), who was consulted (A2A). */
 .v3-chat-trace { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
 .v3-chat-step { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 600; color: var(--ink-500); background: var(--paper-0); border: 1px solid var(--paper-200); border-radius: var(--r-pill); padding: 4px 11px; }

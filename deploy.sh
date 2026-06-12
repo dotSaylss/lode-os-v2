@@ -13,8 +13,8 @@ set -euo pipefail
 
 PROJECT_ID="$(gcloud config get-value project 2>/dev/null)"
 REGION="${REGION:-us-central1}"
-BACKEND_SVC="mogul-backend"
-FRONTEND_SVC="mogul-frontend"
+BACKEND_SVC="lode-backend"
+FRONTEND_SVC="lode-frontend"
 TARGET="${1:-all}"
 
 if [[ -z "${PROJECT_ID}" ]]; then
@@ -58,10 +58,12 @@ deploy_frontend() {
   IMAGE="gcr.io/${PROJECT_ID}/${FRONTEND_SVC}"
 
   # PUBLIC_API_BASE must be baked into the client bundle at BUILD time, so it's
-  # passed as a Docker build-arg via a Cloud Build docker step.
+  # passed as a Docker build-arg via a Cloud Build docker step. The build config
+  # is written to a temp file in ./frontend (gcloud's `--config=-` stdin form is
+  # unreliable across shells), then cleaned up.
   echo "▶ Building frontend image via Cloud Build (PUBLIC_API_BASE=${BACKEND_URL})…"
-  gcloud builds submit ./frontend \
-    --config=- <<YAML
+  CB_CONFIG="$(mktemp -t cloudbuild.frontend.XXXXXX.yaml)"
+  cat > "${CB_CONFIG}" <<YAML
 steps:
   - name: gcr.io/cloud-builders/docker
     args:
@@ -74,13 +76,19 @@ steps:
 images:
   - ${IMAGE}
 YAML
+  gcloud builds submit ./frontend --config="${CB_CONFIG}"
+  rm -f "${CB_CONFIG}"
 
   echo "▶ Deploying frontend to Cloud Run…"
+  # PUBLIC_API_BASE is also set as a RUNTIME env var: the client resolves the
+  # backend via $env/dynamic/public (read at run time), so the build-arg alone
+  # isn't enough — without this the browser falls back to http://localhost:8000.
   gcloud run deploy "${FRONTEND_SVC}" \
     --image "${IMAGE}" \
     --region "${REGION}" \
     --platform managed \
-    --allow-unauthenticated
+    --allow-unauthenticated \
+    --set-env-vars "PUBLIC_API_BASE=${BACKEND_URL}"
 
   FRONTEND_URL="$(gcloud run services describe "${FRONTEND_SVC}" --region "${REGION}" --format 'value(status.url)')"
   echo "✓ Frontend: ${FRONTEND_URL}"

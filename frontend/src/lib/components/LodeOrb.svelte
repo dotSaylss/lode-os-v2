@@ -195,6 +195,18 @@
 				{#each messages as m (m.id)}
 					<div class="v3-orb-bubble {m.role === 'user' ? 'user' : 'lode'}">
 						<p>{m.text}</p>
+						{#if m.role === 'lode' && m.tier}
+							<span class="v3-chat-tier" class:reasoning={m.tier === 'reasoning'}>
+								<Icon
+									name={m.tier === 'reasoning' ? 'gem' : 'zap'}
+									size={11}
+									color="currentColor"
+								/>
+								{m.tier === 'reasoning'
+									? 'Reasoning · Gemini 2.5 Pro'
+									: 'Quick lookup · Gemini 2.5 Flash'}
+							</span>
+						{/if}
 					</div>
 					{#if m.role === 'lode' && m.hint}
 						<button class="v3-orb-route" type="button" onclick={() => follow(m.hint!)}>
