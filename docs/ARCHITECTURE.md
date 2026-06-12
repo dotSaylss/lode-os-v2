@@ -1,14 +1,14 @@
-# LodeOS — Architecture
+# LodeOS - Architecture
 
 LodeOS is an **agentic control plane for the music business**. Artists and small labels
-run their catalog across half a dozen disconnected platforms — distribution, rights
-organizations, royalty collection, creation tools, sync marketplaces — and money falls
+run their catalog across half a dozen disconnected platforms - distribution, rights
+organizations, royalty collection, creation tools, sync marketplaces - and money falls
 through the gaps between them: unregistered neighboring rights, unclaimed mechanicals,
 black-box royalties, unpitched sync opportunities. No single platform sees the whole
 picture, so nobody is accountable for the gaps.
 
 LodeOS puts a team of Google ADK agents *across* those platforms. The agents read from
-every connected source, find the missing money, and act to recover it — under
+every connected source, find the missing money, and act to recover it - under
 **human-set, per-capability permissions** that genuinely gate what each agent may do.
 
 ```
@@ -40,7 +40,7 @@ every connected source, find the missing money, and act to recover it — under
 The team is split into two compute tiers. The **fast tier** (Gemini 2.5 Flash) is the
 front line: the concierge answers quick factual lookups directly from its own read
 tools (artist context, connectors overview) in seconds. The **reasoning tier**
-(Gemini 2.5 Pro) handles cross-connector analysis and action — the concierge engages
+(Gemini 2.5 Pro) handles cross-connector analysis and action - the concierge engages
 exactly one specialist when the question needs it, and `/ask` reports which tier
 served each answer (`tier: "fast" | "reasoning"`) so the UI can label it.
 
@@ -56,7 +56,7 @@ served each answer (`tier: "fast" | "reasoning"`) so the UI can label it.
 | ↳ LiveProviderResearchAgent | Gemini 2.5 Flash | Public grounding via the built-in `google_search` tool | (AgentTool) |
 | **SyncAgent** | Gemini 2.5 Pro | Pitches the catalog into live sync briefs; drafts pitches; forecasts placement fees | Disco connector, `POST /api/v1/connectors/disco/action` |
 
-¹ Overridable per-deployment via `LABEL_STRATEGIST_MODEL` / `LABEL_EXECUTION_MODEL` —
+¹ Overridable per-deployment via `LABEL_STRATEGIST_MODEL` / `LABEL_EXECUTION_MODEL` -
 both resolve through Vertex AI, so either seat can be repointed at any Model Garden
 model (tuned Gemini, partner, or open model) with no code change.
 
@@ -69,11 +69,11 @@ The system uses two agent-to-agent coordination patterns, with these intents:
 | Agent | Intent | Input | Output |
 |---|---|---|---|
 | OrchestratorAgent | `audit_artist_rights` | artist context | gap list + recoverable totals |
-| LabelAgent | `audit_catalog` | (none — reads portfolio) | ranked bulk opportunities + forecast |
+| LabelAgent | `audit_catalog` | (none - reads portfolio) | ranked bulk opportunities + forecast |
 | ActionAgent | `draft_registrations` | gap descriptions | registration drafts ready for human approval |
 | MatchmakerAgent | `match_providers` | song needs description | cited provider matches + split proposal |
 | LiveProviderResearchAgent | `research_providers` | niche/service query | live-web findings (Google Search grounded) |
-| SyncAgent | `match_briefs` / `draft_pitch` | (none — reads briefs + catalog) | ranked matches, draft pitch, fee forecast |
+| SyncAgent | `match_briefs` / `draft_pitch` | (none - reads briefs + catalog) | ranked matches, draft pitch, fee forecast |
 
 **Intents consumed:**
 
@@ -91,13 +91,13 @@ The system uses two agent-to-agent coordination patterns, with these intents:
 ## Demo workspaces (personas)
 
 The demo ships three self-contained workspaces, one per user base, switchable from
-the account button in the rail: **June Freedom** (artist — Today/Services), **Lode
-Records** (label — Catalog), and **Kai Rivers** (AI-native creator — Suno →
+the account button in the rail: **June Freedom** (artist - Today/Services), **Lode
+Records** (label - Catalog), and **Kai Rivers** (AI-native creator - Suno →
 Untitled → Mogul → Disco; his Today view renders his Untitled library with
 per-track pitch actions). The active workspace is persisted server-side
 (`GET/POST /api/v1/persona`)
 and scopes *everything*: the nav, the artist context, the connector catalog and its
-configs, and what every agent tool returns — so an artist's workspace never shows
+configs, and what every agent tool returns - so an artist's workspace never shows
 label data and vice versa. The SyncAgent grounds in the active workspace's catalog
 (`get_sync_catalog`): a creator's tracks or a label's roster, both carrying `sound`
 profiles.
@@ -108,19 +108,19 @@ Each connector (`/connectors`) is one external platform the agents reason or act
 across. A connector exposes a **capability schema**, and the human sets two things
 per capability on its config page:
 
-- **enabled** — off means the agent must skip that step entirely.
-- **permission** — `allow` (act autonomously) · `approval` (produce a clearly-labeled
+- **enabled** - off means the agent must skip that step entirely.
+- **permission** - `allow` (act autonomously) · `approval` (produce a clearly-labeled
   draft and ask before submitting) · `deny` (never).
 
 The config is persisted server-side (`PUT /api/v1/connectors/{id}/config`) and read
-by agents **at run time** via the `get_connector_config` tool — every agent's first
+by agents **at run time** via the `get_connector_config` tool - every agent's first
 step is to load the config and obey it. The settings gate model behavior, not just
 the UI: turning "Draft pitches" off makes the SyncAgent decline to draft and say why;
 "Needs approval" yields a draft plus an explicit ask; `auto_submit` ships denied by
 default. Each action returns a tool **trace** so the human can see the config being
 honored step by step.
 
-Connector catalog: **Mogul** (catalog, masters, royalty statements — the source of
+Connector catalog: **Mogul** (catalog, masters, royalty statements - the source of
 truth), **Suno** (creation: releases/stems into the catalog), **Untitled** (the
 creator's library: playlists and tracks that populate the dashboard and ground the
 sync catalog), **Disco** (demand: sync briefs in, pitches out, placement fees back
@@ -132,14 +132,14 @@ Artists, DistroKid, ASCAP, SoundExchange, Songtradr).
 work across platforms: "use Afterburn from my Sync Ready playlist and submit it to
 the best Disco pitch" makes the SyncAgent read the Disco permissions, load Disco's
 live briefs, read the Untitled library, resolve the named track, and draft the
-pitch — and the returned trace names each connector touched (*Read your Disco
+pitch - and the returned trace names each connector touched (*Read your Disco
 permissions → Loaded active briefs from Disco → Read your library from Untitled*).
 Untitled's own agent action is deliberately cross-connector: it matches the
 library against Disco's briefs.
 
 **Connecting a platform** runs through a consent-style authorization flow
 (`POST /api/v1/connectors/{id}/connect`): the user reviews exactly what Lode will
-be able to do, authorizes, and the connection persists with safe defaults — read
+be able to do, authorizes, and the connection persists with safe defaults - read
 capabilities allowed, platform-changing actions at "needs approval", anything
 automatic denied. The demo simulates the handshake; in production this is where
 each platform's OAuth2/API-key exchange lands, and each connector's data access
@@ -152,19 +152,19 @@ Every factual claim an agent makes is grounded in a store it can cite:
 | Source | Used by | Enforced how |
 |---|---|---|
 | Artist royalty context (Mogul, over **MCP** via `mcp_server.py`; persona-scoped) | Orchestrator graph | may only cite returned data |
-| Label portfolio — 50 artists with earnings, gaps, and a `sound` profile (genres, moods, tempo, vocals) | LabelAgent | bulk plans cite real roster data |
-| Sync catalog (persona-scoped: a creator's Untitled library — playlists + tracks with `source`/`playlist` provenance — or the label roster, with `sound` profiles) | SyncAgent | matches must cite the entry's actual `sound` profile, never a guessed style; named tracks/playlists resolve against the library or the agent says they don't exist |
+| Label portfolio - 50 artists with earnings, gaps, and a `sound` profile (genres, moods, tempo, vocals) | LabelAgent | bulk plans cite real roster data |
+| Sync catalog (persona-scoped: a creator's Untitled library - playlists + tracks with `source`/`playlist` provenance - or the label roster, with `sound` profiles) | SyncAgent | matches must cite the entry's actual `sound` profile, never a guessed style; named tracks/playlists resolve against the library or the agent says they don't exist |
 | Vetted provider marketplace (19 providers) | MatchmakerAgent | recommendations restricted to DB entries, cited with rating/genre/rate evidence |
 | Live sync briefs (film/TV/ad/game/brand) | SyncAgent | may only reference briefs that exist in the store |
 | Public web (Grounding with Google Search) | LiveProviderResearchAgent | built-in `google_search` tool |
 
 The mock JSON stores stand in for live platform APIs; the MCP seam demonstrates the
-swap path — replace the MCP server with a live Mogul API and the agents are unchanged.
+swap path - replace the MCP server with a live Mogul API and the agents are unchanged.
 
 ## Sessions, memory, observability
 
 - **Sessions:** every endpoint runs through ADK Runners over a shared
-  `InMemorySessionService` by default — all chats are multi-turn.
+  `InMemorySessionService` by default - all chats are multi-turn.
 - **Memory Bank:** `USE_MEMORY_BANK=true` + `AGENT_ENGINE_ID` upgrades the services
   graph to Vertex AI Agent Engine **Sessions + Memory Bank** for durable,
   cross-session memory.
@@ -190,11 +190,11 @@ service never takes down the product.
 
 Two containers, built by Cloud Build and deployed to Cloud Run via `./deploy.sh`:
 
-- **`mogul-backend`** — `Dockerfile` at the repo root; FastAPI + ADK; 1 GiB memory,
+- **`mogul-backend`** - `Dockerfile` at the repo root; FastAPI + ADK; 1 GiB memory,
   300 s timeout; env: `GOOGLE_GENAI_USE_VERTEXAI=TRUE`, `GOOGLE_CLOUD_PROJECT`,
   `GOOGLE_CLOUD_LOCATION` (+ the gates above). Reasoning runs on Vertex AI
   (Gemini 2.5), so no API keys ship in the image.
-- **`mogul-frontend`** — `frontend/Dockerfile`; SvelteKit (Node adapter) pointing at
+- **`mogul-frontend`** - `frontend/Dockerfile`; SvelteKit (Node adapter) pointing at
   the backend URL.
 
 Both services are stateless and scale to zero; session state lives in the session
