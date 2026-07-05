@@ -1,0 +1,169 @@
+@import "tailwindcss";
+
+/* Explicitly scan all source files so utility generation never depends on
+   .gitignore heuristics (Tailwind v4 auto-detection skips git-ignored paths). */
+@source "./";
+
+/* ============================================================
+   Design tokens — "Ambient Sage": warm paper canvas, calm slate
+   blue, sage accent, warm terracotta. Fonts (Hanken Grotesk /
+   Newsreader / Spline Sans Mono) are loaded via <link> in app.html.
+   Re-theme by editing the values here — the components read tokens,
+   never hard-coded colors.
+   ============================================================ */
+:root {
+  /* ---------- Font families ---------- */
+  --font-sans: 'Hanken Grotesk', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-serif: 'Newsreader', ui-serif, Georgia, 'Times New Roman', serif;
+  --font-mono: 'Spline Sans Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* ---------- Slate Blue (calm primary) ---------- */
+  --slate-50:  #F4F7FA;
+  --slate-100: #E7EEF4;
+  --slate-200: #CFDDE8;
+  --slate-300: #A7BFD1;
+  --slate-400: #7E9DB6;
+  --slate-500: #5C7E9A;
+  --slate-600: #466480;
+  --slate-700: #374F63;
+  --slate-800: #2A3B49;
+  --slate-900: #1E2B36;
+
+  /* ---------- Terracotta (warm secondary) ---------- */
+  --terra-50:  #FAF5F2;
+  --terra-100: #F3E8E1;
+  --terra-200: #E8D1C4;
+  --terra-300: #D6B3A3;
+  --terra-400: #C49583;
+  --terra-500: #B07762;
+  --terra-600: #97604C;
+  --terra-700: #774B3B;
+
+  /* ---------- Semantic accents ---------- */
+  --amber-50:  #FAF3E9;
+  --amber-500: #BE8B4E;
+  --amber-600: #9E7138;
+
+  /* ---------- "Ambient Sage" surface + ink ---------- */
+  --paper-0:   #FFFFFF;
+  --paper-50:  #FAF8F2;   /* canvas */
+  --paper-100: #F2EEE4;
+  --paper-200: #E8E2D4;   /* warm hairline */
+  --paper-300: #D9D1BF;
+  --ink-900:   #23241F;   /* warm near-black */
+  --ink-700:   #45473E;
+  --ink-500:   #6C6F62;
+  --ink-muted: #8E9183;
+  --sg-50:  #EDF3EE;
+  --sg-100: #DCE7DF;
+  --sg-200: #BFD4C6;
+  --sg-300: #9ABBA4;
+  --sg-400: #739B80;
+  --sg-500: #577D63;   /* accent */
+  --sg-600: #456450;
+  --sg-700: #374F40;
+
+  /* ---------- Radii ---------- */
+  --r-xs:   6px;
+  --r-sm:   10px;
+  --r-md:   14px;
+  --r-lg:   18px;
+  --r-xl:   24px;
+  --r-2xl:  32px;
+  --r-pill: 999px;
+
+  /* ---------- Shadows (warm-tinted) ---------- */
+  --v3-sh-xs: 0 1px 2px rgba(60,52,38,0.05);
+  --v3-sh-sm: 0 1px 3px rgba(60,52,38,0.06), 0 1px 2px rgba(60,52,38,0.04);
+  --v3-sh-md: 0 6px 18px rgba(60,52,38,0.07), 0 2px 6px rgba(60,52,38,0.04);
+  --v3-sh-lg: 0 16px 40px rgba(60,52,38,0.12), 0 4px 12px rgba(60,52,38,0.06);
+  --v3-sh-xl: 0 28px 64px rgba(45,38,28,0.18), 0 8px 20px rgba(45,38,28,0.08);
+}
+
+/* Map brand scales into Tailwind utilities (bg-paper-50, text-ink-900, ...). */
+@theme {
+  --font-sans: 'Hanken Grotesk', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-serif: 'Newsreader', ui-serif, Georgia, serif;
+  --font-mono: 'Spline Sans Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --color-paper-0:   #FFFFFF;
+  --color-paper-50:  #FAF8F2;
+  --color-paper-100: #F2EEE4;
+  --color-paper-200: #E8E2D4;
+  --color-paper-300: #D9D1BF;
+  --color-ink-900:   #23241F;
+  --color-ink-700:   #45473E;
+  --color-ink-500:   #6C6F62;
+  --color-ink-muted: #8E9183;
+  --color-sage-500:  #577D63;
+}
+
+/* ============================================================
+   Semantic type helpers used by the pages.
+   ============================================================ */
+.eyebrow { font-family: var(--font-sans); font-size: 12px; font-weight: 600; line-height: 1; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sg-600); }
+.mono { font-family: var(--font-mono); font-size: 15px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: -0.011em; color: var(--ink-900); }
+
+/* ============================================================
+   Global — warm paper canvas.
+   ============================================================ */
+html, body { margin: 0; height: 100%; }
+body {
+  font-family: var(--font-sans);
+  color: var(--ink-900);
+  background: var(--paper-50);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================================
+   Stage / header — the page frame.
+   ============================================================ */
+.v3-main { min-height: 100vh; }
+.v3-stage-wide { max-width: 1120px; margin: 0 auto; padding: 44px 40px 100px; }
+.v3-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 32px; }
+.v3-date { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sg-600); }
+.v3-header h1 { margin: 6px 0 0; font-family: var(--font-serif); font-size: 36px; font-weight: 400; letter-spacing: -0.02em; color: var(--ink-900); line-height: 1.1; }
+.v3-vp { margin: 7px 0 0; max-width: 56ch; font-size: 13px; line-height: 1.55; color: var(--ink-500); }
+.v3-header-recovered { text-align: right; flex: none; padding-left: 24px; }
+.v3-header-recovered span { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 4px; white-space: nowrap; }
+.v3-header-recovered b { font-family: var(--font-mono); font-size: 19px; font-weight: 500; color: var(--ink-900); }
+
+/* Primary action button. */
+.v3-act { display: inline-flex; align-items: center; gap: 8px; background: var(--sg-500); color: #fff; border: none; border-radius: var(--r-md); padding: 12px 22px; font-size: 14.5px; font-weight: 600; box-shadow: var(--v3-sh-sm); transition: background .15s, transform .12s; cursor: pointer; }
+.v3-act:hover { background: var(--sg-600); }
+.v3-act:active { transform: scale(0.98); }
+.v3-act:disabled { background: var(--paper-200); color: var(--ink-muted); box-shadow: none; cursor: not-allowed; }
+
+/* ============================================================
+   Chat bubbles + composer (shared by the matchmaker chat).
+   ============================================================ */
+.v3-orb-bubble { max-width: 90%; }
+.v3-orb-bubble.user { align-self: flex-end; background: var(--slate-500); color: #fff; border-radius: 14px 14px 4px 14px; padding: 9px 13px; }
+.v3-orb-bubble.user p { margin: 0; font-size: 13px; line-height: 1.4; color: #fff; }
+.v3-orb-bubble.lode { align-self: flex-start; }
+.v3-orb-bubble.lode p { margin: 0; font-family: var(--font-serif); font-size: 14.5px; line-height: 1.5; color: var(--ink-900); background: var(--paper-50); border: 1px solid var(--paper-200); border-radius: 4px 14px 14px 14px; padding: 11px 14px; }
+
+.typing { display: inline-flex; gap: 4px; background: var(--paper-50); border: 1px solid var(--paper-200); border-radius: 4px 14px 14px 14px; padding: 13px 15px; }
+.typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--sg-400); animation: blink 1.2s infinite both; }
+.typing span:nth-child(2) { animation-delay: .2s; }
+.typing span:nth-child(3) { animation-delay: .4s; }
+@keyframes blink { 0%,60%,100% { opacity: .25; } 30% { opacity: 1; } }
+
+.v3-orb-composer { display: flex; align-items: center; gap: 8px; background: var(--paper-50); border: 1px solid var(--paper-200); border-radius: var(--r-pill); padding: 5px 5px 5px 15px; transition: border-color .15s; }
+.v3-orb-composer:focus-within { border-color: var(--sg-300); }
+.v3-orb-composer input { flex: 1; border: none; outline: none; background: transparent; font-size: 13.5px; color: var(--ink-900); }
+.v3-orb-composer input::placeholder { color: var(--ink-muted); }
+.v3-orb-send { width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--sg-500); flex: none; display: flex; align-items: center; justify-content: center; transition: background .15s; cursor: pointer; }
+.v3-orb-send:hover { background: var(--sg-600); }
+.v3-orb-send:disabled { background: var(--paper-200); cursor: not-allowed; }
+
+/* ============================================================
+   Mobile.
+   ============================================================ */
+@media (max-width: 520px) {
+	.v3-stage-wide { padding: 26px 18px 80px; }
+	.v3-header { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: 24px; }
+	.v3-header h1 { font-size: 28px; }
+	.v3-header-recovered { text-align: left; padding-left: 0; }
+	.v3-act { padding: 11px 18px; font-size: 14px; }
+}
