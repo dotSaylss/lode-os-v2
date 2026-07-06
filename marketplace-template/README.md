@@ -47,9 +47,19 @@ editing config and data (see [Make it yours](#make-it-yours)).
 
 ---
 
+> **New here / not a developer?** Follow the step-by-step, copy-paste
+> [**Setup guide**](docs/SETUP.md) — written for non-technical readers (Lovable
+> users welcome), covering macOS and Windows. Want the full technical map (or a
+> file to hand an LLM to customize the module)? See [**ARCHITECTURE.md**](docs/ARCHITECTURE.md).
+> Proof it all works end-to-end: [**VERIFICATION.md**](docs/VERIFICATION.md).
+
 ## Quick start
 
-Two terminals. **No API keys required** — it runs in mock matchmaker mode.
+**Fastest (macOS/Linux):** from the template root, `./run.sh` — it installs both
+halves and starts them. Then open http://localhost:5173.
+
+Or run the two halves by hand (two terminals). **No API keys required** — it runs
+in mock matchmaker mode.
 
 ### 1) Backend → http://localhost:8000
 
@@ -73,6 +83,23 @@ hip-hop single mixed, mastered, and cover art"*), and hit **Find my team**. The
 matchmaker assembles a grounded team and shows the evidence behind it.
 
 Check which backend is active any time: `curl localhost:8000/api/health`.
+
+---
+
+## Tests
+
+The backend ships a `pytest` suite that drives the real FastAPI app (health,
+config, providers, grounded chat, multi-turn session memory, mode resolution):
+
+```bash
+cd backend
+pip install -r requirements.txt -r requirements-dev.txt
+pytest        # 13 passing, no API keys needed
+```
+
+Frontend typecheck: `cd frontend && npm run check`. See
+[**VERIFICATION.md**](docs/VERIFICATION.md) for a captured end-to-end run with
+evidence (test output, live endpoint responses, and a screenshot).
 
 ---
 
@@ -117,6 +144,11 @@ prompt. No changes to the API, the chat UX, or the grounding-evidence pipeline.
 
 ```
 marketplace-template/
+├── run.sh                 # one-command bootstrap (installs + starts both halves)
+├── docs/
+│   ├── SETUP.md           # step-by-step setup for non-technical readers (mac/win)
+│   ├── ARCHITECTURE.md    # full spec — the file to hand an LLM to customize/rebuild
+│   └── VERIFICATION.md    # captured end-to-end run + evidence
 ├── backend/
 │   ├── main.py            # FastAPI app: /api/providers, /api/chat, /api/config
 │   ├── matchmaker.py      # Mock + Real (ADK/Gemini) backends behind one interface
@@ -124,7 +156,9 @@ marketplace-template/
 │   ├── config.py          # branding, categories, matchmaker-mode resolution
 │   ├── models.py          # Pydantic schemas (Provider, ChatRequest/Response, Evidence)
 │   ├── data/providers.json# the vetted marketplace (music example dataset)
+│   ├── tests/test_api.py  # pytest suite over the real FastAPI app
 │   ├── requirements.txt   # core deps required; AI deps optional/commented
+│   ├── requirements-dev.txt # test deps (pytest, httpx)
 │   └── .env.example
 └── frontend/
     ├── src/routes/
