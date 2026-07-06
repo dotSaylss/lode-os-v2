@@ -16,7 +16,9 @@ import os
 from dotenv import load_dotenv
 
 # Load env (Gemini creds / marketplace config) before anything reads it.
-load_dotenv()
+# Scope to *this* backend's own .env so the template stays self-contained and
+# never inherits a parent repo's .env when nested inside another project.
+load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
