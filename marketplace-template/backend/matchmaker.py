@@ -282,6 +282,16 @@ class RealMatchmaker:
     mode = "real"
 
     def __init__(self) -> None:
+        # Verify the ADK dependency is importable *now*, so get_matchmaker()'s
+        # try/except can fall back to the mock at construction time rather than
+        # letting a missing dependency surface as a 500 on the first chat turn.
+        import importlib.util
+
+        if importlib.util.find_spec("google.adk") is None:
+            raise ImportError(
+                "google-adk is not installed; install requirements or set "
+                "MATCHMAKER_MODE=mock (see backend/.env.example)."
+            )
         self._runner = None
         self._session_service = None
         self._app_name = "marketplace-matchmaker"
