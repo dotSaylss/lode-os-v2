@@ -1,0 +1,14 @@
+# ── Core (required) ──────────────────────────────────────────────────────────
+# These alone give you a fully working server in mock matchmaker mode — no API
+# keys, no Google Cloud, no heavy AI deps.
+fastapi
+uvicorn
+pydantic
+python-dotenv
+
+# ── Real AI matchmaker (optional) ────────────────────────────────────────────
+# Uncomment to enable the Google ADK + Gemini 2.5 Pro matchmaker (grounded RAG +
+# live web research). Requires Gemini credentials (see .env.example). Without
+# these installed / configured, the backend automatically uses the mock matcher.
+# google-adk
+# google-genai
