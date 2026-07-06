@@ -2,10 +2,11 @@
 Provider data source — the swappable seam between the marketplace and its data.
 
 By default this reads a bundled JSON file (`data/providers.json`). To back the
-marketplace with a real database or an external API instead, implement the same
-two functions (`load_providers` returning a list of `Provider`, and
-`load_providers_raw` returning the raw dicts the matchmaker grounds on) and point
-`ACTIVE_SOURCE` at your implementation. Nothing else in the app needs to change.
+marketplace with a real database or an external API instead, re-implement the two
+functions below in place — `load_providers` (returning a list of `Provider`) and
+`load_providers_raw` (returning the raw dicts the matchmaker grounds on); keep
+`providers_json` working, since the real matchmaker's RAG tool calls it. Nothing
+else in the app needs to change.
 """
 
 import json

@@ -60,9 +60,13 @@ cleanup() {
   _cleaned=1
   echo
   echo "→ Shutting down…"
+  # Signal both halves. No blocking `wait <pid>` here: on bash 3.2 (macOS default)
+  # a `wait <specific-pid>` inside a trap defers further signals, so we just send
+  # the kills and let the processes exit; a short sleep gives them time to release
+  # their ports before the script returns.
   [ -n "${FRONTEND_PID}" ] && kill "${FRONTEND_PID}" 2>/dev/null || true
   kill "${BACKEND_PID}" 2>/dev/null || true
-  wait "${BACKEND_PID}" "${FRONTEND_PID}" 2>/dev/null || true
+  sleep 1
 }
 trap cleanup EXIT INT TERM
 
@@ -83,9 +87,14 @@ echo
 
 # Run the frontend in the background too, so the Ctrl+C trap can stop BOTH halves
 # (otherwise the frontend, as the foreground process, would keep running and the
-# cleanup could never reach it). `wait -n` blocks until either half exits; if one
-# dies, we fall through to cleanup and tear the other down as well.
+# cleanup could never reach it).
 npm run dev -- --port "${FRONTEND_PORT}" &
 FRONTEND_PID=$!
 
-wait -n 2>/dev/null || wait "${BACKEND_PID}" "${FRONTEND_PID}" 2>/dev/null || true
+# Block here with an ARGUMENT-LESS `wait` — this form IS interruptible by a
+# trapped signal on every bash (including 3.2), so Ctrl+C runs cleanup promptly.
+# It returns when all children exit; loop so that if only one half dies, we tear
+# the other down via the EXIT trap rather than hanging on the survivor.
+while kill -0 "${BACKEND_PID}" 2>/dev/null && kill -0 "${FRONTEND_PID}" 2>/dev/null; do
+  wait
+done
