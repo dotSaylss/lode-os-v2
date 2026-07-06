@@ -128,8 +128,12 @@ def test_chat_remembers_the_running_brief_across_turns():
         "/api/chat", json={"message": "now add mastering", "session_id": sid}
     ).json()
     assert second["session_id"] == sid
-    # The recap/aggregate should reference mastering now.
-    assert "master" in second["response"].lower()
+    # Assert on the *evidence*, not the reply text: the reply always contains the
+    # word "master" via the boilerplate splits paragraph, so a substring check
+    # would pass even if mastering detection were broken. A mastering-category
+    # provider chip only appears if the new need was actually detected and matched.
+    second_cats = {c["category"] for c in second["evidence"]["providers"]}
+    assert "mastering" in second_cats
 
 
 def test_chat_without_a_need_greets_or_recaps():
@@ -138,6 +142,19 @@ def test_chat_without_a_need_greets_or_recaps():
     body = r.json()
     assert body["response"].strip()  # never returns empty
     assert body["mode"] == "mock"
+
+
+# ── Mock genre detection (word-boundary matching) ─────────────────────────────
+def test_genre_detection_ignores_substring_false_positives():
+    from matchmaker import MockMatchmaker
+
+    mm = MockMatchmaker()
+    providers = load_providers_raw()
+    # Short genres ("soul", "folk") must NOT fire inside unrelated words.
+    assert mm._detect_genre("my soulful ballad", providers) is None
+    assert mm._detect_genre("folks, I need a mix", providers) is None
+    # A genuine, whole-word genre mention still resolves.
+    assert mm._detect_genre("a lo-fi hip-hop single", providers) == "lo-fi hip-hop"
 
 
 # ── Mode resolution (pure config logic, no server) ────────────────────────────

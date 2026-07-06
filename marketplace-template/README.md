@@ -11,9 +11,10 @@ cover art, sync, ...), but nothing about the wiring is music-specific — re-the
 it to freelancers, contractors, legal services, AI tools, or anything else by
 editing config and data (see [Make it yours](#make-it-yours)).
 
-> Extracted from [LodeOS](../README.md) — the "Services" vertical, lifted out of
-> the multi-agent app into a self-contained template with its shared shell,
-> personas, and connector coupling removed.
+> Extracted from LodeOS — the "Services" vertical, lifted out of the multi-agent
+> app into a self-contained template with its shared shell, personas, and
+> connector coupling removed. This directory stands alone: nothing here depends
+> on the parent repository.
 
 ---
 
@@ -94,7 +95,7 @@ config, providers, grounded chat, multi-turn session memory, mode resolution):
 ```bash
 cd backend
 pip install -r requirements.txt -r requirements-dev.txt
-pytest        # 13 passing, no API keys needed
+pytest        # 14 passing, no API keys needed
 ```
 
 Frontend typecheck: `cd frontend && npm run check`. See

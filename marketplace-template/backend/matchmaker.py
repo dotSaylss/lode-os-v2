@@ -119,8 +119,13 @@ class MockMatchmaker:
         # Match against the genre vocabulary actually present in the marketplace.
         vocab = {g.lower() for p in providers for g in p.get("genres", [])}
         # Prefer the longest matching genre phrase (e.g. "lo-fi hip-hop" over "hip-hop").
+        # Match on word boundaries so short genres ("soul", "folk") don't fire inside
+        # unrelated words ("soulful", "folks"), which would otherwise skew provider
+        # selection toward a genre the user never named. (This is a heuristic mock,
+        # not an NLU model; a bare word like "pop" in "pop the champagne" can still
+        # match. The real Gemini backend infers genre properly.)
         for g in sorted(vocab, key=len, reverse=True):
-            if g and g in low:
+            if g and re.search(rf"(?<!\w){re.escape(g)}(?!\w)", low):
                 return g
         return None
 
@@ -345,7 +350,9 @@ class RealMatchmaker:
                 label = "Live web source"
             else:
                 label = domain or uri
-            entry = {"title": label, "uri": uri, "domain": label}
+            # title = human-readable label; domain = the actual parsed host (falling
+            # back to the label only when no domain could be parsed), per WebSource.
+            entry = {"title": label, "uri": uri, "domain": domain or label}
             if uri not in {w["uri"] for w in evidence["web_sources"]}:
                 evidence["web_sources"].append(entry)
                 evidence["grounded"] = True

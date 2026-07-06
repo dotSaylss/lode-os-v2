@@ -10,28 +10,29 @@ is not aspirational. Reproduce it yourself with the commands in
 
 ---
 
-## 1. Automated test suite — 13/13 passing
+## 1. Automated test suite — 14/14 passing
 
 ```
 $ cd backend && pip install -r requirements.txt -r requirements-dev.txt && pytest
 ============================= test session starts ==============================
-collected 13 items
+collected 14 items
 
 tests/test_api.py::test_health_reports_mock_backend PASSED               [  7%]
-tests/test_api.py::test_config_exposes_branding_and_categories PASSED    [ 15%]
-tests/test_api.py::test_providers_endpoint_returns_the_marketplace PASSED [ 23%]
-tests/test_api.py::test_every_provider_has_the_core_shape PASSED         [ 30%]
-tests/test_api.py::test_provider_models_validate PASSED                  [ 38%]
-tests/test_api.py::test_chat_assembles_a_grounded_team PASSED            [ 46%]
-tests/test_api.py::test_chat_names_cited_providers_in_the_reply PASSED   [ 53%]
-tests/test_api.py::test_chat_reports_rag_loaded_count PASSED             [ 61%]
-tests/test_api.py::test_chat_remembers_the_running_brief_across_turns PASSED [ 69%]
-tests/test_api.py::test_chat_without_a_need_greets_or_recaps PASSED      [ 76%]
-tests/test_api.py::test_mode_resolution_mock PASSED                      [ 84%]
+tests/test_api.py::test_config_exposes_branding_and_categories PASSED    [ 14%]
+tests/test_api.py::test_providers_endpoint_returns_the_marketplace PASSED [ 21%]
+tests/test_api.py::test_every_provider_has_the_core_shape PASSED         [ 28%]
+tests/test_api.py::test_provider_models_validate PASSED                  [ 35%]
+tests/test_api.py::test_chat_assembles_a_grounded_team PASSED            [ 42%]
+tests/test_api.py::test_chat_names_cited_providers_in_the_reply PASSED   [ 50%]
+tests/test_api.py::test_chat_reports_rag_loaded_count PASSED             [ 57%]
+tests/test_api.py::test_chat_remembers_the_running_brief_across_turns PASSED [ 64%]
+tests/test_api.py::test_chat_without_a_need_greets_or_recaps PASSED      [ 71%]
+tests/test_api.py::test_genre_detection_ignores_substring_false_positives PASSED [ 78%]
+tests/test_api.py::test_mode_resolution_mock PASSED                      [ 85%]
 tests/test_api.py::test_mode_resolution_real_forced PASSED              [ 92%]
 tests/test_api.py::test_mode_resolution_auto_needs_credentials PASSED   [100%]
 
-======================== 13 passed in 0.42s ===================================
+======================== 14 passed in 0.41s ===================================
 ```
 
 The suite drives the **real FastAPI app** (via `TestClient`) — the same code path
@@ -118,7 +119,7 @@ team live in the UI:
 cd backend
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt -r requirements-dev.txt
-pytest                        # 13 passing
+pytest                        # 14 passing
 uvicorn main:app --reload     # serves http://localhost:8000
 
 # Terminal 2 — frontend
