@@ -147,7 +147,7 @@
 					<span class="v3-rail-ico"><Icon name="message-circle" size={20} /></span>
 					<span class="v3-rail-label">Chat</span>
 				</a>
-				<button class="v3-rail-item" type="button" onclick={newChat}>
+				<button class="v3-rail-item v3-rail-hide-mobile" type="button" onclick={newChat}>
 					<span class="v3-rail-ico"><Icon name="pencil-line" size={20} /></span>
 					<span class="v3-rail-label">New chat</span>
 				</button>

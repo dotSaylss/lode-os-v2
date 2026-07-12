@@ -158,6 +158,10 @@
 		font-size: 14px;
 		font-weight: 600;
 		color: var(--ink-900);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: 100%;
 	}
 	.lib-meta {
 		font-size: 12px;

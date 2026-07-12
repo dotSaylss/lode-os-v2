@@ -426,9 +426,21 @@
 		color: var(--ink-muted);
 	}
 
-	@media (max-width: 520px) {
+	@media (max-width: 640px) {
 		.set-card {
 			padding: 20px 18px;
+		}
+		/* Rows wrap and the text block drops its 180px floor so long persona /
+		   account names never force horizontal overflow on a phone. */
+		.set-row {
+			flex-wrap: wrap;
+			row-gap: 8px;
+		}
+		.set-row-text {
+			min-width: 0;
+		}
+		.set-perm-link {
+			margin-left: 47px;
 		}
 	}
 </style>

@@ -84,4 +84,20 @@
 	.fin-dot.off {
 		background: var(--amber-500);
 	}
+	/* Mobile: the large mono figure can be wider than the card; scale it down
+	   and stack the head so the artist pill never collides with the eyebrow. */
+	@media (max-width: 640px) {
+		.fin-card {
+			padding: 22px 18px;
+		}
+		.fin-head {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 8px;
+		}
+		.fin-amount {
+			font-size: clamp(30px, 11vw, 52px);
+			overflow-wrap: anywhere;
+		}
+	}
 </style>

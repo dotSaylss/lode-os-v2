@@ -349,9 +349,14 @@
 		margin-bottom: 22px;
 		min-width: 0;
 	}
-	@media (max-width: 520px) {
+	@media (max-width: 640px) {
 		.lab-card {
 			padding: 20px 18px;
+		}
+		/* The mono roster figure can be wider than the card on a phone. */
+		.lab-hero-amount {
+			font-size: clamp(32px, 11vw, 52px);
+			overflow-wrap: anywhere;
 		}
 	}
 	.lab-card-head {
@@ -479,9 +484,11 @@
 	.lab-table-scroll {
 		overflow: auto;
 		max-height: 540px;
+		-webkit-overflow-scrolling: touch;
 	}
 	.lab-table {
 		width: 100%;
+		min-width: 460px;
 		border-collapse: collapse;
 		font-size: 14px;
 	}

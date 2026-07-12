@@ -597,7 +597,8 @@
 	.svc-prov-foot {
 		display: flex;
 		align-items: center;
-		gap: 10px;
+		flex-wrap: wrap;
+		gap: 10px 12px;
 		margin-top: 14px;
 		padding-top: 12px;
 		border-top: 1px solid var(--paper-200);
@@ -605,11 +606,13 @@
 	.svc-rate {
 		font-size: 13px;
 		color: var(--ink-900);
+		min-width: 0;
 	}
 	.svc-turnaround {
 		font-size: 12px;
 		color: var(--ink-muted);
 		margin-right: auto;
+		min-width: 0;
 	}
 	/* Icon-only: the card is the context; the label lives in the tooltip. */
 	.svc-ask {
